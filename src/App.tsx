@@ -148,14 +148,21 @@ const MainApp: React.FC = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const navigateToArticle = (slug: string) => {
-    setActiveSlug(slug);
+  const navigateToArticle = (rawSlug: string) => {
+    if (!rawSlug) return;
+    const cleanSlug = typeof rawSlug === 'string'
+      ? decodeURIComponent(rawSlug).replace(/^\/?(news\/)?/, '').replace(/\/$/, '').trim()
+      : String(rawSlug);
+    setActiveSlug(cleanSlug);
     setCurrentView('article');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const navigateToCategory = (slug: string) => {
-    setActiveCategorySlug(slug);
+    const cleanSlug = typeof slug === 'string'
+      ? decodeURIComponent(slug).replace(/^\/?(category\/)?/, '').replace(/\/$/, '').trim()
+      : String(slug);
+    setActiveCategorySlug(cleanSlug);
     setCurrentView('category');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -516,15 +523,27 @@ const MainApp: React.FC = () => {
             {currentView === 'article' && (
               <ArticlePage
                 slug={activeSlug}
+                articles={articles}
+                categories={categories}
+                siteSettings={siteSettings}
                 onSelectArticle={navigateToArticle}
                 onSelectCategory={navigateToCategory}
                 onSelectAuthor={navigateToAuthor}
+                onNavigate={(path) => {
+                  if (path === '/' || path === '/home') navigateToHome();
+                  else if (path.startsWith('/news/')) navigateToArticle(path.replace('/news/', ''));
+                  else if (path.startsWith('/category/')) navigateToCategory(path.replace('/category/', ''));
+                  else if (path === '/videos') navigateToVideos();
+                  else if (path === '/e-paper' || path === '/epaper') navigateToEPaper();
+                }}
               />
             )}
 
             {currentView === 'category' && (
               <CategoryPage
                 categorySlug={activeCategorySlug}
+                categories={categories}
+                subcategories={subcategories}
                 onSelectArticle={navigateToArticle}
                 onSelectCategory={navigateToCategory}
               />
@@ -533,6 +552,7 @@ const MainApp: React.FC = () => {
             {currentView === 'search' && (
               <SearchPage
                 initialQuery={searchQuery}
+                categories={categories}
                 onSelectArticle={navigateToArticle}
                 onSelectCategory={navigateToCategory}
               />
@@ -541,6 +561,8 @@ const MainApp: React.FC = () => {
             {currentView === 'author' && (
               <AuthorPage
                 authorSlug={activeAuthorSlug}
+                authors={authors}
+                categories={categories}
                 onSelectArticle={navigateToArticle}
                 onSelectCategory={navigateToCategory}
               />
@@ -548,12 +570,14 @@ const MainApp: React.FC = () => {
 
             {currentView === 'videos' && (
               <VideosPage
+                videos={videos}
                 onSelectArticle={navigateToArticle}
               />
             )}
 
             {currentView === 'photos' && (
               <PhotosPage
+                articles={articles}
                 onSelectArticle={navigateToArticle}
               />
             )}
@@ -574,6 +598,8 @@ const MainApp: React.FC = () => {
 
             {currentView === 'sitemap' && (
               <SitemapPage
+                articles={articles}
+                categories={categories}
                 onSelectArticle={navigateToArticle}
                 onSelectCategory={navigateToCategory}
               />

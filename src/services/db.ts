@@ -235,37 +235,73 @@ export const dbService = {
     return list;
   },
 
-  async getArticleBySlug(slug: string): Promise<Article | null> {
+  async getArticleBySlug(rawSlug: string): Promise<Article | null> {
+    if (!rawSlug) return null;
+    const cleanSlug = decodeURIComponent(rawSlug).replace(/^\/?(news\/)?/, '').replace(/\/$/, '').trim();
+    if (!cleanSlug) return null;
+
     if (isLive && db) {
       try {
-        const q = query(collection(db, 'articles'), where('slug', '==', slug), limit(1));
+        // 1. Try finding by slug
+        const q = query(collection(db, 'articles'), where('slug', '==', cleanSlug), limit(1));
         const snap = await getDocs(q);
         if (!snap.empty) {
           const docData = snap.docs[0];
           return { id: docData.id, ...docData.data() } as Article;
         }
+
+        // 2. Also try finding by document ID if cleanSlug happens to be an ID (e.g. 'art-1')
+        const docSnap = await getDoc(doc(db, 'articles', cleanSlug));
+        if (docSnap.exists()) {
+          return { id: docSnap.id, ...docSnap.data() } as Article;
+        }
       } catch (err) {
-        handleFirestoreError(err, OperationType.GET, `articles/slug/${slug}`);
+        handleFirestoreError(err, OperationType.GET, `articles/slug/${cleanSlug}`);
       }
     }
 
+    // Local Storage & Seed Fallback
     const list = getLocal<Article[]>('articles', INITIAL_ARTICLES);
-    return list.find((a) => a.slug === slug) || null;
+    const found = list.find(
+      (a) =>
+        a.slug === cleanSlug ||
+        a.id === cleanSlug ||
+        a.slug === rawSlug ||
+        a.id === rawSlug
+    );
+    if (found) return found;
+
+    // Fallback to INITIAL_ARTICLES constant directly
+    return (
+      INITIAL_ARTICLES.find(
+        (a) =>
+          a.slug === cleanSlug ||
+          a.id === cleanSlug ||
+          a.slug === rawSlug ||
+          a.id === rawSlug
+      ) || null
+    );
   },
 
   async getArticleById(id: string): Promise<Article | null> {
+    if (!id) return null;
+    const cleanId = decodeURIComponent(id).replace(/^\/?(news\/)?/, '').replace(/\/$/, '').trim();
+    if (!cleanId) return null;
+
     if (isLive && db) {
       try {
-        const snap = await getDoc(doc(db, 'articles', id));
+        const snap = await getDoc(doc(db, 'articles', cleanId));
         if (snap.exists()) {
           return { id: snap.id, ...snap.data() } as Article;
         }
       } catch (err) {
-        handleFirestoreError(err, OperationType.GET, `articles/${id}`);
+        handleFirestoreError(err, OperationType.GET, `articles/${cleanId}`);
       }
     }
     const list = getLocal<Article[]>('articles', INITIAL_ARTICLES);
-    return list.find((a) => a.id === id) || null;
+    const found = list.find((a) => a.id === cleanId || a.slug === cleanId);
+    if (found) return found;
+    return INITIAL_ARTICLES.find((a) => a.id === cleanId || a.slug === cleanId) || null;
   },
 
   async createArticle(article: Omit<Article, 'id'>, performedBy = 'संपादक'): Promise<Article> {

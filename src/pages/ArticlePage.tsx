@@ -48,12 +48,23 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({
   onSelectCategory,
   onSelectAuthor,
 }) => {
-  const [article, setArticle] = useState<Article | null>(null);
+  const cleanSlug = typeof slug === 'string'
+    ? decodeURIComponent(slug).replace(/^\/?(news\/)?/, '').replace(/\/$/, '').trim()
+    : '';
+
   const [allArticles, setAllArticles] = useState<Article[]>(initialArticles || []);
+
+  // Check if article is already in props/memory for instantaneous opening
+  const initialFound = (initialArticles || []).find(
+    (a) => a.slug === cleanSlug || a.id === cleanSlug || a.slug === slug || a.id === slug
+  );
+
+  const [article, setArticle] = useState<Article | null>(initialFound || null);
+  const [loading, setLoading] = useState(!initialFound);
   const [comments, setComments] = useState<Comment[]>([]);
   const [fontSize, setFontSize] = useState<'normal' | 'large' | 'xlarge'>('normal');
   const [liked, setLiked] = useState(false);
-  const [likesCount, setLikesCount] = useState(0);
+  const [likesCount, setLikesCount] = useState(initialFound?.likes || 0);
   const [copied, setCopied] = useState(false);
 
   const siteSettings = initialSiteSettings || dbService.getSiteSettings();
@@ -78,19 +89,48 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({
 
   useEffect(() => {
     if (!initialArticles || initialArticles.length === 0) {
-      dbService.getArticles({ status: 'published' }).then((data) => setAllArticles(data || []));
+      dbService.getArticles({ status: 'published' }).then((data) => {
+        setAllArticles(data || []);
+        // Also try matching if still not found
+        if (!article) {
+          const matched = (data || []).find(
+            (a) => a.slug === cleanSlug || a.id === cleanSlug || a.slug === slug || a.id === slug
+          );
+          if (matched) {
+            setArticle(matched);
+            setLikesCount(matched.likes || 0);
+            setLoading(false);
+          }
+        }
+      });
     } else {
       setAllArticles(initialArticles);
     }
-  }, [initialArticles]);
+  }, [initialArticles, cleanSlug, slug, article]);
 
   useEffect(() => {
     let mounted = true;
-    dbService.getArticleBySlug(slug).then((art) => {
+    if (!cleanSlug) {
+      setLoading(false);
+      return;
+    }
+
+    const localFound = (initialArticles || allArticles || []).find(
+      (a) => a.slug === cleanSlug || a.id === cleanSlug || a.slug === slug || a.id === slug
+    );
+
+    if (localFound) {
+      setArticle(localFound);
+      setLikesCount(localFound.likes || 0);
+      setLoading(false);
+    }
+
+    dbService.getArticleBySlug(cleanSlug || slug).then((art) => {
       if (!mounted) return;
       if (art) {
         setArticle(art);
         setLikesCount(art.likes || 0);
+        setLoading(false);
 
         // Increment view count
         dbService.incrementArticleViews(art.id);
@@ -128,6 +168,10 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({
         dbService.getComments(art.id).then((comms) => {
           if (mounted) setComments(comms || []);
         });
+      } else {
+        if (!localFound) {
+          setLoading(false);
+        }
       }
     });
 
@@ -138,19 +182,33 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({
       const script = document.getElementById('article-json-ld');
       if (script) script.remove();
     };
-  }, [slug, siteSettings]);
+  }, [cleanSlug, slug, siteSettings, initialArticles]);
+
+  if (loading && !article) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 py-20 text-center">
+        <div className="inline-block w-8 h-8 border-3 border-red-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <h2 className="text-xl font-bold text-slate-800 mb-1">खबर लोड हो रही है...</h2>
+        <p className="text-slate-500 text-xs">कृपया कुछ सेकंड प्रतीक्षा करें...</p>
+      </div>
+    );
+  }
 
   if (!article) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-20 text-center">
-        <h2 className="text-2xl font-bold text-slate-800 mb-2">खबर लोड हो रही है...</h2>
-        <p className="text-slate-500 text-sm">कृपया प्रतीक्षा करें या होमपेज पर वापस जाएं।</p>
-        <button
-          onClick={() => handleNavigate('/')}
-          className="mt-4 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm font-semibold transition-colors"
-        >
-          होमपेज पर जाएं
-        </button>
+      <div className="max-w-4xl mx-auto px-4 py-16 text-center bg-white my-8 rounded-xl border border-neutral-200 shadow-sm">
+        <h2 className="text-2xl font-bold text-slate-800 mb-2">खबर नहीं मिली (Article Not Found)</h2>
+        <p className="text-slate-500 text-sm max-w-md mx-auto mb-6">
+          यह खबर हटा दी गई हो सकती है या लिंक अमान्य हो सकता है। कृपया अन्य प्रमुख खबरें देखें या होमपेज पर जाएं।
+        </p>
+        <div className="flex justify-center gap-3">
+          <button
+            onClick={() => handleNavigate('/')}
+            className="bg-red-600 hover:bg-red-700 text-white px-5 py-2.5 rounded-lg text-sm font-bold transition-colors cursor-pointer"
+          >
+            होमपेज पर जाएं
+          </button>
+        </div>
       </div>
     );
   }
