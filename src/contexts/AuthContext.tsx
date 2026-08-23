@@ -90,14 +90,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     // Local authentication fallback for development / instant review
-    if (email.toLowerCase().includes('admin') || email === 'saini.pardeep45@gmail.com') {
+    if (email.toLowerCase() === 'saini.pardeep45@gmail.com' || email.toLowerCase().startsWith('superadmin')) {
       const profile: UserProfile = {
         uid: 'usr-superadmin',
         email,
         displayName: 'प्रदीप सैनी (Chief Editor)',
         role: 'super_admin',
-        designation: 'प्रधान संपादक',
+        designation: 'प्रधान संपादक (Super Admin)',
         photoURL: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
+        createdAt: new Date().toISOString(),
+        isActive: true,
+      };
+      setCurrentUser(profile);
+      localStorage.setItem('samachar_current_user', JSON.stringify(profile));
+      dbService.logActivity({
+        userId: profile.uid,
+        userName: profile.displayName,
+        action: 'Super Admin Logged In',
+        entityType: 'Auth',
+        details: `${email} logged into CMS`,
+        timestamp: new Date().toISOString(),
+      });
+    } else if (email.toLowerCase().includes('admin')) {
+      const profile: UserProfile = {
+        uid: 'usr-admin',
+        email,
+        displayName: 'राजेश खन्ना (CMS Admin)',
+        role: 'admin',
+        designation: 'प्रबंधक (Admin)',
+        photoURL: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80',
         createdAt: new Date().toISOString(),
         isActive: true,
       };
@@ -111,13 +132,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         details: `${email} logged into CMS`,
         timestamp: new Date().toISOString(),
       });
+    } else if (email.toLowerCase().includes('editor')) {
+      const profile: UserProfile = {
+        uid: 'usr-editor',
+        email,
+        displayName: 'अमित भारद्वाज (Senior Editor)',
+        role: 'editor',
+        designation: 'वरिष्ठ उप-संपादक',
+        photoURL: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&auto=format&fit=crop&q=80',
+        createdAt: new Date().toISOString(),
+        isActive: true,
+      };
+      setCurrentUser(profile);
+      localStorage.setItem('samachar_current_user', JSON.stringify(profile));
     } else {
       const profile: UserProfile = {
         uid: `usr-${Date.now()}`,
         email,
         displayName: email.split('@')[0],
         role: 'reporter',
-        designation: 'संवाददाता',
+        designation: 'संवाददाता (Reporter)',
+        photoURL: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&auto=format&fit=crop&q=80',
         createdAt: new Date().toISOString(),
         isActive: true,
       };

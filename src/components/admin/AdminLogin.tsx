@@ -63,6 +63,60 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onBackToSite }) => {
             </div>
           )}
 
+          {/* Pre-configured Credentials Helper Card */}
+          <div className="mb-6 bg-slate-800/80 border border-slate-700 rounded-xl p-4 text-xs">
+            <div className="flex items-center justify-between font-bold text-amber-400 mb-2">
+              <span className="flex items-center gap-1.5">
+                <UserCheck className="w-4 h-4" /> अधिकृत लॉगिन क्रेडेंशियल्स (Login Credentials)
+              </span>
+              <span className="bg-emerald-950 text-emerald-300 px-2 py-0.5 rounded text-[10px] font-mono border border-emerald-800">सक्रिय / Active</span>
+            </div>
+
+            <div className="space-y-2.5 text-slate-300">
+              <div className="p-2.5 bg-slate-900/90 rounded-lg border border-slate-700/80 flex items-center justify-between">
+                <div>
+                  <div className="text-[11px] font-bold text-white flex items-center gap-1.5">
+                    👑 <span className="text-red-400">Super Admin ID:</span> saini.pardeep45@gmail.com
+                  </div>
+                  <div className="text-[11px] text-slate-400 mt-0.5">
+                    🔑 <span className="text-slate-300">पासवर्ड (Password):</span> <span className="font-mono text-amber-300 font-semibold">Admin@123</span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEmail('saini.pardeep45@gmail.com');
+                    setPassword('Admin@123');
+                  }}
+                  className="bg-red-600/90 hover:bg-red-600 text-white text-[10px] font-bold px-2.5 py-1.5 rounded transition-colors"
+                >
+                  ऑटो-भरें (Fill)
+                </button>
+              </div>
+
+              <div className="p-2.5 bg-slate-900/90 rounded-lg border border-slate-700/80 flex items-center justify-between">
+                <div>
+                  <div className="text-[11px] font-bold text-white flex items-center gap-1.5">
+                    ⚙️ <span className="text-sky-400">CMS Admin ID:</span> admin@samacharfirst.com
+                  </div>
+                  <div className="text-[11px] text-slate-400 mt-0.5">
+                    🔑 <span className="text-slate-300">पासवर्ड (Password):</span> <span className="font-mono text-amber-300 font-semibold">Admin@123</span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEmail('admin@samacharfirst.com');
+                    setPassword('Admin@123');
+                  }}
+                  className="bg-slate-700 hover:bg-slate-600 text-white text-[10px] font-bold px-2.5 py-1.5 rounded transition-colors"
+                >
+                  ऑटो-भरें (Fill)
+                </button>
+              </div>
+            </div>
+          </div>
+
           {/* Email / Password Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
