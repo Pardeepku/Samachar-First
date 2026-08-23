@@ -124,13 +124,48 @@ export const INITIAL_ARTICLES: Article[] = [
     shortDescription: 'भारतीय मौसम विज्ञान विभाग (IMD) ने हरियाणा के उत्तरी और मध्य जिलों में अगले 48 घंटों के दौरान आंधी के साथ भारी वर्षा की चेतावनी जारी की है।',
     content: `<h2>उत्तर भारत में मानसून की सक्रियता बढ़ी</h2>
 <p>हरियाणा और पंजाब में पश्चिमी विक्षोभ और मानसूनी हवाओं के संगम के चलते मौसम में अचानक बदलाव दर्ज किया गया है। मौसम विभाग (IMD) के चंडीगढ़ केंद्र ने ताजा बुलेटिन जारी कर बताया है कि पानीपत, करनाल, सोनीपत, कुरुक्षेत्र, अंबाला और रोहतक में तेज हवाओं (40-50 किमी/घंटा) के साथ भारी बारिश हो सकती है।</p>
+
+<!-- YouTube Video Embed in Article -->
+<div class="video-embed-container" data-embed-type="youtube" data-video-id="9Auq9mYxFEE">
+  <div class="video-embed-wrapper">
+    <iframe
+      src="https://www.youtube-nocookie.com/embed/9Auq9mYxFEE?rel=0"
+      title="मौसम विभाग की विशेष ग्राउंड रिपोर्ट"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      allowfullscreen
+    ></iframe>
+  </div>
+  <div class="embed-caption">🎥 <span>ग्राउंड रिपोर्ट: उत्तर भारत में भारी बारिश का अलर्ट व प्रशासनिक तैयारियां</span></div>
+</div>
+
 <blockquote>"किसानों को सलाह दी गई है कि वे कटी हुई फसलों और मंडियों में रखे अनाज को सुरक्षित स्थानों पर ढक कर रखें।" - मौसम विज्ञानी</blockquote>
+
+<!-- Social Media Embed (X / Twitter) -->
+<div class="social-embed-card twitter-embed" data-embed-type="twitter" data-url="https://x.com/Indiametdept">
+  <div class="embed-header bg-slate-900 text-white flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <span class="text-sky-400 font-bold">𝕏 / IMD Weather Alert</span>
+      <span class="text-xs text-slate-400">@Indiametdept</span>
+    </div>
+    <a href="https://x.com" target="_blank" rel="noreferrer" class="text-[11px] text-sky-400 hover:underline">मूल पोस्ट देखें ↗</a>
+  </div>
+  <div class="embed-body p-4 bg-slate-50 text-slate-800 text-sm italic">
+    "हरियाणा, पंजाब, दिल्ली-एनसीआर में अगले 48 घंटों में मध्यम से भारी बारिश का पूर्वानुमान जारी किया गया है। नागरिकों से सतर्क रहने का अनुरोध।"
+  </div>
+</div>
+
 <h3>प्रमुख जिलों की स्थिति:</h3>
 <ul>
   <li><strong>पानीपत:</strong> सुबह से बादल छाए हुए हैं, दोपहर बाद मूसलाधार बारिश का पूर्वानुमान।</li>
   <li><strong>करनाल:</strong> जीटी रोड बेल्ट पर जलभराव की आशंका को देखते हुए नगर निगम की टीमें अलर्ट मोड पर हैं।</li>
   <li><strong>गुरुग्राम व फरीदाबाद:</strong> शाम तक हल्की से मध्यम बारिश और तापमान में 4 डिग्री की गिरावट संभावित है।</li>
 </ul>
+
+<figure class="w-full my-4">
+  <img src="https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?w=1200&auto=format&fit=crop&q=80" alt="बारिश का दृश्य" class="rounded-lg shadow-sm w-full object-cover" />
+  <figcaption class="text-xs text-slate-500 text-center mt-1.5">सड़कों पर जलभराव से यातायात प्रभावित (फोटो: विशेष संवाददाता)</figcaption>
+</figure>
+
 <p>प्रशासन ने नागरिकों से अपील की है कि वे आकाशीय बिजली चमकने के दौरान खुले मैदानों और पेड़ों के नीचे जाने से बचें। बिजली निगम ने हेल्पलाइन नंबर जारी कर दिए हैं ताकि फॉल्ट की सूचना तुरंत दर्ज कराई जा सके।</p>`,
     featuredImage: 'https://images.unsplash.com/photo-1519692933481-e162a57d6721?w=1200&auto=format&fit=crop&q=80',
     imageCaption: 'हरियाणा में बादलों का डेरा, बारिश से मौसम हुआ सुहावना (फाइल फोटो)',

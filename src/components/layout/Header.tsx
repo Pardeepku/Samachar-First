@@ -15,6 +15,8 @@ import {
 } from 'lucide-react';
 import { Category, BreakingNews } from '../../types';
 import { dbService } from '../../services/db';
+import { LanguageSelector } from './LanguageSelector';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export interface HeaderProps {
   currentPath?: string;
@@ -138,8 +140,11 @@ export const Header: React.FC<HeaderProps> = ({
             </span>
           </div>
 
-          {/* Right: Quick Links, E-Paper, Admin Panel */}
-          <div className="flex items-center space-x-4">
+          {/* Right: Language Selector, Quick Links, E-Paper, Admin Panel */}
+          <div className="flex items-center space-x-2 sm:space-x-3">
+            {/* Top Right Indian Languages + English Selector */}
+            <LanguageSelector />
+
             <button
               onClick={() => (onNavigateEPaper ? onNavigateEPaper() : navigate('/e-paper'))}
               id="header-epaper-btn"
@@ -411,35 +416,42 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
           </div>
 
-          <div className="pt-4 border-t border-slate-800 grid grid-cols-2 gap-2 text-xs">
-            <button
-              onClick={() => {
-                navigate('/about');
-                setMobileMenuOpen(false);
-              }}
-              className="p-2 bg-slate-900 rounded text-slate-300 hover:text-white"
-            >
-              हमारे बारे में
-            </button>
-            <button
-              onClick={() => {
-                navigate('/contact');
-                setMobileMenuOpen(false);
-              }}
-              className="p-2 bg-slate-900 rounded text-slate-300 hover:text-white"
-            >
-              संपर्क करें
-            </button>
-            <button
-              onClick={() => {
-                if (onNavigateAdmin) onNavigateAdmin();
-                else navigate('/admin');
-                setMobileMenuOpen(false);
-              }}
-              className="col-span-2 p-2 bg-red-600 rounded text-white font-bold text-center"
-            >
-              CMS / एडमिन पोर्टल
-            </button>
+          <div className="pt-4 border-t border-slate-800 space-y-3">
+            <div className="flex items-center justify-between px-1">
+              <span className="text-xs text-slate-400 font-medium">भाषा (Language):</span>
+              <LanguageSelector />
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              <button
+                onClick={() => {
+                  navigate('/about');
+                  setMobileMenuOpen(false);
+                }}
+                className="p-2 bg-slate-900 rounded text-slate-300 hover:text-white"
+              >
+                हमारे बारे में
+              </button>
+              <button
+                onClick={() => {
+                  navigate('/contact');
+                  setMobileMenuOpen(false);
+                }}
+                className="p-2 bg-slate-900 rounded text-slate-300 hover:text-white"
+              >
+                संपर्क करें
+              </button>
+              <button
+                onClick={() => {
+                  if (onNavigateAdmin) onNavigateAdmin();
+                  else navigate('/admin');
+                  setMobileMenuOpen(false);
+                }}
+                className="col-span-2 p-2 bg-red-600 rounded text-white font-bold text-center"
+              >
+                CMS / एडमिन पोर्टल
+              </button>
+            </div>
           </div>
         </div>
       )}
