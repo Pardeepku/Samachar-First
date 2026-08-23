@@ -1,0 +1,6 @@
+{
+  "name": "Samachar First",
+  "description": "Samachar First - आपकी खबर, सबसे पहले. Complete digital Hindi news portal and editorial CMS with real-time news, breaking ticker, category management, and SEO engine.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

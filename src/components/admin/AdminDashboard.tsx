@@ -1,0 +1,252 @@
+import React from 'react';
+import { Article, Category, Author, VideoNews, BreakingNews, ActivityLog } from '../../types';
+import {
+  FileText,
+  Flame,
+  FolderTree,
+  Users,
+  Video,
+  Eye,
+  Plus,
+  Clock,
+  CheckCircle,
+  TrendingUp,
+  Activity,
+  ArrowUpRight,
+} from 'lucide-react';
+import { AdminTab } from './AdminLayout';
+
+interface AdminDashboardProps {
+  articles: Article[];
+  categories: Category[];
+  authors: Author[];
+  videos: VideoNews[];
+  breakingNews: BreakingNews[];
+  activityLogs: ActivityLog[];
+  onNavigateTab: (tab: AdminTab) => void;
+  onCreateArticle: () => void;
+  onEditArticle: (article: Article) => void;
+}
+
+export const AdminDashboard: React.FC<AdminDashboardProps> = ({
+  articles,
+  categories,
+  authors,
+  videos,
+  breakingNews,
+  activityLogs,
+  onNavigateTab,
+  onCreateArticle,
+  onEditArticle,
+}) => {
+  const publishedCount = articles.filter((a) => a.status === 'published').length;
+  const draftCount = articles.filter((a) => a.status === 'draft').length;
+  const totalViews = articles.reduce((sum, a) => sum + (a.views || 0), 0);
+
+  const stats = [
+    {
+      title: 'कुल समाचार (Articles)',
+      value: articles.length,
+      sub: `${publishedCount} लाइव, ${draftCount} ड्राफ्ट`,
+      icon: <FileText className="w-5 h-5 text-red-500" />,
+      tab: 'articles' as AdminTab,
+    },
+    {
+      title: 'बड़ी खबरें (Breaking)',
+      value: breakingNews.filter((b) => b.isActive).length,
+      sub: `${breakingNews.length} कुल दर्ज`,
+      icon: <Flame className="w-5 h-5 text-amber-500" />,
+      tab: 'breaking' as AdminTab,
+    },
+    {
+      title: 'श्रेणियां व जिले',
+      value: categories.length,
+      sub: 'सक्रिय न्यूज़ श्रेणियां',
+      icon: <FolderTree className="w-5 h-5 text-indigo-500" />,
+      tab: 'categories' as AdminTab,
+    },
+    {
+      title: 'संवाददाता / रिपोर्टर',
+      value: authors.length,
+      sub: 'संपादकीय टीम सदस्य',
+      icon: <Users className="w-5 h-5 text-emerald-500" />,
+      tab: 'authors' as AdminTab,
+    },
+    {
+      title: 'वीडियो बुलेटिन',
+      value: videos.length,
+      sub: 'YouTube बुलेटिन',
+      icon: <Video className="w-5 h-5 text-sky-500" />,
+      tab: 'videos' as AdminTab,
+    },
+    {
+      title: 'कुल पाठक व्यूज (Views)',
+      value: totalViews.toLocaleString(),
+      sub: 'डिजिटल न्यूज़ इंप्रेशन',
+      icon: <Eye className="w-5 h-5 text-purple-500" />,
+      tab: 'articles' as AdminTab,
+    },
+  ];
+
+  return (
+    <div className="space-y-6">
+      {/* Top Banner with Quick Actions */}
+      <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="font-serif font-black text-xl text-white">
+            समाचार फर्स्ट संपादकीय डैशबोर्ड (Dashboard)
+          </h1>
+          <p className="text-xs text-slate-400 mt-0.5">
+            वेबसाइट सामग्री, बड़ी खबरों और मल्टीमीडिया का लाइव नियंत्रण केंद्र
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={onCreateArticle}
+            className="bg-red-600 hover:bg-red-700 text-white px-3.5 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-sm transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            नया समाचार बनाएं
+          </button>
+          <button
+            onClick={() => onNavigateTab('breaking')}
+            className="bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-500/30 px-3.5 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors"
+          >
+            <Flame className="w-4 h-4" />
+            Breaking News
+          </button>
+        </div>
+      </div>
+
+      {/* Metrics Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        {stats.map((st, i) => (
+          <div
+            key={i}
+            onClick={() => onNavigateTab(st.tab)}
+            className="bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-xl p-4 cursor-pointer transition-colors flex flex-col justify-between"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <span className="p-2 bg-slate-800 rounded-lg">{st.icon}</span>
+              <ArrowUpRight className="w-3.5 h-3.5 text-slate-500" />
+            </div>
+            <div>
+              <div className="text-xl font-bold text-white font-mono">{st.value}</div>
+              <div className="text-[11px] font-semibold text-slate-300 truncate">{st.title}</div>
+              <div className="text-[10px] text-slate-500 mt-0.5">{st.sub}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Main 2-Column Content: Recent Articles & Activity Log */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Recent Articles (8 cols) */}
+        <div className="lg:col-span-8 bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-xs">
+          <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-800">
+            <h2 className="font-serif font-bold text-base text-white flex items-center gap-2">
+              <FileText className="w-4 h-4 text-red-500" />
+              हालिया प्रकाशित व ड्राफ्ट समाचार
+            </h2>
+            <button
+              onClick={() => onNavigateTab('articles')}
+              className="text-xs text-red-400 hover:text-red-300 font-semibold"
+            >
+              सभी समाचार देखें ({articles.length}) →
+            </button>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs text-slate-300">
+              <thead className="bg-slate-950 text-slate-400 font-semibold uppercase text-[10px] border-b border-slate-800">
+                <tr>
+                  <th className="py-2.5 px-3">समाचार शीर्षक</th>
+                  <th className="py-2.5 px-3">श्रेणी / जिला</th>
+                  <th className="py-2.5 px-3">लेखक</th>
+                  <th className="py-2.5 px-3">स्थिति</th>
+                  <th className="py-2.5 px-3">व्यूज</th>
+                  <th className="py-2.5 px-3 text-right">कार्य</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-800">
+                {articles.slice(0, 7).map((art) => (
+                  <tr key={art.id} className="hover:bg-slate-800/50 transition-colors">
+                    <td className="py-2.5 px-3 max-w-[220px]">
+                      <div className="font-semibold text-white truncate">{art.title}</div>
+                      <div className="text-[10px] text-slate-500">
+                        {new Date(art.publishedAt || art.createdAt).toLocaleDateString('hi-IN')}
+                      </div>
+                    </td>
+                    <td className="py-2.5 px-3">
+                      <span className="bg-slate-800 text-slate-300 px-2 py-0.5 rounded text-[10px]">
+                        {art.categoryName}
+                      </span>
+                    </td>
+                    <td className="py-2.5 px-3 text-slate-400">{art.authorName}</td>
+                    <td className="py-2.5 px-3">
+                      {art.status === 'published' ? (
+                        <span className="bg-emerald-950 text-emerald-300 border border-emerald-800 px-2 py-0.5 rounded text-[10px] font-semibold">
+                          प्रकाशित
+                        </span>
+                      ) : (
+                        <span className="bg-amber-950 text-amber-300 border border-amber-800 px-2 py-0.5 rounded text-[10px] font-semibold">
+                          ड्राफ्ट
+                        </span>
+                      )}
+                    </td>
+                    <td className="py-2.5 px-3 font-mono">{art.views.toLocaleString()}</td>
+                    <td className="py-2.5 px-3 text-right">
+                      <button
+                        onClick={() => onEditArticle(art)}
+                        className="bg-slate-800 hover:bg-slate-700 text-slate-200 px-2 py-1 rounded text-[11px] font-medium"
+                      >
+                        संपादित करें
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Activity Logs & Quick System Status (4 cols) */}
+        <div className="lg:col-span-4 bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-xs flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-800">
+              <h2 className="font-serif font-bold text-base text-white flex items-center gap-2">
+                <Activity className="w-4 h-4 text-emerald-400" />
+                सिस्टम गतिविधि (Activity Logs)
+              </h2>
+            </div>
+
+            <div className="space-y-3">
+              {activityLogs.slice(0, 6).map((log) => (
+                <div key={log.id} className="p-2.5 bg-slate-950/60 rounded-lg border border-slate-800 text-xs">
+                  <div className="flex items-center justify-between text-[11px] mb-1">
+                    <span className="font-bold text-slate-200">{log.action}</span>
+                    <span className="text-[10px] text-slate-500 font-mono">
+                      {new Date(log.timestamp).toLocaleTimeString('hi-IN', { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-400">{log.details}</p>
+                  <div className="text-[10px] text-slate-500 mt-1">द्वारा: {log.userName}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="pt-4 mt-4 border-t border-slate-800">
+            <button
+              onClick={() => onNavigateTab('activity')}
+              className="w-full text-center text-xs text-slate-400 hover:text-white"
+            >
+              सभी गतिविधि लॉग्स देखें →
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
