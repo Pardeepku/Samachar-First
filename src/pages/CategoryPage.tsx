@@ -12,6 +12,7 @@ export interface CategoryPageProps {
   subcategories?: Subcategory[];
   onArticleClick?: (slug: string) => void;
   onSelectArticle?: (slug: string) => void;
+  onSelectCategory?: (slug: string) => void;
   onNavigate?: (path: string) => void;
 }
 

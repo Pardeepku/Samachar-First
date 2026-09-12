@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Article, Category, Subcategory, Author } from '../../types';
+import { Article, Category, Subcategory, Author, ArticleStatus } from '../../types';
 import { generateSlug } from '../../utils/slugify';
 import {
   X,
@@ -19,6 +19,8 @@ import {
   Layers,
 } from 'lucide-react';
 import { MediaEmbedToolbar } from './MediaEmbedToolbar';
+import { uploadMediaFile } from '../../services/storageService';
+import { storage } from '../../firebase/config';
 
 interface ArticleEditorModalProps {
   article: Article | null;
@@ -55,7 +57,7 @@ export const ArticleEditorModal: React.FC<ArticleEditorModalProps> = ({
   const [location, setLocation] = useState('');
   const [isBreaking, setIsBreaking] = useState(false);
   const [isFeatured, setIsFeatured] = useState(false);
-  const [status, setStatus] = useState<'published' | 'draft' | 'pending_review'>('published');
+  const [status, setStatus] = useState<ArticleStatus>('published');
   const [saving, setSaving] = useState(false);
   const [viewTab, setViewTab] = useState<'write' | 'preview'>('write');
 
@@ -111,17 +113,28 @@ export const ArticleEditorModal: React.FC<ArticleEditorModalProps> = ({
     setSlug(generateSlug(title));
   };
 
-  const handleFeaturedImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFeaturedImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (uploadEvent) => {
-        const base64 = uploadEvent.target?.result as string;
-        setFeaturedImage(base64);
+    if (!file) return;
+
+    if (storage) {
+      try {
+        const url = await uploadMediaFile(file, 'articles');
+        setFeaturedImage(url);
         if (!imageCredit) setImageCredit('स्टाफ रिपोर्टर');
-      };
-      reader.readAsDataURL(file);
+        return;
+      } catch (err) {
+        console.warn('Firebase storage upload error, falling back to data URL:', err);
+      }
     }
+
+    const reader = new FileReader();
+    reader.onload = (uploadEvent) => {
+      const base64 = uploadEvent.target?.result as string;
+      setFeaturedImage(base64);
+      if (!imageCredit) setImageCredit('स्टाफ रिपोर्टर');
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleAddGalleryImage = () => {
@@ -135,16 +148,26 @@ export const ArticleEditorModal: React.FC<ArticleEditorModalProps> = ({
     setGallery(gallery.filter((_, i) => i !== idx));
   };
 
-  const handleGalleryUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (uploadEvent) => {
-        const base64 = uploadEvent.target?.result as string;
-        setGallery([...gallery, base64]);
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+
+    if (storage) {
+      try {
+        const url = await uploadMediaFile(file, 'articles');
+        setGallery((prev) => [...prev, url]);
+        return;
+      } catch (err) {
+        console.warn('Firebase storage upload error for gallery:', err);
+      }
     }
+
+    const reader = new FileReader();
+    reader.onload = (uploadEvent) => {
+      const base64 = uploadEvent.target?.result as string;
+      setGallery((prev) => [...prev, base64]);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleInsertContentFromToolbar = (htmlToInsert: string) => {

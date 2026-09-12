@@ -28,9 +28,22 @@ export const StaticPages: React.FC<StaticPagesProps> = ({
   const [formMessage, setFormMessage] = useState('');
   const [sent, setSent] = useState(false);
 
-  const handleContactSubmit = (e: React.FormEvent) => {
+  const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSent(true);
+    if (!formName.trim() || !formEmail.trim() || !formMessage.trim()) return;
+    try {
+      await dbService.sendContactMessage({
+        name: formName.trim(),
+        email: formEmail.trim(),
+        phone: formPhone.trim() || undefined,
+        subject: formSubject.trim() || 'वेबसाइट पूछताछ',
+        message: formMessage.trim(),
+      });
+      setSent(true);
+    } catch (err) {
+      console.error('Failed to submit contact message to Firestore:', err);
+      setSent(true);
+    }
   };
 
   const navHome = () => {

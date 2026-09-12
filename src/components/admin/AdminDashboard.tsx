@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Article, Category, Author, VideoNews, BreakingNews, ActivityLog } from '../../types';
 import {
   FileText,
@@ -13,8 +13,18 @@ import {
   TrendingUp,
   Activity,
   ArrowUpRight,
+  Sparkles,
+  ShieldCheck,
+  Database,
+  RefreshCw,
+  Copy,
+  Check,
+  LogIn,
 } from 'lucide-react';
 import { AdminTab } from './AdminLayout';
+import { DEMO_ACCOUNTS } from '../../data/demoAccounts';
+import { useAuth } from '../../contexts/AuthContext';
+import { dbService } from '../../services/db';
 
 interface AdminDashboardProps {
   articles: Article[];
@@ -26,6 +36,7 @@ interface AdminDashboardProps {
   onNavigateTab: (tab: AdminTab) => void;
   onCreateArticle: () => void;
   onEditArticle: (article: Article) => void;
+  onRefreshData?: () => Promise<void>;
 }
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({
@@ -38,10 +49,38 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   onNavigateTab,
   onCreateArticle,
   onEditArticle,
+  onRefreshData,
 }) => {
+  const { currentUser, quickDemoLogin } = useAuth();
+  const [isSeeding, setIsSeeding] = useState(false);
+  const [seedSuccess, setSeedSuccess] = useState<string | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
   const publishedCount = articles.filter((a) => a.status === 'published').length;
   const draftCount = articles.filter((a) => a.status === 'draft').length;
   const totalViews = articles.reduce((sum, a) => sum + (a.views || 0), 0);
+
+  const handleSeed = async () => {
+    setIsSeeding(true);
+    setSeedSuccess(null);
+    try {
+      const res = await dbService.seedInitialDataToFirestore();
+      setSeedSuccess(res.message);
+      if (onRefreshData && res.success) {
+        await onRefreshData();
+      }
+    } catch (e: any) {
+      setSeedSuccess(e.message || 'सीडिंग विफल');
+    } finally {
+      setIsSeeding(false);
+    }
+  };
+
+  const copyCreds = (text: string, id: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
 
   const stats = [
     {
@@ -103,6 +142,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
         <div className="flex flex-wrap items-center gap-2">
           <button
+            onClick={() => onNavigateTab('auto_fetch')}
+            className="bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 px-3.5 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors"
+          >
+            <Sparkles className="w-4 h-4 text-amber-400" />
+            दैनिक भास्कर ऑटो-फेच (AI)
+          </button>
+          <button
             onClick={onCreateArticle}
             className="bg-red-600 hover:bg-red-700 text-white px-3.5 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-sm transition-colors"
           >
@@ -138,6 +184,128 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Demo Credentials & Firestore Seeding Quick Bar */}
+      <div className="bg-slate-900 border border-slate-800 rounded-xl p-4.5">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 mb-3 border-b border-slate-800">
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="w-5 h-5 text-amber-400" />
+            <div>
+              <h2 className="font-bold text-sm text-white flex items-center gap-2">
+                डेमो लॉगिन क्रेडेंशियल्स व भूमिकाएं (5 Demo User Accounts)
+              </h2>
+              <p className="text-[11px] text-slate-400">
+                सुपर एडमिन, एडमिन, सीनियर एडिटर, रिपोर्टर व यूजर अकाउंट से 1-क्लिक में परीक्षण करें
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleSeed}
+              disabled={isSeeding}
+              className="bg-emerald-600 hover:bg-emerald-500 disabled:opacity-60 text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors shadow-xs"
+              title="Firestore में सभी 14 लेख, 7 श्रेणियां, 5 रिपोर्टर, 4 वीडियो, 5 डेमो यूजर्स व सेटिंग्स लोड करें"
+            >
+              {isSeeding ? (
+                <>
+                  <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                  डेटाबेस सिंक हो रहा है...
+                </>
+              ) : (
+                <>
+                  <Database className="w-3.5 h-3.5" />
+                  डेटाबेस सिंक करें (Seed Demo Data)
+                </>
+              )}
+            </button>
+            <button
+              onClick={() => onNavigateTab('users')}
+              className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-3 py-1.5 rounded-lg border border-slate-700 transition-colors"
+            >
+              पूर्ण यूजर सूची →
+            </button>
+          </div>
+        </div>
+
+        {seedSuccess && (
+          <div className="mb-3 p-2.5 rounded-lg bg-emerald-950/50 border border-emerald-800 text-emerald-300 text-xs flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Check className="w-4 h-4 text-emerald-400" />
+              <span>{seedSuccess}</span>
+            </div>
+            <button onClick={() => setSeedSuccess(null)} className="underline text-[10px]">हटाएं</button>
+          </div>
+        )}
+
+        {/* 5 Demo Accounts Horizontal Carousel / Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+          {DEMO_ACCOUNTS.map((acc) => {
+            const isActive = currentUser?.email === acc.email;
+            return (
+              <div
+                key={acc.id}
+                className={`bg-slate-950/80 rounded-lg p-3 border transition-colors flex flex-col justify-between ${
+                  isActive ? 'border-red-500 bg-red-950/10' : 'border-slate-800/80 hover:border-slate-700'
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${acc.badgeColor}`}>
+                      {acc.role.toUpperCase()}
+                    </span>
+                    {isActive && (
+                      <span className="text-[10px] text-emerald-400 font-bold flex items-center gap-0.5">
+                        <Check className="w-3 h-3" /> सक्रिय
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-xs font-bold text-white truncate">{acc.name.split(' (')[0]}</div>
+                  <div className="text-[10px] text-slate-400 truncate mb-2">{acc.designation.split(' (')[0]}</div>
+
+                  <div className="space-y-1 bg-slate-900 p-2 rounded text-[10px] font-mono border border-slate-800/60 mb-2">
+                    <div className="flex items-center justify-between text-slate-300">
+                      <span className="truncate text-emerald-400 select-all">{acc.email.split('@')[0]}@..</span>
+                      <button
+                        onClick={() => copyCreds(acc.email, `${acc.id}-em`)}
+                        className="text-slate-400 hover:text-white p-0.5"
+                        title="ईमेल कॉपी करें"
+                      >
+                        {copiedId === `${acc.id}-em` ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                      </button>
+                    </div>
+                    <div className="flex items-center justify-between text-slate-300 pt-1 border-t border-slate-800">
+                      <span className="truncate text-amber-400 select-all">{acc.password}</span>
+                      <button
+                        onClick={() => copyCreds(acc.password, `${acc.id}-pw`)}
+                        className="text-slate-400 hover:text-white p-0.5"
+                        title="पासवर्ड कॉपी करें"
+                      >
+                        {copiedId === `${acc.id}-pw` ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  {isActive ? (
+                    <div className="text-[10px] font-bold text-center text-emerald-400 py-1 bg-emerald-950/40 rounded border border-emerald-900/60">
+                      वर्तमान यूजर
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => quickDemoLogin(acc)}
+                      className="w-full bg-slate-800 hover:bg-red-600 hover:text-white text-slate-300 py-1 rounded text-[11px] font-bold flex items-center justify-center gap-1 transition-colors"
+                    >
+                      <LogIn className="w-3 h-3" /> स्विच करें
+                    </button>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       {/* Main 2-Column Content: Recent Articles & Activity Log */}

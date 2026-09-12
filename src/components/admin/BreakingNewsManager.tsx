@@ -20,7 +20,7 @@ export const BreakingNewsManager: React.FC<BreakingNewsManagerProps> = ({
 
   const [title, setTitle] = useState('');
   const [url, setUrl] = useState('');
-  const [priority, setPriority] = useState<'critical' | 'high' | 'normal'>('high');
+  const [priority, setPriority] = useState<BreakingNews['priority']>('high');
   const [isActive, setIsActive] = useState(true);
 
   const handleSave = async (e: React.FormEvent) => {

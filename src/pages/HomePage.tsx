@@ -13,10 +13,13 @@ export interface HomePageProps {
   categories?: Category[];
   subcategories?: Subcategory[];
   videos?: VideoNews[];
+  breakingNews?: any[];
   onArticleClick?: (slug: string) => void;
   onSelectArticle?: (slug: string) => void;
   onNavigate?: (path: string) => void;
   onSelectCategory?: (slug: string) => void;
+  onSelectVideo?: () => void;
+  onSelectDistrict?: (dist: any) => void;
   onNavigateEPaper?: () => void;
   onNavigateVideos?: () => void;
 }

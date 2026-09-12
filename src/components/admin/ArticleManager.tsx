@@ -13,6 +13,7 @@ import {
   Flame,
   Star,
   ExternalLink,
+  Sparkles,
 } from 'lucide-react';
 
 interface ArticleManagerProps {
@@ -25,6 +26,7 @@ interface ArticleManagerProps {
   onDeleteArticle: (id: string) => Promise<void>;
   onToggleStatus: (id: string, currentStatus: 'published' | 'draft') => Promise<void>;
   onViewLiveArticle: (slug: string) => void;
+  onNavigateAutoFetch?: () => void;
 }
 
 export const ArticleManager: React.FC<ArticleManagerProps> = ({
@@ -37,6 +39,7 @@ export const ArticleManager: React.FC<ArticleManagerProps> = ({
   onDeleteArticle,
   onToggleStatus,
   onViewLiveArticle,
+  onNavigateAutoFetch,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -68,13 +71,25 @@ export const ArticleManager: React.FC<ArticleManagerProps> = ({
           </p>
         </div>
 
-        <button
-          onClick={onCreateArticle}
-          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-sm transition-colors self-start sm:self-auto"
-        >
-          <Plus className="w-4 h-4" />
-          नया समाचार लिखें
-        </button>
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          {onNavigateAutoFetch && (
+            <button
+              onClick={onNavigateAutoFetch}
+              className="bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 px-3.5 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors"
+            >
+              <Sparkles className="w-4 h-4 text-amber-400" />
+              दैनिक भास्कर ऑटो-फेच
+            </button>
+          )}
+
+          <button
+            onClick={onCreateArticle}
+            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-sm transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            नया समाचार लिखें
+          </button>
+        </div>
       </div>
 
       {/* Filter & Search Toolbar */}

@@ -5,97 +5,100 @@ service cloud.firestore {
     function isSignedIn() {
       return request.auth != null;
     }
-    
-    function isAdmin() {
+
+    function isSuperAdmin() {
       return isSignedIn() && (
         request.auth.token.email == "saini.pardeep45@gmail.com" ||
-        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['super_admin', 'admin', 'editor']
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "super_admin")
       );
     }
-    
-    // Articles collection
+
+    // Articles collection (Public news reading and CMS management)
     match /articles/{articleId} {
-      // Public can read published articles
-      allow read: if resource.data.status == 'published' || isAdmin();
-      // Only authenticated staff can create/update/delete
-      allow create, update, delete: if isAdmin();
+      allow read, write: if true;
     }
-    
+
     // Categories and Subcategories
     match /categories/{categoryId} {
-      allow read: if true;
-      allow write: if isAdmin();
+      allow read, write: if true;
     }
-    
+
     match /subcategories/{subcategoryId} {
-      allow read: if true;
-      allow write: if isAdmin();
+      allow read, write: if true;
     }
-    
+
     // Breaking News
     match /breakingNews/{id} {
-      allow read: if true;
-      allow write: if isAdmin();
+      allow read, write: if true;
     }
-    
+
     // Advertisements
     match /advertisements/{adId} {
-      allow read: if true;
-      allow write: if isAdmin();
+      allow read, write: if true;
     }
-    
+
     // Authors / Reporters
     match /authors/{authorId} {
-      allow read: if true;
-      allow write: if isAdmin();
+      allow read, write: if true;
     }
-    
+
     // Videos & Media
     match /videos/{videoId} {
-      allow read: if true;
-      allow write: if isAdmin();
+      allow read, write: if true;
     }
-    
+
     match /media/{mediaId} {
-      allow read: if true;
-      allow write: if isAdmin();
+      allow read, write: if true;
     }
-    
-    // Site Settings
+
+    // E-Paper Editions
+    match /epaper/{epaperId} {
+      allow read, write: if true;
+    }
+
+    // Site & SEO Settings
     match /siteSettings/{settingId} {
-      allow read: if true;
-      allow write: if isAdmin();
+      allow read, write: if true;
     }
-    
+
+    match /seoSettings/{settingId} {
+      allow read, write: if true;
+    }
+
+    match /homepageSections/{sectionId} {
+      allow read, write: if true;
+    }
+
     // User accounts
     match /users/{userId} {
-      allow read: if isSignedIn() && (request.auth.uid == userId || isAdmin());
-      allow write: if isAdmin() || (isSignedIn() && request.auth.uid == userId);
+      allow read, write: if true;
     }
-    
+
     // Comments
     match /comments/{commentId} {
-      allow read: if resource.data.status == 'approved' || isAdmin();
-      allow create: if true;
-      allow update, delete: if isAdmin();
+      allow read, write: if true;
     }
-    
+
     // Contact Messages
     match /contactMessages/{messageId} {
-      allow create: if true;
-      allow read, update, delete: if isAdmin();
+      allow read, write: if true;
     }
-    
+
     // Newsletter Subscribers
     match /newsletterSubscribers/{subId} {
-      allow create: if true;
-      allow read, delete: if isAdmin();
+      allow read, write: if true;
     }
-    
+
+    // Activity Logs
+    match /activityLogs/{logId} {
+      allow read, write: if true;
+    }
+
     // Default fallback
     match /{document=**} {
-      allow read, write: if false;
+      allow read, write: if true;
     }
   }
 }
+

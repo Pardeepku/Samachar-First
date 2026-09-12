@@ -19,11 +19,14 @@ import {
   X,
   Bell,
   ShieldCheck,
+  Sparkles,
+  Bot,
 } from 'lucide-react';
 
 export type AdminTab =
   | 'dashboard'
   | 'articles'
+  | 'auto_fetch'
   | 'breaking'
   | 'categories'
   | 'authors'
@@ -32,6 +35,7 @@ export type AdminTab =
   | 'ads'
   | 'seo'
   | 'settings'
+  | 'users'
   | 'activity';
 
 interface AdminLayoutProps {
@@ -52,9 +56,10 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   const { currentUser, logout, isLiveFirebase } = useAuth();
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
-  const menuItems: { id: AdminTab; label: string; labelHi: string; icon: React.ReactNode; roles?: string[] }[] = [
+  const menuItems: { id: AdminTab; label: string; labelHi: string; icon: React.ReactNode; badge?: string; roles?: string[] }[] = [
     { id: 'dashboard', label: 'Dashboard', labelHi: 'डैशबोर्ड', icon: <LayoutDashboard className="w-4 h-4" /> },
     { id: 'articles', label: 'News Articles', labelHi: 'समाचार प्रबंधन', icon: <FileText className="w-4 h-4" /> },
+    { id: 'auto_fetch', label: 'Auto Fetch (Bhaskar & AI)', labelHi: 'दैनिक भास्कर ऑटो-फेच', icon: <Sparkles className="w-4 h-4 text-amber-400" />, badge: 'AI' },
     { id: 'breaking', label: 'Breaking News', labelHi: 'बड़ी खबरें (Breaking)', icon: <Flame className="w-4 h-4" /> },
     { id: 'categories', label: 'Categories & Districts', labelHi: 'श्रेणियां व जिले', icon: <FolderTree className="w-4 h-4" /> },
     { id: 'authors', label: 'Reporters & Editors', labelHi: 'पत्रकार व संवाददाता', icon: <Users className="w-4 h-4" /> },
@@ -63,6 +68,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
     { id: 'ads', label: 'Advertisements', labelHi: 'विज्ञापन प्रबंधन', icon: <DollarSign className="w-4 h-4" /> },
     { id: 'seo', label: 'SEO & Sitemaps', labelHi: 'SEO एवं साइटमैप', icon: <Search className="w-4 h-4" /> },
     { id: 'settings', label: 'Site Settings', labelHi: 'वेबसाइट सेटिंग्स', icon: <Settings className="w-4 h-4" /> },
+    { id: 'users', label: 'User Roles & Demo IDs', labelHi: 'यूजर व भूमिकाएं (IDs)', icon: <ShieldCheck className="w-4 h-4 text-amber-400" />, badge: '5 Roles' },
     { id: 'activity', label: 'Activity Logs', labelHi: 'सिस्टम लॉग्स', icon: <Activity className="w-4 h-4" /> },
   ];
 
@@ -135,8 +141,15 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
                   }`}
                 >
                   <span className={active ? 'text-white' : 'text-slate-400'}>{item.icon}</span>
-                  <div className="flex flex-col">
-                    <span>{item.labelHi}</span>
+                  <div className="flex flex-col flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <span className="truncate">{item.labelHi}</span>
+                      {item.badge && (
+                        <span className="ml-1 bg-amber-400/20 text-amber-300 border border-amber-400/40 text-[9px] font-black px-1.5 py-0.2 rounded">
+                          {item.badge}
+                        </span>
+                      )}
+                    </div>
                     <span className="text-[9px] text-slate-400 opacity-80">{item.label}</span>
                   </div>
                 </button>

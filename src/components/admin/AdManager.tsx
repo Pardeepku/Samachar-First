@@ -15,7 +15,7 @@ export const AdManager: React.FC<AdManagerProps> = ({ ads, onAddAd, onUpdateAd, 
 
   const [title, setTitle] = useState('');
   const [position, setPosition] = useState<AdPosition>('header');
-  const [type, setType] = useState<'image' | 'script' | 'adsense'>('image');
+  const [type, setType] = useState<Advertisement['type']>('image');
   const [imageUrl, setImageUrl] = useState('');
   const [targetUrl, setTargetUrl] = useState('');
   const [htmlCode, setHtmlCode] = useState('');

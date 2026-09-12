@@ -352,7 +352,7 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({
 
               <span className="flex items-center gap-1">
                 <Clock className="w-3 h-3 text-slate-400" />
-                {new Date(article.publishedAt || article.createdAt).toLocaleDateString('hi-IN', {
+                {new Date(article.publishedAt || article.createdAt || Date.now()).toLocaleDateString('hi-IN', {
                   day: 'numeric',
                   month: 'long',
                   year: 'numeric',

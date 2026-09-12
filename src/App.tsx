@@ -47,6 +47,8 @@ import { AdManager } from './components/admin/AdManager';
 import { SeoSettingsManager } from './components/admin/SeoSettingsManager';
 import { SiteSettingsManager } from './components/admin/SiteSettingsManager';
 import { ActivityLogViewer } from './components/admin/ActivityLogViewer';
+import { AutoNewsFetcher } from './components/admin/AutoNewsFetcher';
+import { UserManager } from './components/admin/UserManager';
 
 export type AppView =
   | 'home'
@@ -226,8 +228,22 @@ const MainApp: React.FC = () => {
     setIsArticleModalOpen(true);
   };
 
+  const handleOpenArticleWithPrefill = (articleData: Partial<Article>) => {
+    setEditingArticle(articleData as Article);
+    setIsArticleModalOpen(true);
+  };
+
+  const handleDirectPublishArticle = async (articleData: Omit<Article, 'id'>): Promise<Article> => {
+    const saved = await dbService.createArticle(
+      articleData,
+      currentUser?.displayName || 'समाचार फर्स्ट बॉट (AI Auto-Sync)'
+    );
+    await refreshData();
+    return saved;
+  };
+
   const handleSaveArticle = async (articleData: Partial<Article>) => {
-    if (editingArticle) {
+    if (editingArticle && editingArticle.id) {
       await dbService.updateArticle(
         editingArticle.id,
         articleData,
@@ -396,6 +412,7 @@ const MainApp: React.FC = () => {
               onNavigateTab={setAdminTab}
               onCreateArticle={handleOpenCreateArticle}
               onEditArticle={handleOpenEditArticle}
+              onRefreshData={refreshData}
             />
           )}
 
@@ -409,6 +426,18 @@ const MainApp: React.FC = () => {
               onEditArticle={handleOpenEditArticle}
               onDeleteArticle={handleDeleteArticle}
               onToggleStatus={handleToggleArticleStatus}
+              onViewLiveArticle={navigateToArticle}
+              onNavigateAutoFetch={() => setAdminTab('auto_fetch')}
+            />
+          )}
+
+          {adminTab === 'auto_fetch' && (
+            <AutoNewsFetcher
+              categories={categories}
+              subcategories={subcategories}
+              authors={authors}
+              onPublishArticle={handleDirectPublishArticle}
+              onOpenArticleEditor={handleOpenArticleWithPrefill}
               onViewLiveArticle={navigateToArticle}
             />
           )}
@@ -482,6 +511,10 @@ const MainApp: React.FC = () => {
               siteSettings={siteSettings}
               onSave={handleSaveSiteSettings}
             />
+          )}
+
+          {adminTab === 'users' && (
+            <UserManager onRefreshData={refreshData} />
           )}
 
           {adminTab === 'activity' && (

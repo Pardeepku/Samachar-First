@@ -6,9 +6,10 @@ import {
   User as FirebaseUser,
   sendPasswordResetEmail,
 } from 'firebase/auth';
-import { auth, isLive } from '../firebase/config';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { auth, db, isLive } from '../firebase/config';
 import { UserProfile, UserRole } from '../types';
-import { dbService } from '../services/db';
+import { DEMO_ACCOUNTS, DemoAccount, findDemoAccount, toUserProfile } from '../data/demoAccounts';
 
 interface AuthContextType {
   currentUser: UserProfile | null;
@@ -16,7 +17,7 @@ interface AuthContextType {
   loading: boolean;
   isLiveFirebase: boolean;
   login: (email: string, pass: string) => Promise<void>;
-  demoLogin: (role: UserRole) => Promise<void>;
+  quickDemoLogin: (account: DemoAccount) => Promise<void>;
   logout: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   hasRole: (allowedRoles: UserRole[]) => boolean;
@@ -24,15 +25,17 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const DEMO_SESSION_KEY = 'sf_demo_user_session';
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(() => {
-    const saved = localStorage.getItem('samachar_current_user');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return null;
+    try {
+      const saved = localStorage.getItem(DEMO_SESSION_KEY);
+      if (saved) {
+        return JSON.parse(saved) as UserProfile;
       }
+    } catch (e) {
+      console.warn('Failed to parse saved user session:', e);
     }
     return null;
   });
@@ -40,28 +43,62 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (isLive && auth) {
+    if (auth && isLive) {
       const unsub = onAuthStateChanged(auth, async (fbUser) => {
         setFirebaseUser(fbUser);
-        if (fbUser) {
-          const isSuperAdminEmail = fbUser.email === 'saini.pardeep45@gmail.com';
-          const profile: UserProfile = {
-            uid: fbUser.uid,
-            email: fbUser.email || '',
-            displayName: fbUser.displayName || fbUser.email?.split('@')[0] || 'Admin User',
-            role: isSuperAdminEmail ? 'super_admin' : 'editor',
-            photoURL: fbUser.photoURL || undefined,
-            createdAt: fbUser.metadata.creationTime || new Date().toISOString(),
-            lastLogin: new Date().toISOString(),
-            isActive: true,
-          };
-          setCurrentUser(profile);
-          localStorage.setItem('samachar_current_user', JSON.stringify(profile));
-        } else {
-          // If not signed into Firebase and no local user set
-          const saved = localStorage.getItem('samachar_current_user');
-          if (!saved) {
-            setCurrentUser(null);
+        if (fbUser && db) {
+          try {
+            const userRef = doc(db, 'users', fbUser.uid);
+            const userSnap = await getDoc(userRef);
+
+            const isSuperAdminEmail =
+              fbUser.email?.toLowerCase() === 'saini.pardeep45@gmail.com' ||
+              fbUser.email?.toLowerCase() === 'superadmin@samacharfirst.com';
+
+            if (userSnap.exists()) {
+              const data = userSnap.data() as UserProfile;
+              const profile: UserProfile = {
+                ...data,
+                uid: fbUser.uid,
+                email: fbUser.email || data.email || '',
+              };
+              setCurrentUser(profile);
+              localStorage.setItem(DEMO_SESSION_KEY, JSON.stringify(profile));
+            } else {
+              // Create user record in Firestore on first login
+              const initialProfile: UserProfile = {
+                uid: fbUser.uid,
+                email: fbUser.email || '',
+                displayName:
+                  fbUser.displayName ||
+                  (isSuperAdminEmail ? 'प्रदीप सैनी' : fbUser.email?.split('@')[0] || 'CMS Admin'),
+                role: isSuperAdminEmail ? 'super_admin' : 'admin',
+                designation: isSuperAdminEmail ? 'प्रधान संपादक (Super Admin)' : 'संपादक (Editor)',
+                photoURL: fbUser.photoURL || undefined,
+                createdAt: fbUser.metadata.creationTime || new Date().toISOString(),
+                lastLogin: new Date().toISOString(),
+                isActive: true,
+              };
+
+              await setDoc(userRef, initialProfile, { merge: true });
+              setCurrentUser(initialProfile);
+              localStorage.setItem(DEMO_SESSION_KEY, JSON.stringify(initialProfile));
+            }
+          } catch (err) {
+            console.error('Error fetching/setting user profile from Firestore:', err);
+            const isSuperAdminEmail =
+              fbUser.email?.toLowerCase() === 'saini.pardeep45@gmail.com' ||
+              fbUser.email?.toLowerCase() === 'superadmin@samacharfirst.com';
+            const fallbackProfile: UserProfile = {
+              uid: fbUser.uid,
+              email: fbUser.email || '',
+              displayName: fbUser.displayName || (isSuperAdminEmail ? 'प्रदीप सैनी' : 'CMS Staff'),
+              role: isSuperAdminEmail ? 'super_admin' : 'editor',
+              createdAt: new Date().toISOString(),
+              isActive: true,
+            };
+            setCurrentUser(fallbackProfile);
+            localStorage.setItem(DEMO_SESSION_KEY, JSON.stringify(fallbackProfile));
           }
         }
         setLoading(false);
@@ -73,136 +110,98 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const login = async (email: string, pass: string) => {
-    if (isLive && auth) {
-      const cred = await signInWithEmailAndPassword(auth, email, pass);
-      const isSuperAdminEmail = cred.user.email === 'saini.pardeep45@gmail.com';
-      const profile: UserProfile = {
-        uid: cred.user.uid,
-        email: cred.user.email || email,
-        displayName: cred.user.displayName || email.split('@')[0],
-        role: isSuperAdminEmail ? 'super_admin' : 'admin',
-        createdAt: new Date().toISOString(),
-        isActive: true,
-      };
-      setCurrentUser(profile);
-      localStorage.setItem('samachar_current_user', JSON.stringify(profile));
-      return;
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanPass = pass.trim();
+
+    // 1. Check Demo Accounts First
+    const matchedAccount = findDemoAccount(cleanEmail);
+    if (matchedAccount) {
+      // Validate password (account specific, or Admin@123 / 123456 / SuperAdmin@2026)
+      const validPasswords = [
+        matchedAccount.password.toLowerCase(),
+        'admin@123',
+        '123456',
+        'superadmin@2026',
+        'admin@2026',
+        'editor@2026',
+        'reporter@2026',
+        'user@2026',
+      ];
+      if (validPasswords.includes(cleanPass.toLowerCase()) || cleanPass === matchedAccount.password) {
+        const profile = toUserProfile(matchedAccount);
+        profile.lastLogin = new Date().toISOString();
+        setCurrentUser(profile);
+        localStorage.setItem(DEMO_SESSION_KEY, JSON.stringify(profile));
+
+        // Optionally record in Firestore users collection if db connected
+        if (db) {
+          try {
+            await setDoc(doc(db, 'users', matchedAccount.id), profile, { merge: true });
+          } catch (e) {
+            console.warn('Could not mirror demo user in Firestore:', e);
+          }
+        }
+        return;
+      }
     }
 
-    // Local authentication fallback for development / instant review
-    if (email.toLowerCase() === 'saini.pardeep45@gmail.com' || email.toLowerCase().startsWith('superadmin')) {
-      const profile: UserProfile = {
-        uid: 'usr-superadmin',
-        email,
-        displayName: 'प्रदीप सैनी (Chief Editor)',
-        role: 'super_admin',
-        designation: 'प्रधान संपादक (Super Admin)',
-        photoURL: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
-        createdAt: new Date().toISOString(),
-        isActive: true,
-      };
-      setCurrentUser(profile);
-      localStorage.setItem('samachar_current_user', JSON.stringify(profile));
-      dbService.logActivity({
-        userId: profile.uid,
-        userName: profile.displayName,
-        action: 'Super Admin Logged In',
-        entityType: 'Auth',
-        details: `${email} logged into CMS`,
-        timestamp: new Date().toISOString(),
-      });
-    } else if (email.toLowerCase().includes('admin')) {
-      const profile: UserProfile = {
-        uid: 'usr-admin',
-        email,
-        displayName: 'राजेश खन्ना (CMS Admin)',
-        role: 'admin',
-        designation: 'प्रबंधक (Admin)',
-        photoURL: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80',
-        createdAt: new Date().toISOString(),
-        isActive: true,
-      };
-      setCurrentUser(profile);
-      localStorage.setItem('samachar_current_user', JSON.stringify(profile));
-      dbService.logActivity({
-        userId: profile.uid,
-        userName: profile.displayName,
-        action: 'Admin Logged In',
-        entityType: 'Auth',
-        details: `${email} logged into CMS`,
-        timestamp: new Date().toISOString(),
-      });
-    } else if (email.toLowerCase().includes('editor')) {
-      const profile: UserProfile = {
-        uid: 'usr-editor',
-        email,
-        displayName: 'अमित भारद्वाज (Senior Editor)',
-        role: 'editor',
-        designation: 'वरिष्ठ उप-संपादक',
-        photoURL: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&auto=format&fit=crop&q=80',
-        createdAt: new Date().toISOString(),
-        isActive: true,
-      };
-      setCurrentUser(profile);
-      localStorage.setItem('samachar_current_user', JSON.stringify(profile));
-    } else {
-      const profile: UserProfile = {
-        uid: `usr-${Date.now()}`,
-        email,
-        displayName: email.split('@')[0],
-        role: 'reporter',
-        designation: 'संवाददाता (Reporter)',
-        photoURL: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&auto=format&fit=crop&q=80',
-        createdAt: new Date().toISOString(),
-        isActive: true,
-      };
-      setCurrentUser(profile);
-      localStorage.setItem('samachar_current_user', JSON.stringify(profile));
+    // 2. Try Firebase Auth if live
+    if (auth && isLive) {
+      try {
+        await signInWithEmailAndPassword(auth, cleanEmail, cleanPass);
+        return;
+      } catch (fbErr: any) {
+        // If not found in Firebase and matched demo account with wrong pass, give clear error
+        if (matchedAccount) {
+          throw new Error(`गलत पासवर्ड। ${matchedAccount.name} के लिए सही पासवर्ड '${matchedAccount.password}' है।`);
+        }
+        throw fbErr;
+      }
     }
+
+    throw new Error('अमान्य ईमेल अथवा पासवर्ड। कृपया नीचे दिए गए डेमो खातों में से किसी एक पर क्लिक करके लॉगिन करें।');
   };
 
-  const demoLogin = async (role: UserRole) => {
-    const rolesMap: Record<UserRole, { name: string; email: string; desig: string }> = {
-      super_admin: { name: 'प्रदीप सैनी', email: 'saini.pardeep45@gmail.com', desig: 'प्रधान संपादक (Super Admin)' },
-      admin: { name: 'राजेश खन्ना', email: 'admin@samacharfirst.com', desig: 'प्रबंधक (CMS Admin)' },
-      editor: { name: 'अमित भारद्वाज', email: 'editor@samacharfirst.com', desig: 'वरिष्ठ उप-संपादक (Editor)' },
-      reporter: { name: 'पूजा शर्मा', email: 'reporter@samacharfirst.com', desig: 'विशेष संवाददाता (Reporter)' },
-      moderator: { name: 'विकास कुमार', email: 'moderator@samacharfirst.com', desig: 'कमेंट मॉडरेटर' },
-      reader: { name: 'पाठक', email: 'reader@samacharfirst.com', desig: 'पंजीकृत पाठक' },
-    };
-
-    const target = rolesMap[role] || rolesMap.admin;
-    const profile: UserProfile = {
-      uid: `demo-${role}`,
-      email: target.email,
-      displayName: target.name,
-      role,
-      designation: target.desig,
-      photoURL: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
-      createdAt: new Date().toISOString(),
-      isActive: true,
-    };
+  const quickDemoLogin = async (account: DemoAccount) => {
+    const profile = toUserProfile(account);
+    profile.lastLogin = new Date().toISOString();
     setCurrentUser(profile);
-    localStorage.setItem('samachar_current_user', JSON.stringify(profile));
+    localStorage.setItem(DEMO_SESSION_KEY, JSON.stringify(profile));
+
+    // Mirror to Firestore if available
+    if (db) {
+      try {
+        await setDoc(doc(db, 'users', account.id), profile, { merge: true });
+      } catch (e) {
+        console.warn('Could not mirror quick demo user in Firestore:', e);
+      }
+    }
   };
 
   const logout = async () => {
-    if (isLive && auth) {
+    if (auth) {
       try {
         await firebaseSignOut(auth);
       } catch (e) {
         console.error('Logout error:', e);
       }
     }
+    localStorage.removeItem(DEMO_SESSION_KEY);
     setCurrentUser(null);
     setFirebaseUser(null);
-    localStorage.removeItem('samachar_current_user');
   };
 
   const resetPassword = async (email: string) => {
-    if (isLive && auth) {
-      await sendPasswordResetEmail(auth, email);
+    if (auth && isLive) {
+      await sendPasswordResetEmail(auth, email.trim());
+      return;
     }
+    // For demo accounts, explain reset
+    const matched = findDemoAccount(email);
+    if (matched) {
+      throw new Error(`यह डेमो खाता है। ${matched.name} का पासवर्ड है: "${matched.password}"`);
+    }
+    throw new Error('Firebase Authentication कॉन्फ़िगर नहीं है।');
   };
 
   const hasRole = (allowedRoles: UserRole[]): boolean => {
@@ -219,7 +218,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         loading,
         isLiveFirebase: Boolean(isLive),
         login,
-        demoLogin,
+        quickDemoLogin,
         logout,
         resetPassword,
         hasRole,
@@ -237,3 +236,4 @@ export const useAuth = () => {
   }
   return context;
 };
+

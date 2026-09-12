@@ -337,7 +337,7 @@ export const Header: React.FC<HeaderProps> = ({
               }}
             >
               <span className="bg-red-700 text-[10px] px-1.5 py-0.5 rounded uppercase font-bold tracking-wider">
-                {currentBreaking.priority === 'urgent' ? '🚨 अत्यंत महत्वपूर्ण' : 'फ्लैश'}
+                {currentBreaking.priority === 'critical' || (currentBreaking.priority as string) === 'urgent' ? '🚨 अत्यंत महत्वपूर्ण' : 'फ्लैश'}
               </span>
               <span>{currentBreaking.title}</span>
             </div>

@@ -30,10 +30,13 @@ export interface Article {
   gallery?: string[];
   categoryId: string;
   categoryName: string;
+  categorySlug?: string;
   subcategoryId?: string;
   subcategoryName?: string;
+  district?: string;
   authorId: string;
   authorName: string;
+  authorSlug?: string;
   authorPhoto?: string;
   authorRole?: string;
   tags: string[];
@@ -50,6 +53,7 @@ export interface Article {
   scheduledFor?: string;
   views: number;
   likes?: number;
+  readingTime?: number | string;
   seoTitle?: string;
   seoDescription?: string;
   seoKeywords?: string[];
@@ -87,6 +91,7 @@ export interface BreakingNews {
   title: string;
   slug?: string;
   url?: string;
+  link?: string;
   priority: 'critical' | 'high' | 'medium' | 'normal' | 'low';
   isActive: boolean;
   createdAt?: string;
@@ -153,7 +158,7 @@ export interface VideoNews {
   categoryName?: string;
   authorName?: string;
   publishedAt?: string;
-  views: number;
+  views?: number;
   duration?: string;
   isFeatured?: boolean;
 }
@@ -178,6 +183,10 @@ export interface SeoSettings {
   googleNewsPublisherId?: string;
   robotsTxt?: string;
   canonicalUrl?: string;
+  canonicalDomain?: string;
+  ogImage?: string;
+  twitterHandle?: string;
+  schemaOrgJson?: string;
 }
 
 export interface MediaItem {
@@ -258,7 +267,8 @@ export interface ContactMessage {
   phone?: string;
   subject: string;
   message: string;
-  status: 'unread' | 'read' | 'replied';
+  status?: 'unread' | 'read' | 'replied';
+  isRead?: boolean;
   createdAt: string;
 }
 

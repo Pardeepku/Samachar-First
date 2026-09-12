@@ -6,6 +6,8 @@ import { User, MapPin, Mail, Twitter, Facebook, Clock, ChevronRight } from 'luci
 interface AuthorPageProps {
   authorId?: string;
   authorSlug?: string;
+  authors?: Author[];
+  categories?: any[];
   onArticleClick?: (slug: string) => void;
   onSelectArticle?: (slug: string) => void;
   onNavigate?: (path: string) => void;

@@ -2,6 +2,7 @@ import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
 import { getAuth, Auth } from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
 import { getStorage, FirebaseStorage } from 'firebase/storage';
+import firebaseAppletConfig from '../../firebase-applet-config.json';
 
 export interface FirebaseClientConfig {
   apiKey?: string;
@@ -11,28 +12,22 @@ export interface FirebaseClientConfig {
   messagingSenderId?: string;
   appId?: string;
   measurementId?: string;
+  firestoreDatabaseId?: string;
 }
 
-// Read from env or local storage override
+// Read from generated firebase-applet-config.json with Vite env override
 export function getFirebaseConfig(): FirebaseClientConfig {
-  const saved = localStorage.getItem('samachar_firebase_config');
-  if (saved) {
-    try {
-      return JSON.parse(saved);
-    } catch {
-      // ignore
-    }
-  }
-
+  const fileConfig = (firebaseAppletConfig as any) || {};
   const env = (import.meta as any).env || {};
   return {
-    apiKey: env.VITE_FIREBASE_API_KEY || '',
-    authDomain: env.VITE_FIREBASE_AUTH_DOMAIN || '',
-    projectId: env.VITE_FIREBASE_PROJECT_ID || '',
-    storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET || '',
-    messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID || '',
-    appId: env.VITE_FIREBASE_APP_ID || '',
-    measurementId: env.VITE_FIREBASE_MEASUREMENT_ID || '',
+    apiKey: env.VITE_FIREBASE_API_KEY || fileConfig.apiKey || '',
+    authDomain: env.VITE_FIREBASE_AUTH_DOMAIN || fileConfig.authDomain || '',
+    projectId: env.VITE_FIREBASE_PROJECT_ID || fileConfig.projectId || '',
+    storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET || fileConfig.storageBucket || '',
+    messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID || fileConfig.messagingSenderId || '',
+    appId: env.VITE_FIREBASE_APP_ID || fileConfig.appId || '',
+    measurementId: env.VITE_FIREBASE_MEASUREMENT_ID || fileConfig.measurementId || '',
+    firestoreDatabaseId: env.VITE_FIREBASE_DATABASE_ID || fileConfig.firestoreDatabaseId || '',
   };
 }
 
@@ -60,12 +55,12 @@ export function initFirebase(customConfig?: FirebaseClientConfig) {
     }
     
     auth = getAuth(app);
-    db = getFirestore(app);
+    db = config.firestoreDatabaseId ? getFirestore(app, config.firestoreDatabaseId) : getFirestore(app);
     storage = getStorage(app);
 
     return { app, auth, db, storage, isLive: true };
   } catch (error) {
-    console.warn('Firebase initialization note (running in local resilient store mode):', error);
+    console.error('Firebase initialization error:', error);
     return { app: null, auth: null, db: null, storage: null, isLive: false, error };
   }
 }
@@ -73,3 +68,5 @@ export function initFirebase(customConfig?: FirebaseClientConfig) {
 // Initial setup
 const { isLive } = initFirebase();
 export { app, auth, db, storage, isLive };
+
+

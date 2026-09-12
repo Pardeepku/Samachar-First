@@ -4,6 +4,31 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="referrer" content="no-referrer" />
+    <script>
+      // Suppress benign third-party browser extension errors (e.g., MetaMask, Web3 wallets)
+      (function() {
+        var isExtensionError = function(msg, source) {
+          var str = (msg || '') + ' ' + (source || '');
+          return /metamask|ethereum|web3|solana|phantom|extension|chrome-extension|moz-extension/i.test(str);
+        };
+        window.addEventListener('unhandledrejection', function(event) {
+          var reason = event.reason;
+          var msg = (typeof reason === 'string') ? reason : (reason && reason.message) ? reason.message : '';
+          if (isExtensionError(msg, '')) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+          }
+        }, true);
+        window.addEventListener('error', function(event) {
+          var msg = event.message || '';
+          var src = event.filename || '';
+          if (isExtensionError(msg, src)) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+          }
+        }, true);
+      })();
+    </script>
     <title>Samachar First - आपकी खबर, सबसे पहले | Hindi News Portal</title>
     <meta name="description" content="हरियाणा, दिल्ली-NCR, राष्ट्रीय राजनीति, अपराध, खेल, शिक्षा और व्यापार की सबसे तेज और सटीक हिंदी खबरें।" />
     <meta property="og:title" content="Samachar First - आपकी खबर, सबसे पहले" />

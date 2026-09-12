@@ -19,7 +19,7 @@
         "authorId": { "type": "string", "maxLength": 128 },
         "authorName": { "type": "string", "maxLength": 128 },
         "authorRole": { "type": "string", "maxLength": 64 },
-        "status": { "type": "string", "enum": ["draft", "published", "scheduled", "archived"] },
+        "status": { "type": "string", "enum": ["draft", "published", "pending_review", "archived"] },
         "isBreaking": { "type": "boolean" },
         "isFeatured": { "type": "boolean" },
         "isTrending": { "type": "boolean" },
@@ -111,6 +111,21 @@
       },
       "required": ["name", "email", "role"]
     },
+    "EPaperEdition": {
+      "title": "EPaperEdition",
+      "description": "Digital newspaper edition with PDF and page previews",
+      "type": "object",
+      "properties": {
+        "editionName": { "type": "string", "maxLength": 200 },
+        "date": { "type": "string" },
+        "thumbnailUrl": { "type": "string", "maxLength": 1000 },
+        "totalPages": { "type": "number" },
+        "pdfUrl": { "type": "string", "maxLength": 1000 },
+        "pages": { "type": "array", "items": { "type": "string" } },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["editionName", "date", "pdfUrl"]
+    },
     "SiteSettings": {
       "title": "SiteSettings",
       "description": "General portal configuration and metadata",
@@ -153,6 +168,10 @@
     "/authors/{authorId}": {
       "schema": "Author",
       "description": "Reporters and editors"
+    },
+    "/epaper/{epaperId}": {
+      "schema": "EPaperEdition",
+      "description": "Digital e-paper editions"
     },
     "/siteSettings/{settingId}": {
       "schema": "SiteSettings",
