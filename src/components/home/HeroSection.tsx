@@ -24,9 +24,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ articles, onArticleCli
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Main Lead Story (Left 7 Cols) */}
         <div className="lg:col-span-7">
-          <div
-            onClick={() => onArticleClick(mainStory.slug)}
-            className="group cursor-pointer bg-white border border-neutral-200 rounded-xl overflow-hidden shadow-xs hover:shadow-md transition-shadow flex flex-col h-full"
+          <a
+            href={`/news/${encodeURIComponent(mainStory.slug)}`}
+            onClick={(e) => {
+              if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                e.preventDefault();
+                onArticleClick(mainStory.slug);
+              }
+            }}
+            className="group cursor-pointer bg-white border border-neutral-200 rounded-xl overflow-hidden shadow-xs hover:shadow-md transition-shadow flex flex-col h-full block"
           >
             <div className="relative aspect-16/9 overflow-hidden bg-slate-900">
               <img
@@ -73,22 +79,28 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ articles, onArticleCli
                 </div>
               </div>
             </div>
-          </div>
+          </a>
         </div>
 
         {/* Side Important Stories (Right 5 Cols) */}
         <div className="lg:col-span-5 flex flex-col justify-between space-y-4">
           <div className="bg-red-50 border-l-4 border-red-600 px-3 py-2 text-sm font-bold text-red-900 flex items-center justify-between">
             <span>प्रमुख सुर्खियां (Top Stories)</span>
-            <span className="text-xs text-red-700">समाचार फर्स्ट विशेष</span>
+            <span className="text-xs text-red-700">गैजेट ग्लो विशेष</span>
           </div>
 
           <div className="space-y-3.5">
             {sideStories.map((story) => (
-              <div
+              <a
                 key={story.id}
-                onClick={() => onArticleClick(story.slug)}
-                className="group cursor-pointer bg-white p-3 rounded-lg border border-neutral-200 hover:border-red-300 hover:shadow-xs transition-all flex gap-3.5 items-center"
+                href={`/news/${encodeURIComponent(story.slug)}`}
+                onClick={(e) => {
+                  if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                    e.preventDefault();
+                    onArticleClick(story.slug);
+                  }
+                }}
+                className="group cursor-pointer bg-white p-3 rounded-lg border border-neutral-200 hover:border-red-300 hover:shadow-xs transition-all flex gap-3.5 items-center block"
               >
                 <div className="w-24 sm:w-28 h-20 shrink-0 rounded overflow-hidden bg-slate-900">
                   <img
@@ -119,7 +131,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ articles, onArticleCli
                     <span>{formatTime(story.publishedAt)}</span>
                   </div>
                 </div>
-              </div>
+              </a>
             ))}
           </div>
         </div>

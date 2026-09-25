@@ -33,7 +33,7 @@ export const AdBanner: React.FC<AdBannerProps> = ({ position, className = '' }) 
       >
         <div className="text-[10px] tracking-wider uppercase font-semibold text-neutral-400 mb-1">विज्ञापन (Advertisement)</div>
         <div className="py-2 text-neutral-400">
-          <span className="font-medium text-red-600 dark:text-red-400">समाचार फर्स्ट</span> पर विज्ञापन देने के लिए संपर्क करें: contact@samacharfirst.com
+          <span className="font-medium text-red-600 dark:text-red-400">गैजेट ग्लो</span> पर विज्ञापन देने के लिए संपर्क करें: ads@gadgetglow.com
         </div>
       </div>
     );

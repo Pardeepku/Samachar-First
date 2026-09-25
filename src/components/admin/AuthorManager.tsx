@@ -44,7 +44,7 @@ export const AuthorManager: React.FC<AuthorManagerProps> = ({
       await onAddAuthor({
         name: name.trim(),
         slug: generateSlug(name.trim()),
-        designation: designation.trim() || 'संवाददाता',
+        designation: designation.trim() || 'Reporter',
         email: email.trim() || undefined,
         bio: bio.trim() || undefined,
         location: location.trim() || undefined,
@@ -77,12 +77,12 @@ export const AuthorManager: React.FC<AuthorManagerProps> = ({
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-serif font-black text-xl text-white flex items-center gap-2">
+          <h1 className="font-bold text-xl sm:text-2xl text-white flex items-center gap-2">
             <Users className="w-5 h-5 text-emerald-500" />
-            संपादकीय टीम एवं रिपोर्टर प्रबंधन (Authors & Reporters)
+            Editorial Team & Reporters
           </h1>
-          <p className="text-xs text-slate-400 mt-0.5">
-            ब्यूरो चीफ, वरिष्ठ संपादक और जिला संवाददाताओं की प्रोफाइल डायरेक्टरी
+          <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
+            Manage bureau chiefs, senior editors, and district correspondents
           </p>
         </div>
 
@@ -92,19 +92,19 @@ export const AuthorManager: React.FC<AuthorManagerProps> = ({
               setEditingId(null);
               setIsAdding(true);
             }}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-lg text-xs flex items-center gap-1.5 transition-colors self-start sm:self-auto"
+            className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 transition-colors self-start sm:self-auto shadow-md"
           >
             <Plus className="w-4 h-4" />
-            नया रिपोर्टर जोड़ें
+            <span>Add Reporter / Author</span>
           </button>
         )}
       </div>
 
       {isAdding && (
-        <form onSubmit={handleSave} className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-xs space-y-4">
+        <form onSubmit={handleSave} className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-slate-800">
             <h2 className="font-bold text-sm text-white">
-              {editingId ? 'रिपोर्टर प्रोफाइल संपादित करें' : 'नया संवाददाता दर्ज करें'}
+              {editingId ? 'Edit Author Profile' : 'Add New Editorial Member'}
             </h2>
             <button
               type="button"
@@ -120,70 +120,70 @@ export const AuthorManager: React.FC<AuthorManagerProps> = ({
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-bold text-slate-300 mb-1">नाम (Full Name)*</label>
+              <label className="block text-xs font-bold text-slate-300 mb-1">Full Name *</label>
               <input
                 type="text"
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="उदा: प्रदीप सैनी"
-                className="w-full bg-slate-800 border border-slate-700 text-white rounded p-2 text-xs"
+                placeholder="e.g., Rajesh Sharma"
+                className="w-full bg-slate-950 border border-slate-700 text-white rounded-xl p-2 text-xs focus:outline-none focus:border-emerald-500"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-slate-300 mb-1">पद / दायित्व (Designation)*</label>
+              <label className="block text-xs font-bold text-slate-300 mb-1">Designation / Role *</label>
               <input
                 type="text"
                 required
                 value={designation}
                 onChange={(e) => setDesignation(e.target.value)}
-                placeholder="प्रधान संपादक / जिला संवाददाता"
-                className="w-full bg-slate-800 border border-slate-700 text-white rounded p-2 text-xs"
+                placeholder="Chief Bureau / Senior Editor / Reporter"
+                className="w-full bg-slate-950 border border-slate-700 text-white rounded-xl p-2 text-xs focus:outline-none focus:border-emerald-500"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-slate-300 mb-1">स्थान / जिला (Location)</label>
+              <label className="block text-xs font-bold text-slate-300 mb-1">Location / District</label>
               <input
                 type="text"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
-                placeholder="चंडीगढ़ / पानीपत / नई दिल्ली"
-                className="w-full bg-slate-800 border border-slate-700 text-white rounded p-2 text-xs"
+                placeholder="Chandigarh / Panipat / New Delhi"
+                className="w-full bg-slate-950 border border-slate-700 text-white rounded-xl p-2 text-xs focus:outline-none focus:border-emerald-500"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-slate-300 mb-1">ईमेल (Email)</label>
+              <label className="block text-xs font-bold text-slate-300 mb-1">Email Address</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="reporter@samacharfirst.com"
-                className="w-full bg-slate-800 border border-slate-700 text-white rounded p-2 text-xs"
+                placeholder="reporter@gadgetglow.com"
+                className="w-full bg-slate-950 border border-slate-700 text-white rounded-xl p-2 text-xs focus:outline-none focus:border-emerald-500"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-slate-300 mb-1">फोटो URL (Photo URL)</label>
+              <label className="block text-xs font-bold text-slate-300 mb-1">Profile Photo URL</label>
               <input
                 type="url"
                 value={photo}
                 onChange={(e) => setPhoto(e.target.value)}
                 placeholder="https://images.unsplash.com/..."
-                className="w-full bg-slate-800 border border-slate-700 text-white rounded p-2 text-xs"
+                className="w-full bg-slate-950 border border-slate-700 text-white rounded-xl p-2 text-xs focus:outline-none focus:border-emerald-500"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-300 mb-1">जीवनी / परिचय (Bio)</label>
+            <label className="block text-xs font-bold text-slate-300 mb-1">Bio / Journalist Summary</label>
             <textarea
               rows={3}
               value={bio}
               onChange={(e) => setBio(e.target.value)}
-              placeholder="पत्रकारिता का अनुभव और विशेषज्ञता..."
-              className="w-full bg-slate-800 border border-slate-700 text-white rounded p-2 text-xs"
+              placeholder="Journalistic background, areas of expertise, beats covered..."
+              className="w-full bg-slate-950 border border-slate-700 text-white rounded-xl p-2 text-xs focus:outline-none focus:border-emerald-500"
             />
           </div>
 
@@ -194,12 +194,12 @@ export const AuthorManager: React.FC<AuthorManagerProps> = ({
                 setIsAdding(false);
                 setEditingId(null);
               }}
-              className="px-3 py-1.5 rounded text-xs text-slate-400"
+              className="px-3.5 py-1.5 rounded-xl text-xs text-slate-400 hover:text-white"
             >
-              रद्द करें
+              Cancel
             </button>
-            <button type="submit" className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-1.5 rounded text-xs">
-              प्रोफाइल सहेजें
+            <button type="submit" className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-1.5 rounded-xl text-xs shadow-md transition-colors">
+              Save Profile
             </button>
           </div>
         </form>
@@ -210,7 +210,7 @@ export const AuthorManager: React.FC<AuthorManagerProps> = ({
         {authors.map((auth) => (
           <div
             key={auth.id}
-            className="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-xs flex flex-col justify-between"
+            className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col justify-between"
           >
             <div>
               <div className="flex items-start gap-3 mb-3">
@@ -225,31 +225,31 @@ export const AuthorManager: React.FC<AuthorManagerProps> = ({
                   {auth.location && (
                     <div className="text-[10px] text-slate-400 flex items-center gap-1 mt-0.5">
                       <MapPin className="w-3 h-3 text-red-500" />
-                      {auth.location}
+                      <span>{auth.location}</span>
                     </div>
                   )}
                 </div>
               </div>
 
-              <p className="text-xs text-slate-400 line-clamp-2 mb-3">{auth.bio}</p>
+              <p className="text-xs text-slate-400 line-clamp-2 mb-3">{auth.bio || 'Journalist and contributor at Gadget Glow.'}</p>
             </div>
 
             <div className="flex items-center justify-between pt-3 border-t border-slate-800 text-xs">
-              <span className="text-[11px] text-slate-500">{auth.email}</span>
+              <span className="text-[11px] text-slate-500 truncate max-w-[150px]">{auth.email}</span>
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => startEdit(auth)}
-                  className="p-1.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300"
+                  className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
                 >
                   <Edit2 className="w-3.5 h-3.5" />
                 </button>
                 <button
                   onClick={() => {
-                    if (confirm(`क्या आप ${auth.name} को हटाना चाहते हैं?`)) {
+                    if (window.confirm(`Are you sure you want to remove author ${auth.name}?`)) {
                       onDeleteAuthor(auth.id);
                     }
                   }}
-                  className="p-1.5 rounded bg-slate-800 hover:bg-rose-950 text-rose-400"
+                  className="p-1.5 rounded-lg bg-slate-800 hover:bg-rose-950 text-rose-400 transition-colors"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>

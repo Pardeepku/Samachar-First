@@ -52,13 +52,19 @@ export const HaryanaDistrictSection: React.FC<HaryanaDistrictSectionProps> = ({
           </h2>
         </div>
 
-        <button
-          onClick={() => onNavigateToCategory('haryana')}
+        <a
+          href="/category/haryana"
+          onClick={(e) => {
+            if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+              e.preventDefault();
+              onNavigateToCategory('haryana');
+            }
+          }}
           className="text-xs font-bold text-red-600 hover:text-red-800 flex items-center gap-1 self-start sm:self-auto cursor-pointer"
         >
           हरियाणा की सभी खबरें देखें
           <ChevronRight className="w-4 h-4" />
-        </button>
+        </a>
       </div>
 
       {/* District Filter Tabs */}
@@ -93,10 +99,16 @@ export const HaryanaDistrictSection: React.FC<HaryanaDistrictSectionProps> = ({
       {/* Articles Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-5">
         {displayList.slice(0, 6).map((art) => (
-          <div
+          <a
             key={art.id}
-            onClick={() => onArticleClick(art.slug)}
-            className="group cursor-pointer bg-white border border-neutral-200 rounded-lg overflow-hidden hover:shadow-md transition-all flex flex-col justify-between"
+            href={`/news/${encodeURIComponent(art.slug)}`}
+            onClick={(e) => {
+              if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                e.preventDefault();
+                onArticleClick(art.slug);
+              }
+            }}
+            className="group cursor-pointer bg-white border border-neutral-200 rounded-lg overflow-hidden hover:shadow-md transition-all flex flex-col justify-between block"
           >
             <div className="aspect-16/10 overflow-hidden relative bg-slate-900">
               <img
@@ -126,7 +138,7 @@ export const HaryanaDistrictSection: React.FC<HaryanaDistrictSectionProps> = ({
                 </span>
               </div>
             </div>
-          </div>
+          </a>
         ))}
       </div>
     </section>

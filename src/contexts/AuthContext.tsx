@@ -53,6 +53,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
             const isSuperAdminEmail =
               fbUser.email?.toLowerCase() === 'saini.pardeep45@gmail.com' ||
+              fbUser.email?.toLowerCase() === 'superadmin@gadgetglow.com' ||
               fbUser.email?.toLowerCase() === 'superadmin@samacharfirst.com';
 
             if (userSnap.exists()) {
@@ -88,6 +89,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             console.error('Error fetching/setting user profile from Firestore:', err);
             const isSuperAdminEmail =
               fbUser.email?.toLowerCase() === 'saini.pardeep45@gmail.com' ||
+              fbUser.email?.toLowerCase() === 'superadmin@gadgetglow.com' ||
               fbUser.email?.toLowerCase() === 'superadmin@samacharfirst.com';
             const fallbackProfile: UserProfile = {
               uid: fbUser.uid,

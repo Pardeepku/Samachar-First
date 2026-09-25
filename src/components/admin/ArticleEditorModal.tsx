@@ -21,6 +21,8 @@ import {
 import { MediaEmbedToolbar } from './MediaEmbedToolbar';
 import { uploadMediaFile } from '../../services/storageService';
 import { storage } from '../../firebase/config';
+import { optimizeImageFile } from '../../utils/imageOptimizer';
+import { AiImageAgentModal } from './AiImageAgentModal';
 
 interface ArticleEditorModalProps {
   article: Article | null;
@@ -84,16 +86,16 @@ export const ArticleEditorModal: React.FC<ArticleEditorModalProps> = ({
       setTitle('');
       setSlug('');
       setShortDescription('');
-      setContent('<p>विस्तृत समाचार सामग्री यहां दर्ज करें...</p>');
+      setContent('<p>Enter full detailed news report here...</p>');
       setCategoryId(categories[0]?.id || 'cat-desh');
       setSubcategoryId('');
-      setAuthorId(authors[0]?.id || 'auth-pradeep');
+      setAuthorId(authors[0]?.id || 'auth-1');
       setFeaturedImage('https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=1200&auto=format&fit=crop&q=80');
       setImageCaption('');
-      setImageCredit('समाचार फर्स्ट ब्यूरो');
+      setImageCredit('News Bureau');
       setGallery([]);
-      setTagsInput('ताजा खबर, समाचार फर्स्ट, राष्ट्रीय');
-      setLocation('नई दिल्ली');
+      setTagsInput('News, Latest, Special');
+      setLocation('New Delhi');
       setIsBreaking(false);
       setIsFeatured(false);
       setStatus('published');
@@ -113,28 +115,44 @@ export const ArticleEditorModal: React.FC<ArticleEditorModalProps> = ({
     setSlug(generateSlug(title));
   };
 
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [isAiImageModalOpen, setIsAiImageModalOpen] = useState(false);
+
   const handleFeaturedImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (storage) {
-      try {
-        const url = await uploadMediaFile(file, 'articles');
-        setFeaturedImage(url);
-        if (!imageCredit) setImageCredit('स्टाफ रिपोर्टर');
-        return;
-      } catch (err) {
-        console.warn('Firebase storage upload error, falling back to data URL:', err);
-      }
-    }
+    setUploadingImage(true);
+    try {
+      const optimized = await optimizeImageFile(file, { maxWidth: 1280, quality: 0.82 });
 
-    const reader = new FileReader();
-    reader.onload = (uploadEvent) => {
-      const base64 = uploadEvent.target?.result as string;
-      setFeaturedImage(base64);
-      if (!imageCredit) setImageCredit('स्टाफ रिपोर्टर');
-    };
-    reader.readAsDataURL(file);
+      if (storage) {
+        try {
+          const customName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+          const url = await uploadMediaFile(optimized.blob, 'articles', customName);
+          setFeaturedImage(url);
+          if (!imageCredit) setImageCredit('Staff Photojournalist');
+          setUploadingImage(false);
+          return;
+        } catch (err) {
+          console.warn('Firebase storage upload fallback:', err);
+        }
+      }
+
+      setFeaturedImage(optimized.dataUrl);
+      if (!imageCredit) setImageCredit('Staff Photojournalist');
+    } catch (err) {
+      console.error('Image compression error:', err);
+      const reader = new FileReader();
+      reader.onload = (uploadEvent) => {
+        const base64 = uploadEvent.target?.result as string;
+        setFeaturedImage(base64);
+        if (!imageCredit) setImageCredit('Staff Photojournalist');
+      };
+      reader.readAsDataURL(file);
+    } finally {
+      setUploadingImage(false);
+    }
   };
 
   const handleAddGalleryImage = () => {
@@ -152,22 +170,23 @@ export const ArticleEditorModal: React.FC<ArticleEditorModalProps> = ({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (storage) {
-      try {
-        const url = await uploadMediaFile(file, 'articles');
-        setGallery((prev) => [...prev, url]);
-        return;
-      } catch (err) {
-        console.warn('Firebase storage upload error for gallery:', err);
+    try {
+      const optimized = await optimizeImageFile(file, { maxWidth: 1280, quality: 0.82 });
+      if (storage) {
+        try {
+          const customName = `${Date.now()}_gallery_${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+          const url = await uploadMediaFile(optimized.blob, 'articles', customName);
+          setGallery((prev) => [...prev, url]);
+          return;
+        } catch (err) {
+          console.warn('Firebase storage gallery upload error:', err);
+        }
       }
-    }
 
-    const reader = new FileReader();
-    reader.onload = (uploadEvent) => {
-      const base64 = uploadEvent.target?.result as string;
-      setGallery((prev) => [...prev, base64]);
-    };
-    reader.readAsDataURL(file);
+      setGallery((prev) => [...prev, optimized.dataUrl]);
+    } catch (err) {
+      console.error('Gallery image error:', err);
+    }
   };
 
   const handleInsertContentFromToolbar = (htmlToInsert: string) => {
@@ -176,45 +195,63 @@ export const ArticleEditorModal: React.FC<ArticleEditorModalProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim() || !content.trim()) return;
+    if (!title.trim()) {
+      alert('Please enter an article headline.');
+      return;
+    }
+    if (!content.trim()) {
+      alert('Please enter the full article content.');
+      return;
+    }
 
     setSaving(true);
-    const selectedCategory = categories.find((c) => c.id === categoryId);
-    const selectedSubcategory = subcategories.find((s) => s.id === subcategoryId);
-    const selectedAuthor = authors.find((a) => a.id === authorId);
+    try {
+      const selectedCategory = categories.find((c) => c.id === categoryId);
+      const selectedSubcategory = subcategories.find((s) => s.id === subcategoryId);
+      const selectedAuthor = authors.find((a) => a.id === authorId);
 
-    const tags = tagsInput
-      .split(',')
-      .map((t) => t.trim())
-      .filter(Boolean);
+      const tags = tagsInput
+        .split(',')
+        .map((t) => t.trim())
+        .filter(Boolean);
 
-    await onSave({
-      ...(article ? { id: article.id } : {}),
-      title: title.trim(),
-      slug: slug.trim() || generateSlug(title.trim()),
-      shortDescription: shortDescription.trim(),
-      content,
-      categoryId,
-      categoryName: selectedCategory?.nameHi || 'समाचार',
-      subcategoryId: subcategoryId || undefined,
-      subcategoryName: selectedSubcategory?.nameHi || undefined,
-      authorId,
-      authorName: selectedAuthor?.name || 'समाचार फर्स्ट ब्यूरो',
-      authorPhoto: selectedAuthor?.photo || undefined,
-      authorRole: selectedAuthor?.designation || undefined,
-      featuredImage: featuredImage.trim(),
-      imageCaption: imageCaption.trim() || undefined,
-      imageCredit: imageCredit.trim() || undefined,
-      gallery: gallery.length > 0 ? gallery : undefined,
-      tags,
-      location: location.trim() || undefined,
-      isBreaking,
-      isFeatured,
-      status,
-      publishedAt: status === 'published' ? (article?.publishedAt || new Date().toISOString()) : undefined,
-    });
-    setSaving(false);
-    onClose();
+      const payload: Partial<Article> = {
+        ...(article ? { id: article.id } : {}),
+        title: title.trim(),
+        slug: slug.trim() || generateSlug(title.trim()),
+        shortDescription: shortDescription.trim() || title.trim().slice(0, 140),
+        content: content.trim(),
+        categoryId: categoryId || 'cat-desh',
+        categoryName: selectedCategory?.name || selectedCategory?.nameHi || 'Latest News',
+        featuredImage: featuredImage.trim() || 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=1200&auto=format&fit=crop&q=80',
+        tags: tags.length > 0 ? tags : ['News', 'Latest'],
+        isBreaking,
+        isFeatured,
+        status,
+        authorId: authorId || 'auth-1',
+        authorName: selectedAuthor?.name || 'News Bureau',
+      };
+
+      if (subcategoryId) payload.subcategoryId = subcategoryId;
+      if (selectedSubcategory?.name) payload.subcategoryName = selectedSubcategory.name;
+      if (selectedAuthor?.photo) payload.authorPhoto = selectedAuthor.photo;
+      if (selectedAuthor?.designation) payload.authorRole = selectedAuthor.designation;
+      if (imageCaption.trim()) payload.imageCaption = imageCaption.trim();
+      if (imageCredit.trim()) payload.imageCredit = imageCredit.trim();
+      if (gallery.length > 0) payload.gallery = gallery;
+      if (location.trim()) payload.location = location.trim();
+      if (status === 'published') {
+        payload.publishedAt = article?.publishedAt || new Date().toISOString();
+      }
+
+      await onSave(payload);
+      setSaving(false);
+      onClose();
+    } catch (err: any) {
+      console.error('Error saving article:', err);
+      setSaving(false);
+      alert(`Error saving article: ${err?.message || 'Please try again'}`);
+    }
   };
 
   const relevantSubcategories = subcategories.filter(
@@ -229,11 +266,11 @@ export const ArticleEditorModal: React.FC<ArticleEditorModalProps> = ({
           <div className="flex items-center space-x-3">
             <span className="w-2.5 h-6 bg-red-600 rounded-xs"></span>
             <div>
-              <h2 className="font-serif font-black text-lg sm:text-xl text-white">
-                {article ? 'समाचार संपादित करें (Edit Article)' : 'नया समाचार प्रकाशित करें (New Article)'}
+              <h2 className="font-bold text-lg sm:text-xl text-white">
+                {article ? 'Edit News Article' : 'Create & Publish New Article'}
               </h2>
-              <p className="text-[11px] text-slate-400">
-                फोटो, YouTube वीडियो, Twitter/Facebook/Instagram एम्बेड और संपूर्ण विवरण जोड़ें
+              <p className="text-xs text-slate-400">
+                Add rich media, YouTube embeds, social media posts, photo galleries, and SEO parameters
               </p>
             </div>
           </div>
@@ -248,7 +285,7 @@ export const ArticleEditorModal: React.FC<ArticleEditorModalProps> = ({
                   viewTab === 'write' ? 'bg-red-600 text-white shadow-xs' : 'text-slate-400 hover:text-white'
                 }`}
               >
-                संपादक (Editor)
+                Editor
               </button>
               <button
                 type="button"
@@ -258,12 +295,12 @@ export const ArticleEditorModal: React.FC<ArticleEditorModalProps> = ({
                 }`}
               >
                 <Eye className="w-3 h-3" />
-                <span>लाइव प्रीव्यू</span>
+                <span>Live Preview</span>
               </button>
             </div>
 
-            <button onClick={onClose} className="p-1 rounded-md text-slate-400 hover:text-white hover:bg-slate-800">
-              <X className="w-6 h-6" />
+            <button onClick={onClose} className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800">
+              <X className="w-5 h-5" />
             </button>
           </div>
         </div>
@@ -275,10 +312,10 @@ export const ArticleEditorModal: React.FC<ArticleEditorModalProps> = ({
             <div className="bg-white text-slate-900 rounded-xl p-5 sm:p-8 space-y-6 max-w-4xl mx-auto shadow-inner">
               <div className="border-b pb-4">
                 <span className="bg-red-100 text-red-700 text-xs font-bold px-2.5 py-1 rounded">
-                  {categories.find((c) => c.id === categoryId)?.nameHi || 'समाचार'}
+                  {categories.find((c) => c.id === categoryId)?.name || 'News'}
                 </span>
                 <h1 className="font-serif font-black text-2xl sm:text-3xl text-slate-900 mt-3 leading-tight">
-                  {title || 'समाचार का शीर्षक यहां दिखेगा...'}
+                  {title || 'Article headline will appear here...'}
                 </h1>
                 {shortDescription && (
                   <p className="text-slate-600 text-sm font-medium mt-2 italic border-l-2 border-red-500 pl-3">
@@ -293,7 +330,7 @@ export const ArticleEditorModal: React.FC<ArticleEditorModalProps> = ({
                   {(imageCaption || imageCredit) && (
                     <div className="bg-slate-950 text-slate-300 text-xs p-2.5 flex justify-between">
                       <span>{imageCaption}</span>
-                      <span className="font-mono text-slate-400">साभार: {imageCredit}</span>
+                      <span className="font-mono text-slate-400">Credit: {imageCredit}</span>
                     </div>
                   )}
                 </div>
@@ -307,7 +344,7 @@ export const ArticleEditorModal: React.FC<ArticleEditorModalProps> = ({
 
               {gallery.length > 0 && (
                 <div className="bg-slate-50 border rounded-xl p-4">
-                  <h3 className="font-serif font-bold text-slate-900 mb-2">फोटो गैलरी ({gallery.length})</h3>
+                  <h3 className="font-serif font-bold text-slate-900 mb-2">Photo Gallery ({gallery.length})</h3>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     {gallery.map((img, i) => (
                       <div key={i} className="aspect-16/10 rounded overflow-hidden">
@@ -324,15 +361,15 @@ export const ArticleEditorModal: React.FC<ArticleEditorModalProps> = ({
               {/* 1. Title */}
               <div>
                 <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                  समाचार मुख्य शीर्षक (Headline)*
+                  Article Headline *
                 </label>
                 <input
                   type="text"
                   required
                   value={title}
                   onChange={(e) => handleTitleChange(e.target.value)}
-                  placeholder="उदा: हरियाणा विधानसभा चुनाव को लेकर बड़ी घोषणा, नई योजनाओं की शुरुआत..."
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-sm text-white font-serif font-bold focus:outline-none focus:border-red-500"
+                  placeholder="e.g., Major Policy Announcement on Infrastructure Development..."
+                  className="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-white font-bold focus:outline-none focus:border-red-500"
                 />
               </div>
 
@@ -340,25 +377,25 @@ export const ArticleEditorModal: React.FC<ArticleEditorModalProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
                 <div className="sm:col-span-9">
                   <label className="block text-xs font-bold text-slate-300 mb-1">
-                    URL स्लग (SEO Friendly Slug)*
+                    URL Slug (SEO Friendly Link) *
                   </label>
                   <input
                     type="text"
                     required
                     value={slug}
                     onChange={(e) => setSlug(e.target.value)}
-                    placeholder="haryana-assembly-election-announcement"
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs font-mono text-emerald-400 focus:outline-none focus:border-red-500"
+                    placeholder="major-policy-announcement-infrastructure"
+                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs font-mono text-emerald-400 focus:outline-none focus:border-red-500"
                   />
                 </div>
                 <div className="sm:col-span-3">
                   <button
                     type="button"
                     onClick={handleRegenerateSlug}
-                    className="w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 px-3 py-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-1"
+                    className="w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-1"
                   >
                     <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                    स्लग ऑटो-जेनरेट
+                    Auto-Generate
                   </button>
                 </div>
               </div>
@@ -366,56 +403,56 @@ export const ArticleEditorModal: React.FC<ArticleEditorModalProps> = ({
               {/* 3. Short Summary */}
               <div>
                 <label className="block text-xs font-bold text-slate-300 mb-1">
-                  संक्षिप्त विवरण (Short Lead Intro)
+                  Short Lead Summary (Introductory Paragraph)
                 </label>
                 <textarea
                   rows={2}
                   value={shortDescription}
                   onChange={(e) => setShortDescription(e.target.value)}
-                  placeholder="खबर का 1-2 पंक्तियों में मुख्य सार लिखें जो मुख्य पृष्ठ और सोशल मीडिया शेयरिंग पर दिखेगा..."
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-red-500"
+                  placeholder="Key summary of the news story for homepage cards, search engines, and social media previews..."
+                  className="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-red-500"
                 />
               </div>
 
               {/* 4. Category, Subcategory/District, Author */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1">श्रेणी (Category)*</label>
+                  <label className="block text-xs font-bold text-slate-300 mb-1">Category *</label>
                   <select
                     value={categoryId}
                     onChange={(e) => setCategoryId(e.target.value)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-red-500"
+                    className="w-full bg-slate-800 border border-slate-700 rounded-xl p-2 text-xs text-white focus:outline-none focus:border-red-500"
                   >
                     {categories.map((c) => (
                       <option key={c.id} value={c.id}>
-                        {c.nameHi} ({c.name})
+                        {c.name} ({c.nameHi})
                       </option>
                     ))}
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1">उप-श्रेणी / जिला (District)</label>
+                  <label className="block text-xs font-bold text-slate-300 mb-1">Subcategory / District</label>
                   <select
                     value={subcategoryId}
                     onChange={(e) => setSubcategoryId(e.target.value)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-red-500"
+                    className="w-full bg-slate-800 border border-slate-700 rounded-xl p-2 text-xs text-white focus:outline-none focus:border-red-500"
                   >
-                    <option value="">-- कोई उप-श्रेणी नहीं --</option>
+                    <option value="">-- None / General --</option>
                     {relevantSubcategories.map((s) => (
                       <option key={s.id} value={s.id}>
-                        {s.nameHi} ({s.name})
+                        {s.name} ({s.nameHi})
                       </option>
                     ))}
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1">लेखक / संवाददाता (Author)*</label>
+                  <label className="block text-xs font-bold text-slate-300 mb-1">Author / Reporter *</label>
                   <select
                     value={authorId}
                     onChange={(e) => setAuthorId(e.target.value)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-red-500"
+                    className="w-full bg-slate-800 border border-slate-700 rounded-xl p-2 text-xs text-white focus:outline-none focus:border-red-500"
                   >
                     {authors.map((a) => (
                       <option key={a.id} value={a.id}>
@@ -431,19 +468,31 @@ export const ArticleEditorModal: React.FC<ArticleEditorModalProps> = ({
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="flex items-center gap-2 text-xs font-bold text-slate-300">
                     <ImageIcon className="w-4 h-4 text-red-500" />
-                    <span>मुख्य छवि (Featured Image)*</span>
+                    <span>Featured Image *</span>
                   </div>
 
-                  <label className="cursor-pointer bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1 rounded text-xs font-semibold border border-slate-700 flex items-center gap-1.5">
-                    <Upload className="w-3.5 h-3.5 text-red-400" />
-                    <span>डिवाइस से फोटो अपलोड करें</span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFeaturedImageUpload}
-                      className="hidden"
-                    />
-                  </label>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setIsAiImageModalOpen(true)}
+                      className="cursor-pointer bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white px-3 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm transition-all"
+                    >
+                      <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                      <span>AI Image Agent</span>
+                    </button>
+
+                    <label className="cursor-pointer bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1 rounded-lg text-xs font-semibold border border-slate-700 flex items-center gap-1.5">
+                      <Upload className={`w-3.5 h-3.5 text-red-400 ${uploadingImage ? 'animate-spin' : ''}`} />
+                      <span>{uploadingImage ? 'Processing photo...' : 'Upload Image'}</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        disabled={uploadingImage}
+                        onChange={handleFeaturedImageUpload}
+                        className="hidden"
+                      />
+                    </label>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
@@ -454,32 +503,32 @@ export const ArticleEditorModal: React.FC<ArticleEditorModalProps> = ({
                       value={featuredImage}
                       onChange={(e) => setFeaturedImage(e.target.value)}
                       placeholder="https://images.unsplash.com/..."
-                      className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-red-500"
+                      className="w-full bg-slate-800 border border-slate-700 rounded-xl p-2 text-xs text-white focus:outline-none focus:border-red-500"
                     />
                     <div className="grid grid-cols-2 gap-2">
                       <input
                         type="text"
                         value={imageCaption}
                         onChange={(e) => setImageCaption(e.target.value)}
-                        placeholder="छवि कैप्शन (Image Caption)"
-                        className="w-full bg-slate-800 border border-slate-700 rounded p-1.5 text-[11px] text-white"
+                        placeholder="Image Caption"
+                        className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white"
                       />
                       <input
                         type="text"
                         value={imageCredit}
                         onChange={(e) => setImageCredit(e.target.value)}
-                        placeholder="फोटो क्रेडिट (उदा: पीटीआई/समाचार फर्स्ट)"
-                        className="w-full bg-slate-800 border border-slate-700 rounded p-1.5 text-[11px] text-white"
+                        placeholder="Photo Credit (e.g., Staff / Reuters)"
+                        className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white"
                       />
                     </div>
                   </div>
 
                   <div className="sm:col-span-4">
-                    <div className="w-full h-28 rounded-lg overflow-hidden bg-slate-900 border border-slate-700 flex items-center justify-center">
+                    <div className="w-full h-28 rounded-xl overflow-hidden bg-slate-900 border border-slate-700 flex items-center justify-center">
                       {featuredImage ? (
                         <img src={featuredImage} alt="Preview" className="w-full h-full object-cover" />
                       ) : (
-                        <span className="text-[10px] text-slate-500">छवि पूर्वावलोकन</span>
+                        <span className="text-[10px] text-slate-500">Image Preview</span>
                       )}
                     </div>
                   </div>
@@ -491,12 +540,12 @@ export const ArticleEditorModal: React.FC<ArticleEditorModalProps> = ({
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="flex items-center gap-2 text-xs font-bold text-slate-300">
                     <Layers className="w-4 h-4 text-amber-500" />
-                    <span>अतिरिक्त फोटो गैलरी (Additional Photo Gallery - {gallery.length} फोटो)</span>
+                    <span>Additional Photo Gallery ({gallery.length} photos)</span>
                   </div>
 
-                  <label className="cursor-pointer bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1 rounded text-xs font-semibold border border-slate-700 flex items-center gap-1.5">
+                  <label className="cursor-pointer bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1 rounded-lg text-xs font-semibold border border-slate-700 flex items-center gap-1.5">
                     <Upload className="w-3.5 h-3.5 text-amber-400" />
-                    <span>गैलरी फोटो अपलोड</span>
+                    <span>Upload to Gallery</span>
                     <input
                       type="file"
                       accept="image/*"
@@ -511,16 +560,16 @@ export const ArticleEditorModal: React.FC<ArticleEditorModalProps> = ({
                     type="url"
                     value={newGalleryUrl}
                     onChange={(e) => setNewGalleryUrl(e.target.value)}
-                    placeholder="फोटो वेब लिंक दर्ज करें (https://...)"
-                    className="flex-1 bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white"
+                    placeholder="Enter image URL (https://...)"
+                    className="flex-1 bg-slate-800 border border-slate-700 rounded-xl p-2 text-xs text-white"
                   />
                   <button
                     type="button"
                     onClick={handleAddGalleryImage}
-                    className="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1"
+                    className="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1"
                   >
                     <Plus className="w-3.5 h-3.5" />
-                    गैलरी में जोड़ें
+                    Add Photo
                   </button>
                 </div>
 
@@ -542,7 +591,7 @@ export const ArticleEditorModal: React.FC<ArticleEditorModalProps> = ({
                 )}
               </div>
 
-              {/* 7. Rich Media & Embed Toolbar (YouTube, Social Embeds, Inline Images, Presets) */}
+              {/* 7. Rich Media & Embed Toolbar (YouTube, Social Embeds, Inline Images) */}
               <MediaEmbedToolbar
                 onInsertContent={handleInsertContentFromToolbar}
                 onSelectFeaturedImage={(url, cap, cred) => {
@@ -555,58 +604,58 @@ export const ArticleEditorModal: React.FC<ArticleEditorModalProps> = ({
               {/* 8. Full Rich Content Textarea */}
               <div>
                 <label className="block text-xs font-bold text-slate-300 mb-1">
-                  समाचार विस्तृत विवरण (Full Content HTML / Rich Text)*
+                  Full Article Content (HTML / Rich Text) *
                 </label>
                 <textarea
                   rows={9}
                   required
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
-                  placeholder="<p>समाचार का पूरा विवरण यहां लिखें...</p>"
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-xs font-sans text-white focus:outline-none focus:border-red-500 font-mono"
+                  placeholder="<p>Full article body and paragraphs...</p>"
+                  className="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-xs font-sans text-white focus:outline-none focus:border-red-500 font-mono"
                 />
               </div>
 
               {/* 9. Tags, Location, Status */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1">स्थान (Location)</label>
+                  <label className="block text-xs font-bold text-slate-300 mb-1">Location</label>
                   <div className="relative">
                     <MapPin className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
                     <input
                       type="text"
                       value={location}
                       onChange={(e) => setLocation(e.target.value)}
-                      placeholder="चंडीगढ़ / पानीपत / नई दिल्ली"
-                      className="w-full bg-slate-800 border border-slate-700 rounded-lg pl-8 pr-2.5 py-2 text-xs text-white"
+                      placeholder="Chandigarh / New Delhi / Panipat"
+                      className="w-full bg-slate-800 border border-slate-700 rounded-xl pl-8 pr-2.5 py-2 text-xs text-white"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1">टैग्स (Comma Separated)</label>
+                  <label className="block text-xs font-bold text-slate-300 mb-1">Tags (Comma Separated)</label>
                   <div className="relative">
                     <Tag className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
                     <input
                       type="text"
                       value={tagsInput}
                       onChange={(e) => setTagsInput(e.target.value)}
-                      placeholder="हरियाणा, चुनाव, ब्रेकिंग, बजट"
-                      className="w-full bg-slate-800 border border-slate-700 rounded-lg pl-8 pr-2.5 py-2 text-xs text-white"
+                      placeholder="Politics, Economy, Breaking, Special"
+                      className="w-full bg-slate-800 border border-slate-700 rounded-xl pl-8 pr-2.5 py-2 text-xs text-white"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1">प्रकाशन स्थिति (Status)</label>
+                  <label className="block text-xs font-bold text-slate-300 mb-1">Publication Status</label>
                   <select
                     value={status}
                     onChange={(e) => setStatus(e.target.value as any)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white"
+                    className="w-full bg-slate-800 border border-slate-700 rounded-xl p-2 text-xs text-white"
                   >
-                    <option value="published">लाइव प्रकाशित करें (Published)</option>
-                    <option value="draft">ड्राफ्ट रखें (Draft)</option>
-                    <option value="pending_review">समीक्षाधीन (Pending Review)</option>
+                    <option value="published">Publish Live</option>
+                    <option value="draft">Save as Draft</option>
+                    <option value="pending_review">Pending Review</option>
                   </select>
                 </div>
               </div>
@@ -622,7 +671,7 @@ export const ArticleEditorModal: React.FC<ArticleEditorModalProps> = ({
                   />
                   <span className="text-xs font-bold text-amber-300 flex items-center gap-1">
                     <Flame className="w-3.5 h-3.5 text-amber-400" />
-                    बड़ी खबर में शामिल करें (Breaking Ticker)
+                    Include in Breaking News Ticker
                   </span>
                 </label>
 
@@ -635,7 +684,7 @@ export const ArticleEditorModal: React.FC<ArticleEditorModalProps> = ({
                   />
                   <span className="text-xs font-bold text-sky-300 flex items-center gap-1">
                     <Star className="w-3.5 h-3.5 text-sky-400" />
-                    होमपेज मुख्य लीड स्टोरी बनाएं (Featured Lead)
+                    Featured Lead Story
                   </span>
                 </label>
               </div>
@@ -647,22 +696,35 @@ export const ArticleEditorModal: React.FC<ArticleEditorModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800"
+              className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800"
             >
-              रद्द करें
+              Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="bg-red-600 hover:bg-red-700 text-white font-bold text-xs px-6 py-2.5 rounded-lg flex items-center gap-1.5 shadow-md transition-colors"
+              className="bg-red-600 hover:bg-red-700 text-white font-bold text-xs px-6 py-2.5 rounded-xl flex items-center gap-2 shadow-md transition-colors"
             >
               <Save className="w-4 h-4" />
-              {saving ? 'सहेजा जा रहा है...' : article ? 'समाचार अपडेट करें' : 'समाचार प्रकाशित करें'}
+              <span>{saving ? 'Saving Article...' : article ? 'Update Article' : 'Publish Article'}</span>
             </button>
           </div>
         </form>
       </div>
+
+      {/* AI Image Agent Modal (Requirement 2) */}
+      <AiImageAgentModal
+        isOpen={isAiImageModalOpen}
+        onClose={() => setIsAiImageModalOpen(false)}
+        initialImageUrl={featuredImage}
+        initialHeadline={title}
+        category={categories.find((c) => c.id === categoryId)?.name || 'News'}
+        onApplyImage={(url) => {
+          setFeaturedImage(url);
+          if (!imageCaption && title) setImageCaption(title);
+          if (!imageCredit) setImageCredit('साभार: Gadget Glow AI Visual Studio');
+        }}
+      />
     </div>
   );
 };
-

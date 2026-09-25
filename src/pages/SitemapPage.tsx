@@ -100,7 +100,7 @@ export const SitemapPage: React.FC<SitemapPageProps> = ({
           <div className="flex items-center gap-2 mb-1">
             <Globe className="w-6 h-6 text-red-500" />
             <h1 className="font-serif font-black text-2xl sm:text-3xl text-white">
-              समाचार फर्स्ट साइटमैप (Sitemap)
+              गैजेट ग्लो साइटमैप (Sitemap)
             </h1>
           </div>
           <p className="text-xs sm:text-sm text-slate-300">

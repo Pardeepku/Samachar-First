@@ -12,7 +12,7 @@ export const VideoManager: React.FC<VideoManagerProps> = ({ videos, onAddVideo, 
   const [isAdding, setIsAdding] = useState(false);
   const [title, setTitle] = useState('');
   const [youtubeUrl, setYoutubeUrl] = useState('');
-  const [categoryName, setCategoryName] = useState('हरियाणा बुलेटिन');
+  const [categoryName, setCategoryName] = useState('Haryana Bulletin');
   const [duration, setDuration] = useState('04:15');
   const [description, setDescription] = useState('');
 
@@ -51,89 +51,89 @@ export const VideoManager: React.FC<VideoManagerProps> = ({ videos, onAddVideo, 
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-serif font-black text-xl text-white flex items-center gap-2">
+          <h1 className="font-bold text-xl sm:text-2xl text-white flex items-center gap-2">
             <Video className="w-5 h-5 text-sky-500" />
-            वीडियो बुलेटिन प्रबंधन (Video News Hub)
+            Video Bulletins & Live Reports
           </h1>
-          <p className="text-xs text-slate-400 mt-0.5">
-            यूट्यूब लाइव स्ट्रीम्स, ग्राउंड वीडियो रिपोर्ट और बुलेटिन्स का प्रबंधन
+          <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
+            Manage YouTube live broadcasts, video packages, and ground coverage reports
           </p>
         </div>
 
         {!isAdding && (
           <button
             onClick={() => setIsAdding(true)}
-            className="bg-sky-600 hover:bg-sky-700 text-white font-bold px-4 py-2 rounded-lg text-xs flex items-center gap-1.5 transition-colors self-start sm:self-auto"
+            className="bg-sky-600 hover:bg-sky-700 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 transition-colors self-start sm:self-auto shadow-md"
           >
             <Plus className="w-4 h-4" />
-            नया वीडियो जोड़ें
+            <span>Add New Video</span>
           </button>
         )}
       </div>
 
       {isAdding && (
-        <form onSubmit={handleSave} className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-xs space-y-4">
+        <form onSubmit={handleSave} className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-            <h2 className="font-bold text-sm text-white">नया वीडियो समाचार जोड़ें</h2>
+            <h2 className="font-bold text-sm text-white">Add New Video News Report</h2>
             <button type="button" onClick={() => setIsAdding(false)} className="text-slate-400 hover:text-white">
               <X className="w-5 h-5" />
             </button>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-300 mb-1">वीडियो शीर्षक (Title)*</label>
+            <label className="block text-xs font-bold text-slate-300 mb-1">Video Title *</label>
             <input
               type="text"
               required
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="उदा: पानीपत टेक्सटाइल पार्क में हुआ बड़ा हादसा, लाइव ग्राउंड रिपोर्ट..."
-              className="w-full bg-slate-800 border border-slate-700 text-white rounded p-2 text-xs"
+              placeholder="e.g., Live Ground Report: Assembly Elections and Voter Perspectives..."
+              className="w-full bg-slate-950 border border-slate-700 text-white rounded-xl p-2.5 text-xs sm:text-sm focus:outline-none focus:border-sky-500"
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-bold text-slate-300 mb-1">YouTube URL या Video ID*</label>
+              <label className="block text-xs font-bold text-slate-300 mb-1">YouTube URL or Video ID *</label>
               <input
                 type="text"
                 required
                 value={youtubeUrl}
                 onChange={(e) => setYoutubeUrl(e.target.value)}
-                placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-                className="w-full bg-slate-800 border border-slate-700 text-white rounded p-2 text-xs font-mono"
+                placeholder="https://www.youtube.com/watch?v=..."
+                className="w-full bg-slate-950 border border-slate-700 text-white rounded-xl p-2 text-xs font-mono focus:outline-none focus:border-sky-500"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-slate-300 mb-1">श्रेणी (Category)</label>
+              <label className="block text-xs font-bold text-slate-300 mb-1">Category / Tag</label>
               <input
                 type="text"
                 value={categoryName}
                 onChange={(e) => setCategoryName(e.target.value)}
-                placeholder="हरियाणा / राष्ट्रीय / राजनीति"
-                className="w-full bg-slate-800 border border-slate-700 text-white rounded p-2 text-xs"
+                placeholder="Haryana / Politics / Special"
+                className="w-full bg-slate-950 border border-slate-700 text-white rounded-xl p-2 text-xs focus:outline-none focus:border-sky-500"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-slate-300 mb-1">अवधि (Duration)</label>
+              <label className="block text-xs font-bold text-slate-300 mb-1">Duration (MM:SS)</label>
               <input
                 type="text"
                 value={duration}
                 onChange={(e) => setDuration(e.target.value)}
                 placeholder="05:20"
-                className="w-full bg-slate-800 border border-slate-700 text-white rounded p-2 text-xs font-mono"
+                className="w-full bg-slate-950 border border-slate-700 text-white rounded-xl p-2 text-xs font-mono focus:outline-none focus:border-sky-500"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-300 mb-1">विवरण (Description)</label>
+            <label className="block text-xs font-bold text-slate-300 mb-1">Description / Summary</label>
             <textarea
               rows={2}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="वीडियो के मुख्य बिंदु..."
-              className="w-full bg-slate-800 border border-slate-700 text-white rounded p-2 text-xs"
+              placeholder="Key report highlights..."
+              className="w-full bg-slate-950 border border-slate-700 text-white rounded-xl p-2 text-xs focus:outline-none focus:border-sky-500"
             />
           </div>
 
@@ -141,12 +141,12 @@ export const VideoManager: React.FC<VideoManagerProps> = ({ videos, onAddVideo, 
             <button
               type="button"
               onClick={() => setIsAdding(false)}
-              className="px-3 py-1.5 rounded text-xs text-slate-400"
+              className="px-3.5 py-1.5 rounded-xl text-xs text-slate-400 hover:text-white"
             >
-              रद्द करें
+              Cancel
             </button>
-            <button type="submit" className="bg-sky-600 hover:bg-sky-700 text-white font-bold px-4 py-1.5 rounded text-xs">
-              वीडियो प्रकाशित करें
+            <button type="submit" className="bg-sky-600 hover:bg-sky-700 text-white font-bold px-4 py-1.5 rounded-xl text-xs shadow-md transition-colors">
+              Publish Video
             </button>
           </div>
         </form>
@@ -157,7 +157,7 @@ export const VideoManager: React.FC<VideoManagerProps> = ({ videos, onAddVideo, 
         {videos.map((vid) => (
           <div
             key={vid.id}
-            className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xs flex flex-col justify-between"
+            className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl flex flex-col justify-between"
           >
             <div className="aspect-16/9 bg-black relative">
               <img src={vid.thumbnail} alt="" className="w-full h-full object-cover" />
@@ -173,21 +173,21 @@ export const VideoManager: React.FC<VideoManagerProps> = ({ videos, onAddVideo, 
 
             <div className="p-4 flex-1 flex flex-col justify-between">
               <div>
-                <span className="text-[10px] font-bold text-sky-400 uppercase mb-1 block">
+                <span className="text-[10px] font-bold text-sky-400 uppercase tracking-wider mb-1 block">
                   {vid.categoryName}
                 </span>
                 <h3 className="font-bold text-xs sm:text-sm text-white line-clamp-2 mb-2">{vid.title}</h3>
               </div>
 
               <div className="flex items-center justify-between pt-3 border-t border-slate-800 text-xs text-slate-400">
-                <span>{vid.views.toLocaleString()} दृश्य</span>
+                <span>{vid.views.toLocaleString()} views</span>
                 <button
                   onClick={() => {
-                    if (confirm('क्या आप इस वीडियो को हटाना चाहते हैं?')) {
+                    if (window.confirm('Are you sure you want to remove this video?')) {
                       onDeleteVideo(vid.id);
                     }
                   }}
-                  className="p-1 rounded bg-slate-800 hover:bg-rose-950 text-rose-400"
+                  className="p-1.5 rounded-lg bg-slate-800 hover:bg-rose-950 text-rose-400 transition-colors"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>

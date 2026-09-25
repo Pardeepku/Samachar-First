@@ -137,7 +137,7 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({
 
         // Update meta tags for SEO
         updateMetaTags({
-          title: `${art.title} | ${siteSettings.websiteName || 'Samachar First'}`,
+          title: `${art.title} | ${siteSettings.websiteName || 'Gadget Glow'}`,
           description: art.shortDescription || art.title,
           keywords: art.tags || [art.categoryName],
           image: art.featuredImage,
@@ -248,7 +248,7 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({
   };
 
   const currentUrl = encodeURIComponent(window.location.href);
-  const shareText = encodeURIComponent(`${article.title} - समाचार फर्स्ट`);
+  const shareText = encodeURIComponent(`${article.title} - गैजेट ग्लो (Gadget Glow)`);
 
   const safeArticles = allArticles || [];
 
@@ -271,19 +271,32 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({
     <article className="max-w-7xl mx-auto px-4 py-6">
       {/* 1. Breadcrumbs */}
       <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-4 overflow-x-auto">
-        <button onClick={() => handleNavigate('/')} className="hover:text-red-600 shrink-0">
+        <a
+          href="/"
+          onClick={(e) => {
+            if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+              e.preventDefault();
+              handleNavigate('/');
+            }
+          }}
+          className="hover:text-red-600 shrink-0"
+        >
           होम
-        </button>
+        </a>
         <ChevronRight className="w-3.5 h-3.5 shrink-0" />
-        <button
-          onClick={() => {
-            if (onSelectCategory) onSelectCategory(article.categorySlug || article.categoryId);
-            else handleNavigate(`/category/${article.categorySlug || article.categoryId}`);
+        <a
+          href={`/category/${article.categorySlug || article.categoryId}`}
+          onClick={(e) => {
+            if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+              e.preventDefault();
+              if (onSelectCategory) onSelectCategory(article.categorySlug || article.categoryId);
+              else handleNavigate(`/category/${article.categorySlug || article.categoryId}`);
+            }
           }}
           className="hover:text-red-600 shrink-0 text-red-600 font-semibold"
         >
           {article.categoryName}
-        </button>
+        </a>
         {article.subcategoryName && (
           <>
             <ChevronRight className="w-3.5 h-3.5 shrink-0" />
@@ -297,14 +310,14 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({
       {/* 2. Main Article Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Main Content Column (Left 8 Cols) */}
-        <div className="lg:col-span-8 bg-white border border-neutral-200 rounded-xl p-5 sm:p-8 shadow-xs">
+        <div className="lg:col-span-8 bg-white dark:bg-slate-900 border border-neutral-200 dark:border-slate-800 rounded-xl p-5 sm:p-8 shadow-xs transition-colors">
           {/* Category Badge & Breaking Flag */}
           <div className="flex flex-wrap items-center gap-2 mb-3">
             <span className="bg-red-600 text-white text-xs font-bold uppercase px-3 py-1 rounded">
               {article.categoryName}
             </span>
             {article.subcategoryName && (
-              <span className="bg-slate-100 text-slate-700 text-xs font-semibold px-2.5 py-1 rounded border border-neutral-200">
+              <span className="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold px-2.5 py-1 rounded border border-neutral-200 dark:border-slate-700">
                 {article.subcategoryName}
               </span>
             )}
@@ -316,35 +329,35 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({
           </div>
 
           {/* Headline (H1) */}
-          <h1 className="font-serif font-black text-2xl sm:text-3xl lg:text-4xl text-slate-900 leading-tight mb-4">
+          <h1 className="font-serif font-black text-2xl sm:text-3xl lg:text-4xl text-slate-900 dark:text-white leading-tight mb-4">
             {article.title}
           </h1>
 
           {/* Subheading / Summary */}
           {article.shortDescription && (
-            <p className="text-slate-600 text-base sm:text-lg font-medium leading-relaxed border-l-4 border-red-500 pl-4 py-1 mb-6 bg-slate-50 rounded-r-lg">
+            <p className="text-slate-600 dark:text-slate-300 text-base sm:text-lg font-medium leading-relaxed border-l-4 border-red-500 pl-4 py-1 mb-6 bg-slate-50 dark:bg-slate-800/60 rounded-r-lg">
               {article.shortDescription}
             </p>
           )}
 
           {/* Metadata Row: Author, Date, Location, Read Time, Views */}
-          <div className="flex flex-wrap items-center justify-between gap-4 py-3 border-y border-neutral-200 text-xs text-slate-500 mb-6">
+          <div className="flex flex-wrap items-center justify-between gap-4 py-3 border-y border-neutral-200 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400 mb-6">
             <div className="flex flex-wrap items-center gap-3">
               <div
                 onClick={() => {
                   if (onSelectAuthor && article.authorId) onSelectAuthor(article.authorId);
                   else if (article.authorSlug) handleNavigate(`/author/${article.authorSlug}`);
                 }}
-                className="flex items-center gap-1.5 font-bold text-slate-900 hover:text-red-600 cursor-pointer"
+                className="flex items-center gap-1.5 font-bold text-slate-900 dark:text-white hover:text-red-600 cursor-pointer"
               >
-                <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-slate-700 font-bold">
+                <div className="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-200 font-bold">
                   <User className="w-3.5 h-3.5" />
                 </div>
                 <span>{article.authorName}</span>
               </div>
 
               {article.district && (
-                <span className="flex items-center gap-1 text-slate-600 bg-slate-100 px-2 py-0.5 rounded">
+                <span className="flex items-center gap-1 text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">
                   <MapPin className="w-3 h-3 text-red-500" />
                   {article.district}
                 </span>
@@ -369,22 +382,22 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({
               </span>
 
               {/* Font Size Adjuster */}
-              <div className="flex items-center gap-1 bg-slate-100 px-2 py-0.5 rounded border border-neutral-200">
+              <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded border border-neutral-200 dark:border-slate-700">
                 <button
                   onClick={() => setFontSize('normal')}
-                  className={`px-1 font-bold ${fontSize === 'normal' ? 'text-red-600' : 'text-slate-500'}`}
+                  className={`px-1 font-bold ${fontSize === 'normal' ? 'text-red-600' : 'text-slate-500 dark:text-slate-400'}`}
                 >
                   अ
                 </button>
                 <button
                   onClick={() => setFontSize('large')}
-                  className={`px-1 font-bold text-sm ${fontSize === 'large' ? 'text-red-600' : 'text-slate-500'}`}
+                  className={`px-1 font-bold text-sm ${fontSize === 'large' ? 'text-red-600' : 'text-slate-500 dark:text-slate-400'}`}
                 >
                   अ+
                 </button>
                 <button
                   onClick={() => setFontSize('xlarge')}
-                  className={`px-1 font-bold text-base ${fontSize === 'xlarge' ? 'text-red-600' : 'text-slate-500'}`}
+                  className={`px-1 font-bold text-base ${fontSize === 'xlarge' ? 'text-red-600' : 'text-slate-500 dark:text-slate-400'}`}
                 >
                   अ++
                 </button>
@@ -416,14 +429,14 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({
               href={`https://twitter.com/intent/tweet?text=${shareText}&url=${currentUrl}`}
               target="_blank"
               rel="noreferrer"
-              className="bg-slate-900 hover:bg-slate-800 text-white px-3 py-1.5 rounded text-xs font-semibold flex items-center gap-1.5 shadow-xs"
+              className="bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 text-white px-3 py-1.5 rounded text-xs font-semibold flex items-center gap-1.5 shadow-xs"
             >
               <span>X (Twitter)</span>
             </a>
 
             <button
               onClick={handlePrint}
-              className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded text-xs font-semibold flex items-center gap-1.5 border border-neutral-200"
+              className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 px-3 py-1.5 rounded text-xs font-semibold flex items-center gap-1.5 border border-neutral-200 dark:border-slate-700 cursor-pointer"
             >
               <Printer className="w-3.5 h-3.5" />
               प्रिंट
@@ -431,7 +444,7 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({
 
             <button
               onClick={handleCopyLink}
-              className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded text-xs font-semibold flex items-center gap-1.5 border border-neutral-200"
+              className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 px-3 py-1.5 rounded text-xs font-semibold flex items-center gap-1.5 border border-neutral-200 dark:border-slate-700 cursor-pointer"
             >
               {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
               {copied ? 'कॉपी हुआ!' : 'लिंक कॉपी'}
@@ -458,7 +471,7 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({
 
           {/* Full Article Rich Text Body */}
           <div
-            className={`prose prose-slate max-w-none text-slate-800 ${fontSizeClasses[fontSize]} space-y-4`}
+            className={`prose prose-slate dark:prose-invert max-w-none text-slate-800 dark:text-slate-200 ${fontSizeClasses[fontSize]} space-y-4`}
             dangerouslySetInnerHTML={{ __html: article.content }}
           />
 
@@ -547,10 +560,10 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({
             )}
 
             {/* Post Comment Form */}
-            <form onSubmit={handleCommentSubmit} className="bg-white border border-neutral-200 rounded-xl p-4 shadow-xs">
-              <h4 className="font-bold text-sm text-slate-800 mb-3">अपनी राय लिखें</h4>
+            <form onSubmit={handleCommentSubmit} className="bg-white dark:bg-slate-800/80 border border-neutral-200 dark:border-slate-700 rounded-xl p-4 shadow-xs">
+              <h4 className="font-bold text-sm text-slate-800 dark:text-slate-200 mb-3">अपनी राय लिखें</h4>
               {commentSubmitted ? (
-                <div className="bg-emerald-50 text-emerald-800 p-3 rounded text-xs">
+                <div className="bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 p-3 rounded text-xs border border-emerald-200 dark:border-emerald-800">
                   आपकी टिप्पणी सफलतापूर्वक दर्ज हो गई है। संपादकीय समीक्षा के बाद यह प्रकाशित होगी।
                 </div>
               ) : (
@@ -562,7 +575,7 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({
                       value={commentName}
                       onChange={(e) => setCommentName(e.target.value)}
                       placeholder="आपका नाम (Name)*"
-                      className="w-full text-xs p-2.5 bg-slate-50 border border-neutral-200 rounded focus:bg-white focus:outline-none focus:border-red-500"
+                      className="w-full text-xs p-2.5 bg-slate-50 dark:bg-slate-900 border border-neutral-200 dark:border-slate-700 rounded focus:bg-white dark:focus:bg-slate-950 focus:outline-none focus:border-red-500 text-slate-800 dark:text-slate-200"
                     />
                     <input
                       type="email"
@@ -570,7 +583,7 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({
                       value={commentEmail}
                       onChange={(e) => setCommentEmail(e.target.value)}
                       placeholder="ईमेल पता (Email)*"
-                      className="w-full text-xs p-2.5 bg-slate-50 border border-neutral-200 rounded focus:bg-white focus:outline-none focus:border-red-500"
+                      className="w-full text-xs p-2.5 bg-slate-50 dark:bg-slate-900 border border-neutral-200 dark:border-slate-700 rounded focus:bg-white dark:focus:bg-slate-950 focus:outline-none focus:border-red-500 text-slate-800 dark:text-slate-200"
                     />
                   </div>
                   <textarea
@@ -579,11 +592,11 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({
                     value={commentText}
                     onChange={(e) => setCommentText(e.target.value)}
                     placeholder="अपनी टिप्पणी यहां लिखें..."
-                    className="w-full text-xs p-2.5 bg-slate-50 border border-neutral-200 rounded focus:bg-white focus:outline-none focus:border-red-500"
+                    className="w-full text-xs p-2.5 bg-slate-50 dark:bg-slate-900 border border-neutral-200 dark:border-slate-700 rounded focus:bg-white dark:focus:bg-slate-950 focus:outline-none focus:border-red-500 text-slate-800 dark:text-slate-200"
                   />
                   <button
                     type="submit"
-                    className="bg-red-600 hover:bg-red-700 text-white font-bold text-xs px-5 py-2 rounded flex items-center gap-1.5 transition-colors"
+                    className="bg-red-600 hover:bg-red-700 text-white font-bold text-xs px-5 py-2 rounded flex items-center gap-1.5 transition-colors cursor-pointer"
                   >
                     <Send className="w-3.5 h-3.5" />
                     टिप्पणी भेजें
@@ -601,18 +614,24 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({
 
           {/* Related Stories */}
           {relatedArticles.length > 0 && (
-            <div className="bg-white border border-neutral-200 rounded-xl p-4 shadow-xs">
-              <h3 className="font-serif font-black text-base text-slate-900 pb-2 mb-3 border-b border-neutral-200 flex items-center justify-between">
+            <div className="bg-white dark:bg-slate-900 border border-neutral-200 dark:border-slate-800 rounded-xl p-4 shadow-xs transition-colors">
+              <h3 className="font-serif font-black text-base text-slate-900 dark:text-white pb-2 mb-3 border-b border-neutral-200 dark:border-slate-800 flex items-center justify-between">
                 <span>संबंधित खबरें</span>
-                <span className="text-xs text-red-600 font-sans font-bold">{article.categoryName}</span>
+                <span className="text-xs text-red-600 dark:text-red-400 font-sans font-bold">{article.categoryName}</span>
               </h3>
 
               <div className="space-y-3">
                 {relatedArticles.map((rel) => (
-                  <div
+                  <a
                     key={rel.id}
-                    onClick={() => handleArticleClick(rel.slug)}
-                    className="group cursor-pointer flex gap-3 items-center"
+                    href={`/news/${encodeURIComponent(rel.slug)}`}
+                    onClick={(e) => {
+                      if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                        e.preventDefault();
+                        handleArticleClick(rel.slug);
+                      }
+                    }}
+                    className="group cursor-pointer flex gap-3 items-center block"
                   >
                     <div className="w-20 h-16 shrink-0 rounded overflow-hidden bg-slate-900">
                       <img
@@ -622,7 +641,7 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({
                       />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-serif font-bold text-xs text-slate-900 group-hover:text-red-600 line-clamp-2 leading-snug">
+                      <h4 className="font-serif font-bold text-xs text-slate-900 dark:text-slate-100 group-hover:text-red-600 line-clamp-2 leading-snug">
                         {rel.title}
                       </h4>
                       <div className="text-[10px] text-slate-400 mt-1 flex items-center gap-1">
@@ -630,35 +649,41 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({
                         <span>{new Date(rel.publishedAt || rel.createdAt).toLocaleDateString('hi-IN')}</span>
                       </div>
                     </div>
-                  </div>
+                  </a>
                 ))}
               </div>
             </div>
           )}
 
           {/* Top Trending in Portal */}
-          <div className="bg-white border border-neutral-200 rounded-xl p-4 shadow-xs">
-            <h3 className="font-serif font-black text-base text-slate-900 pb-2 mb-3 border-b border-neutral-200">
+          <div className="bg-white dark:bg-slate-900 border border-neutral-200 dark:border-slate-800 rounded-xl p-4 shadow-xs transition-colors">
+            <h3 className="font-serif font-black text-base text-slate-900 dark:text-white pb-2 mb-3 border-b border-neutral-200 dark:border-slate-800">
               ट्रेंडिंग समाचार (Top 5)
             </h3>
 
             <div className="space-y-3">
               {trendingArticles.map((t, idx) => (
-                <div
+                <a
                   key={t.id}
-                  onClick={() => handleArticleClick(t.slug)}
-                  className="group cursor-pointer flex items-start gap-2.5"
+                  href={`/news/${encodeURIComponent(t.slug)}`}
+                  onClick={(e) => {
+                    if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                      e.preventDefault();
+                      handleArticleClick(t.slug);
+                    }
+                  }}
+                  className="group cursor-pointer flex items-start gap-2.5 block"
                 >
-                  <span className="font-black font-serif text-xl text-neutral-300 group-hover:text-red-600 transition-colors w-6 shrink-0">
+                  <span className="font-black font-serif text-xl text-neutral-300 dark:text-slate-700 group-hover:text-red-600 transition-colors w-6 shrink-0">
                     {idx + 1}.
                   </span>
                   <div className="flex-1 min-w-0">
                     <span className="text-[9px] font-bold text-red-600 uppercase block">{t.categoryName}</span>
-                    <h4 className="font-serif font-bold text-xs text-slate-900 group-hover:text-red-600 line-clamp-2 leading-snug">
+                    <h4 className="font-serif font-bold text-xs text-slate-900 dark:text-slate-100 group-hover:text-red-600 line-clamp-2 leading-snug">
                       {t.title}
                     </h4>
                   </div>
-                </div>
+                </a>
               ))}
             </div>
           </div>

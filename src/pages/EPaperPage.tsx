@@ -65,7 +65,7 @@ export const EPaperPage: React.FC<EPaperPageProps> = ({ onNavigate, onNavigateHo
           </div>
           <div>
             <h1 className="font-serif font-black text-xl sm:text-2xl text-white">
-              समाचार फर्स्ट दैनिक ई-पेपर (E-Paper)
+              गैजेट ग्लो दैनिक ई-पेपर (E-Paper)
             </h1>
             <p className="text-xs text-amber-300 font-medium">
               संस्करण: {selectedEdition.editionName} • दिनांक: {new Date(selectedEdition.date || Date.now()).toLocaleDateString('hi-IN', { dateStyle: 'full' })}

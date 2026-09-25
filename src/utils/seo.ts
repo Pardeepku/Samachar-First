@@ -135,7 +135,7 @@ export function generateOrganizationSchema(siteSettings: SiteSettings, siteUrl: 
     '@context': 'https://schema.org',
     '@type': 'NewsMediaOrganization',
     name: siteSettings.websiteName,
-    alternateName: 'Samachar First',
+    alternateName: 'Gadget Glow',
     url: siteUrl,
     logo: `${siteUrl}/logo.png`,
     sameAs: Object.values(siteSettings.socialLinks).filter(Boolean),

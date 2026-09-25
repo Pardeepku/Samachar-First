@@ -51,7 +51,7 @@ export const VideosPage: React.FC<VideosPageProps> = ({
         <div className="flex items-center gap-2 mb-2">
           <Video className="w-6 h-6 text-red-500" />
           <h1 className="font-serif font-black text-2xl sm:text-3xl text-white">
-            समाचार फर्स्ट वीडियो गैलरी
+            गैजेट ग्लो वीडियो गैलरी
           </h1>
         </div>
         <p className="text-xs sm:text-sm text-slate-300">

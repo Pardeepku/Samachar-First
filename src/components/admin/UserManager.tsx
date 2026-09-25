@@ -47,7 +47,7 @@ export const UserManager: React.FC<UserManagerProps> = ({ onRefreshData }) => {
     } catch (err: any) {
       setSeedResult({
         success: false,
-        message: err.message || 'डेटाबेस में डेटा सुरक्षित करने में विफल',
+        message: err.message || 'Failed to seed data into database',
       });
     } finally {
       setIsSeeding(false);
@@ -59,36 +59,36 @@ export const UserManager: React.FC<UserManagerProps> = ({ onRefreshData }) => {
     : DEMO_ACCOUNTS.filter((acc) => acc.role === filterRole);
 
   const permissionsMatrix = [
-    { module: 'डैशबोर्ड व मेट्रिक्स (Dashboard)', super: true, admin: true, editor: true, reporter: true, mod: true },
-    { module: 'समाचार बनाना व संपादन (Articles CRUD)', super: true, admin: true, editor: true, reporter: true, mod: false },
-    { module: 'समाचार सीधे लाइव करना (Direct Publish)', super: true, admin: true, editor: true, reporter: false, mod: false },
-    { module: 'दैनिक भास्कर ऑटो-फेच व AI (Bhaskar AI)', super: true, admin: true, editor: true, reporter: false, mod: false },
-    { module: 'बड़ी खबरें (Breaking News Ticker)', super: true, admin: true, editor: true, reporter: false, mod: false },
-    { module: 'श्रेणियां व जिले (Categories & Districts)', super: true, admin: true, editor: false, reporter: false, mod: false },
-    { module: 'संवाददाता / रिपोर्टर प्रोफाइल (Authors)', super: true, admin: true, editor: true, reporter: false, mod: false },
-    { module: 'वीडियो बुलेटिन (Video News)', super: true, admin: true, editor: true, reporter: true, mod: false },
-    { module: 'ई-पेपर संस्करण (E-Paper PDF)', super: true, admin: true, editor: true, reporter: false, mod: false },
-    { module: 'विज्ञापन प्रबंधन (Ad Banners)', super: true, admin: true, editor: false, reporter: false, mod: false },
-    { module: 'SEO व सोशल मेटा (SEO Settings)', super: true, admin: true, editor: false, reporter: false, mod: false },
-    { module: 'साइट सेटिंग्स व लोगो (Site Settings)', super: true, admin: true, editor: false, reporter: false, mod: false },
-    { module: 'यूजर व रोल नियंत्रण (User Roles & DB Seed)', super: true, admin: false, editor: false, reporter: false, mod: false },
+    { module: 'Dashboard & Metrics', super: true, admin: true, editor: true, reporter: true, mod: true },
+    { module: 'Article Publishing & Editing (CRUD)', super: true, admin: true, editor: true, reporter: true, mod: false },
+    { module: 'Direct Article Publishing (Live)', super: true, admin: true, editor: true, reporter: false, mod: false },
+    { module: 'Fetch News from URL & AI Assistant', super: true, admin: true, editor: true, reporter: false, mod: false },
+    { module: 'Breaking News Flash Bar', super: true, admin: true, editor: true, reporter: false, mod: false },
+    { module: 'Categories & Local Districts', super: true, admin: true, editor: false, reporter: false, mod: false },
+    { module: 'Journalists / Authors Directory', super: true, admin: true, editor: true, reporter: false, mod: false },
+    { module: 'Video News Hub', super: true, admin: true, editor: true, reporter: true, mod: false },
+    { module: 'E-Paper Editions (PDF & Web)', super: true, admin: true, editor: true, reporter: false, mod: false },
+    { module: 'Ad Units & Monetization', super: true, admin: true, editor: false, reporter: false, mod: false },
+    { module: 'SEO & Google News Metadata', super: true, admin: true, editor: false, reporter: false, mod: false },
+    { module: 'Site Branding & Global Settings', super: true, admin: true, editor: false, reporter: false, mod: false },
+    { module: 'User Accounts & Roles Management', super: true, admin: false, editor: false, reporter: false, mod: false },
   ];
 
   return (
     <div className="space-y-6">
       {/* 1. Header Banner & Seeding Action */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="p-2 bg-red-600/20 text-red-500 rounded-lg">
+          <div className="flex items-center gap-3">
+            <span className="p-2.5 bg-red-600/20 text-red-500 rounded-xl">
               <Users className="w-5 h-5" />
             </span>
             <div>
-              <h1 className="font-serif font-black text-xl text-white">
-                यूजर प्रबंधन और भूमिका क्रेडेंशियल्स (User Roles & Demo Accounts)
+              <h1 className="font-bold text-xl sm:text-2xl text-white">
+                User Management & Role Credentials
               </h1>
-              <p className="text-xs text-slate-400 mt-0.5">
-                सुपर एडमिन, एडमिन, संपादक, रिपोर्टर व मॉडरेटर के लॉगिन आईडी व पासवर्ड का विवरण
+              <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
+                Staff accounts, permission tiers, and 1-click credential switching
               </p>
             </div>
           </div>
@@ -99,17 +99,17 @@ export const UserManager: React.FC<UserManagerProps> = ({ onRefreshData }) => {
           <button
             onClick={handleSeedDatabase}
             disabled={isSeeding}
-            className="bg-emerald-600 hover:bg-emerald-500 disabled:opacity-60 text-white font-bold text-xs px-4 py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors shadow-xs"
+            className="bg-emerald-600 hover:bg-emerald-500 disabled:opacity-60 text-white font-bold text-xs px-4 py-2.5 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-md"
           >
             {isSeeding ? (
               <>
                 <RefreshCw className="w-4 h-4 animate-spin" />
-                डेटाबेस में डेटा लोड हो रहा है...
+                <span>Synchronizing Database...</span>
               </>
             ) : (
               <>
                 <Database className="w-4 h-4" />
-                डेटाबेस में डेमो डेटा सिंक करें (Seed Firestore)
+                <span>Sync Database (Seed Firestore)</span>
               </>
             )}
           </button>
@@ -119,7 +119,7 @@ export const UserManager: React.FC<UserManagerProps> = ({ onRefreshData }) => {
       {/* Seed Alert Status */}
       {seedResult && (
         <div
-          className={`p-4 rounded-xl border text-xs flex items-center justify-between ${
+          className={`p-4 rounded-xl border text-xs sm:text-sm flex items-center justify-between ${
             seedResult.success
               ? 'bg-emerald-950/40 border-emerald-800 text-emerald-300'
               : 'bg-rose-950/40 border-rose-800 text-rose-300'
@@ -135,56 +135,56 @@ export const UserManager: React.FC<UserManagerProps> = ({ onRefreshData }) => {
           </div>
           <button
             onClick={() => setSeedResult(null)}
-            className="text-xs underline hover:opacity-80"
+            className="text-xs underline hover:opacity-80 ml-2"
           >
-            बंद करें
+            Dismiss
           </button>
         </div>
       )}
 
       {/* Current Active Account Banner */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <img
             src={currentUser?.photoURL || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80'}
             alt={currentUser?.displayName}
-            className="w-11 h-11 rounded-full object-cover border border-slate-700"
+            className="w-12 h-12 rounded-full object-cover border border-slate-700 shadow"
           />
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <span className="text-sm font-bold text-white">{currentUser?.displayName}</span>
-              <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-red-600/30 text-red-400 border border-red-500/40">
-                वर्तमान सक्रिय: {currentUser?.role}
+              <span className="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase bg-red-600/30 text-red-400 border border-red-500/40">
+                Active Session: {currentUser?.role}
               </span>
             </div>
             <div className="text-xs text-slate-400">{currentUser?.email}</div>
           </div>
         </div>
-        <div className="text-xs text-slate-400 bg-slate-950 px-3 py-2 rounded-lg border border-slate-800">
-          सिंक मोड:{' '}
+        <div className="text-xs text-slate-400 bg-slate-950 px-3.5 py-2 rounded-xl border border-slate-800 self-start sm:self-auto">
+          Persistence Mode:{' '}
           <span className="font-semibold text-emerald-400">
-            {isLiveFirebase ? 'Firebase Firestore Live' : 'लोकल सेशन (Local Mode)'}
+            {isLiveFirebase ? 'Firebase Firestore Live' : 'Local Persistence'}
           </span>
         </div>
       </div>
 
       {/* Role Filter Tabs */}
       <div className="flex flex-wrap items-center gap-2 pb-1">
-        <span className="text-xs font-semibold text-slate-400 mr-1">भूमिका अनुसार देखें:</span>
+        <span className="text-xs font-semibold text-slate-400 mr-1">Filter by role:</span>
         {[
-          { id: 'all', label: 'सभी 5 भूमिकाएं' },
+          { id: 'all', label: 'All Roles' },
           { id: 'super_admin', label: 'Super Admin' },
           { id: 'admin', label: 'Admin' },
           { id: 'editor', label: 'Editor' },
           { id: 'reporter', label: 'Reporter' },
-          { id: 'moderator', label: 'User / Moderator' },
+          { id: 'moderator', label: 'Moderator' },
         ].map((btn) => (
           <button
             key={btn.id}
             onClick={() => setFilterRole(btn.id)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors ${
               filterRole === btn.id
-                ? 'bg-red-600 text-white'
+                ? 'bg-red-600 text-white shadow-sm'
                 : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
             }`}
           >
@@ -201,9 +201,9 @@ export const UserManager: React.FC<UserManagerProps> = ({ onRefreshData }) => {
           return (
             <div
               key={acc.id}
-              className={`bg-slate-900 rounded-xl border p-5 flex flex-col justify-between transition-all ${
+              className={`bg-slate-900 rounded-2xl border p-5 flex flex-col justify-between transition-all shadow-xl ${
                 isCurrentlyActive
-                  ? 'border-red-500 ring-1 ring-red-500/40 shadow-lg shadow-red-950/30'
+                  ? 'border-red-500 ring-1 ring-red-500/40 shadow-red-950/30'
                   : 'border-slate-800 hover:border-slate-700'
               }`}
             >
@@ -218,41 +218,41 @@ export const UserManager: React.FC<UserManagerProps> = ({ onRefreshData }) => {
                     />
                     <div>
                       <h3 className="font-bold text-sm text-white leading-tight">{acc.name}</h3>
-                      <p className="text-[11px] text-slate-400 mt-0.5">{acc.designation}</p>
+                      <p className="text-xs text-slate-400 mt-0.5">{acc.designation}</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Role Badge */}
                 <div className="mb-3">
-                  <span className={`inline-block px-2.5 py-1 rounded-md text-[11px] font-bold border ${acc.badgeColor}`}>
+                  <span className={`inline-block px-2.5 py-1 rounded-lg text-[11px] font-bold border ${acc.badgeColor}`}>
                     {acc.badge}
                   </span>
-                  <span className="text-[11px] text-slate-400 ml-2">📍 {acc.location}</span>
+                  <span className="text-xs text-slate-400 ml-2">📍 {acc.location}</span>
                 </div>
 
                 {/* Bio */}
-                <p className="text-xs text-slate-300 mb-4 line-clamp-2 bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/80">
+                <p className="text-xs text-slate-300 mb-4 line-clamp-2 bg-slate-950/40 p-2.5 rounded-xl border border-slate-800/80">
                   {acc.bio}
                 </p>
 
                 {/* Credentials Box */}
-                <div className="bg-slate-950 border border-slate-800 rounded-lg p-3 space-y-2.5 mb-4">
+                <div className="bg-slate-950 border border-slate-800 rounded-xl p-3 space-y-2.5 mb-4">
                   {/* Email */}
                   <div>
                     <div className="text-[10px] uppercase font-bold text-slate-400 flex items-center justify-between">
-                      <span>लॉगिन ईमेल (ID)</span>
+                      <span>Login Email / ID</span>
                       <button
                         onClick={() => copyToClipboard(acc.email, `${acc.id}-email`)}
                         className="text-slate-400 hover:text-white flex items-center gap-1 text-[10px]"
-                        title="ईमेल कॉपी करें"
+                        title="Copy Email"
                       >
                         {copiedKey === `${acc.id}-email` ? (
                           <Check className="w-3 h-3 text-emerald-400" />
                         ) : (
                           <Copy className="w-3 h-3" />
                         )}
-                        <span>कॉपी</span>
+                        <span>Copy</span>
                       </button>
                     </div>
                     <code className="text-xs font-mono text-emerald-300 block select-all font-semibold mt-0.5">
@@ -264,19 +264,19 @@ export const UserManager: React.FC<UserManagerProps> = ({ onRefreshData }) => {
                   <div className="pt-2 border-t border-slate-900">
                     <div className="text-[10px] uppercase font-bold text-slate-400 flex items-center justify-between">
                       <span className="flex items-center gap-1">
-                        <Key className="w-3 h-3 text-amber-400" /> पासवर्ड (Password)
+                        <Key className="w-3 h-3 text-amber-400" /> Password
                       </span>
                       <button
                         onClick={() => copyToClipboard(acc.password, `${acc.id}-pass`)}
                         className="text-slate-400 hover:text-white flex items-center gap-1 text-[10px]"
-                        title="पासवर्ड कॉपी करें"
+                        title="Copy Password"
                       >
                         {copiedKey === `${acc.id}-pass` ? (
                           <Check className="w-3 h-3 text-emerald-400" />
                         ) : (
                           <Copy className="w-3 h-3" />
                         )}
-                        <span>कॉपी</span>
+                        <span>Copy</span>
                       </button>
                     </div>
                     <code className="text-xs font-mono text-amber-300 block select-all font-bold mt-0.5">
@@ -287,13 +287,13 @@ export const UserManager: React.FC<UserManagerProps> = ({ onRefreshData }) => {
 
                 {/* Permissions Description & Tags */}
                 <div className="space-y-2 mb-4">
-                  <div className="text-[11px] font-semibold text-slate-400">अनुमतियां (Access):</div>
-                  <p className="text-[11px] text-slate-300">{acc.permissionsDescription}</p>
+                  <div className="text-xs font-semibold text-slate-400">Permissions & Access:</div>
+                  <p className="text-xs text-slate-300">{acc.permissionsDescription}</p>
                   <div className="flex flex-wrap gap-1.5 pt-1">
                     {acc.allowedFeatures.map((feat, i) => (
                       <span
                         key={i}
-                        className="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded border border-slate-700/60"
+                        className="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-md border border-slate-700/60"
                       >
                         ✓ {feat}
                       </span>
@@ -305,17 +305,17 @@ export const UserManager: React.FC<UserManagerProps> = ({ onRefreshData }) => {
               {/* Quick Switch Button */}
               <div className="pt-3 border-t border-slate-800">
                 {isCurrentlyActive ? (
-                  <div className="w-full bg-slate-800 text-emerald-400 py-2 rounded-lg text-xs font-bold text-center flex items-center justify-center gap-1.5">
+                  <div className="w-full bg-slate-800 text-emerald-400 py-2.5 rounded-xl text-xs font-bold text-center flex items-center justify-center gap-1.5">
                     <Check className="w-4 h-4 text-emerald-400" />
-                    सक्रिय सत्र (Currently Active)
+                    <span>Current Active Session</span>
                   </div>
                 ) : (
                   <button
                     onClick={() => quickDemoLogin(acc)}
-                    className="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-colors shadow-xs"
+                    className="w-full bg-red-600 hover:bg-red-700 text-white py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-colors shadow-md"
                   >
                     <LogIn className="w-4 h-4" />
-                    इस खाते में स्विच करें (1-Click Switch)
+                    <span>Switch to this Account</span>
                   </button>
                 )}
               </div>
@@ -325,11 +325,11 @@ export const UserManager: React.FC<UserManagerProps> = ({ onRefreshData }) => {
       </div>
 
       {/* 3. Role-Based Permissions Matrix */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-5">
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl">
         <div className="flex items-center gap-2 mb-4">
           <Award className="w-5 h-5 text-amber-400" />
-          <h2 className="font-serif font-bold text-base text-white">
-            भूमिका-आधारित अनुमतियाँ तालिका (Role-Based Permissions Matrix)
+          <h2 className="font-bold text-base text-white">
+            Role-Based Permissions Matrix
           </h2>
         </div>
 
@@ -337,49 +337,49 @@ export const UserManager: React.FC<UserManagerProps> = ({ onRefreshData }) => {
           <table className="w-full text-xs text-left">
             <thead className="bg-slate-950 text-slate-400 uppercase text-[10px] border-b border-slate-800">
               <tr>
-                <th className="py-2.5 px-3">मॉड्यूल / फंक्शन</th>
-                <th className="py-2.5 px-3 text-center text-red-400">सुपर एडमिन</th>
-                <th className="py-2.5 px-3 text-center text-purple-400">एडमिन</th>
-                <th className="py-2.5 px-3 text-center text-blue-400">संपादक (Editor)</th>
-                <th className="py-2.5 px-3 text-center text-emerald-400">रिपोर्टर (Reporter)</th>
-                <th className="py-2.5 px-3 text-center text-amber-400">यूजर (Moderator)</th>
+                <th className="py-3 px-3">Module / Feature</th>
+                <th className="py-3 px-3 text-center text-red-400">Super Admin</th>
+                <th className="py-3 px-3 text-center text-purple-400">Admin</th>
+                <th className="py-3 px-3 text-center text-blue-400">Editor</th>
+                <th className="py-3 px-3 text-center text-emerald-400">Reporter</th>
+                <th className="py-3 px-3 text-center text-amber-400">Moderator</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/60 text-slate-300">
               {permissionsMatrix.map((row, idx) => (
-                <tr key={idx} className="hover:bg-slate-800/30">
+                <tr key={idx} className="hover:bg-slate-800/30 transition-colors">
                   <td className="py-2.5 px-3 font-medium text-white">{row.module}</td>
                   <td className="py-2.5 px-3 text-center">
                     {row.super ? (
-                      <span className="text-emerald-400 font-bold">✓ पूर्ण</span>
+                      <span className="text-emerald-400 font-bold">✓ Full</span>
                     ) : (
                       <span className="text-slate-600">—</span>
                     )}
                   </td>
                   <td className="py-2.5 px-3 text-center">
                     {row.admin ? (
-                      <span className="text-emerald-400 font-bold">✓ पूर्ण</span>
+                      <span className="text-emerald-400 font-bold">✓ Full</span>
                     ) : (
                       <span className="text-slate-600">—</span>
                     )}
                   </td>
                   <td className="py-2.5 px-3 text-center">
                     {row.editor ? (
-                      <span className="text-emerald-400 font-bold">✓ सक्रिय</span>
+                      <span className="text-emerald-400 font-bold">✓ Full</span>
                     ) : (
                       <span className="text-slate-600">—</span>
                     )}
                   </td>
                   <td className="py-2.5 px-3 text-center">
                     {row.reporter ? (
-                      <span className="text-emerald-400 font-bold">✓ ड्राफ्ट/क्रिएट</span>
+                      <span className="text-emerald-400 font-bold">✓ Draft / Create</span>
                     ) : (
                       <span className="text-slate-600">—</span>
                     )}
                   </td>
                   <td className="py-2.5 px-3 text-center">
                     {row.mod ? (
-                      <span className="text-emerald-400 font-bold">✓ केवल व्यू/मॉडरेशन</span>
+                      <span className="text-emerald-400 font-bold">✓ View Only</span>
                     ) : (
                       <span className="text-slate-600">—</span>
                     )}

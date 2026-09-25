@@ -103,20 +103,32 @@ export const HomePage: React.FC<HomePageProps> = ({
               ताजा खबरें (Latest News Feed)
             </h2>
           </div>
-          <button
-            onClick={() => handleNavigate('/latest-news')}
-            className="text-xs font-bold text-red-600 hover:text-red-800 flex items-center gap-1"
+          <a
+            href="/latest-news"
+            onClick={(e) => {
+              if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                e.preventDefault();
+                handleNavigate('/latest-news');
+              }
+            }}
+            className="text-xs font-bold text-red-600 hover:text-red-800 flex items-center gap-1 cursor-pointer"
           >
             सभी ताजा खबरें <ChevronRight className="w-3.5 h-3.5" />
-          </button>
+          </a>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
           {(latestArticles || []).slice(0, 8).map((art) => (
-            <div
+            <a
               key={art.id}
-              onClick={() => handleArticleClick(art.slug)}
-              className="group cursor-pointer bg-white border border-neutral-200 rounded-lg overflow-hidden hover:shadow-md transition-all flex flex-col justify-between"
+              href={`/news/${encodeURIComponent(art.slug)}`}
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                  e.preventDefault();
+                  handleArticleClick(art.slug);
+                }
+              }}
+              className="group cursor-pointer bg-white border border-neutral-200 rounded-lg overflow-hidden hover:shadow-md transition-all flex flex-col justify-between block"
             >
               <div className="aspect-16/10 overflow-hidden bg-slate-900">
                 <img
@@ -147,7 +159,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                   </span>
                 </div>
               </div>
-            </div>
+            </a>
           ))}
         </div>
       </section>

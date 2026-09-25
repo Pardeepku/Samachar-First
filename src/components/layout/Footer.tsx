@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { Category, SiteSettings } from '../../types';
 import { dbService } from '../../services/db';
+import { ThemeToggle } from '../common/ThemeToggle';
 
 export interface FooterProps {
   onNavigate?: (path: string) => void;
@@ -140,7 +141,7 @@ export const Footer: React.FC<FooterProps> = ({
             हमारे बारे में
           </h3>
           <p className="text-xs text-slate-400 leading-relaxed mb-4">
-            <strong className="text-white">समाचार फर्स्ट (Samachar First)</strong> उत्तर भारत और देश का अग्रणी डिजिटल समाचार नेटवर्क है, जो निष्पक्ष, सटीक और सबसे तेज खबरें आप तक पहुंचाता है।
+            <strong className="text-white">गैजेट ग्लो (Gadget Glow)</strong> टेक, गैजेट्स, डिजिटल दुनिया और देश-प्रदेश का अग्रणी डिजिटल समाचार नेटवर्क है, जो निष्पक्ष, सटीक और सबसे तेज खबरें आप तक पहुंचाता है।
           </p>
           <div className="space-y-2 text-xs text-slate-400">
             <div className="flex items-start gap-2">
@@ -153,7 +154,7 @@ export const Footer: React.FC<FooterProps> = ({
             </div>
             <div className="flex items-center gap-2">
               <Mail className="w-4 h-4 text-red-500 shrink-0" />
-              <span>{siteSettings?.contactEmail || 'editor@samacharfirst.com'}</span>
+              <span>{siteSettings?.contactEmail || 'editor@gadgetglow.com'}</span>
             </div>
           </div>
         </div>
@@ -167,12 +168,18 @@ export const Footer: React.FC<FooterProps> = ({
           <ul className="grid grid-cols-2 gap-2 text-xs">
             {displayCategories.slice(0, 12).map((cat) => (
               <li key={cat.id}>
-                <button
-                  onClick={() => navigate(`/category/${cat.slug}`)}
-                  className="text-slate-400 hover:text-white hover:underline transition-colors text-left"
+                <a
+                  href={`/category/${cat.slug}`}
+                  onClick={(e) => {
+                    if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                      e.preventDefault();
+                      navigate(`/category/${cat.slug}`);
+                    }
+                  }}
+                  className="text-slate-400 hover:text-white hover:underline transition-colors text-left block"
                 >
                   {cat.nameHi} ({cat.name})
-                </button>
+                </a>
               </li>
             ))}
           </ul>
@@ -186,39 +193,102 @@ export const Footer: React.FC<FooterProps> = ({
           </h3>
           <ul className="space-y-2 text-xs">
             <li>
-              <button onClick={() => navigate('/about')} className="text-slate-400 hover:text-white hover:underline">
-                समाचार फर्स्ट के बारे में (About Us)
-              </button>
+              <a
+                href="/about"
+                onClick={(e) => {
+                  if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                    e.preventDefault();
+                    navigate('/about');
+                  }
+                }}
+                className="text-slate-400 hover:text-white hover:underline block"
+              >
+                गैजेट ग्लो के बारे में (About Us)
+              </a>
             </li>
             <li>
-              <button onClick={() => navigate('/contact')} className="text-slate-400 hover:text-white hover:underline">
+              <a
+                href="/contact"
+                onClick={(e) => {
+                  if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                    e.preventDefault();
+                    navigate('/contact');
+                  }
+                }}
+                className="text-slate-400 hover:text-white hover:underline block"
+              >
                 संपर्क एवं संपादकीय टीम (Contact Us)
-              </button>
+              </a>
             </li>
             <li>
-              <button onClick={() => navigate('/privacy-policy')} className="text-slate-400 hover:text-white hover:underline">
+              <a
+                href="/privacy-policy"
+                onClick={(e) => {
+                  if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                    e.preventDefault();
+                    navigate('/privacy-policy');
+                  }
+                }}
+                className="text-slate-400 hover:text-white hover:underline block"
+              >
                 गोपनीयता नीति (Privacy Policy)
-              </button>
+              </a>
             </li>
             <li>
-              <button onClick={() => navigate('/terms')} className="text-slate-400 hover:text-white hover:underline">
+              <a
+                href="/terms"
+                onClick={(e) => {
+                  if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                    e.preventDefault();
+                    navigate('/terms');
+                  }
+                }}
+                className="text-slate-400 hover:text-white hover:underline block"
+              >
                 नियम और शर्तें (Terms & Conditions)
-              </button>
+              </a>
             </li>
             <li>
-              <button onClick={() => navigate('/disclaimer')} className="text-slate-400 hover:text-white hover:underline">
+              <a
+                href="/disclaimer"
+                onClick={(e) => {
+                  if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                    e.preventDefault();
+                    navigate('/disclaimer');
+                  }
+                }}
+                className="text-slate-400 hover:text-white hover:underline block"
+              >
                 अस्वीकरण (Disclaimer)
-              </button>
+              </a>
             </li>
             <li>
-              <button onClick={() => navigate('/sitemap')} className="text-amber-400 hover:text-amber-300 font-semibold hover:underline">
+              <a
+                href="/sitemap"
+                onClick={(e) => {
+                  if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                    e.preventDefault();
+                    navigate('/sitemap');
+                  }
+                }}
+                className="text-amber-400 hover:text-amber-300 font-semibold hover:underline block"
+              >
                 HTML साइटमैप (Sitemap Page)
-              </button>
+              </a>
             </li>
             <li>
-              <button onClick={() => navigate('/admin/seo')} className="text-sky-400 hover:text-sky-300 font-semibold hover:underline">
+              <a
+                href="/admin/seo"
+                onClick={(e) => {
+                  if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                    e.preventDefault();
+                    navigate('/admin/seo');
+                  }
+                }}
+                className="text-sky-400 hover:text-sky-300 font-semibold hover:underline block"
+              >
                 XML साइटमैप व SEO टूल्स
-              </button>
+              </a>
             </li>
           </ul>
         </div>
@@ -274,25 +344,38 @@ export const Footer: React.FC<FooterProps> = ({
           <div className="bg-slate-900 p-3 rounded border border-slate-800">
             <div className="text-xs font-semibold text-white mb-1 flex items-center gap-1.5">
               <FileText className="w-4 h-4 text-amber-400" />
-              समाचार फर्स्ट ई-पेपर
+              गैजेट ग्लो ई-पेपर
             </div>
             <p className="text-[11px] text-slate-400 mb-2">
               दैनिक डिजिटल अखबार का पूरा संस्करण ऑनलाइन पढ़ें।
             </p>
-            <button
-              onClick={() => (onNavigateEPaper ? onNavigateEPaper() : navigate('/e-paper'))}
-              className="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-1.5 px-3 rounded text-xs transition-colors"
+            <a
+              href="/e-paper"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                  e.preventDefault();
+                  if (onNavigateEPaper) onNavigateEPaper();
+                  else navigate('/e-paper');
+                }
+              }}
+              className="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-1.5 px-3 rounded text-xs transition-colors block text-center"
             >
               ई-पेपर अभी पढ़ें
-            </button>
+            </a>
           </div>
         </div>
       </div>
 
       {/* Copyright & Disclaimer Bar */}
-      <div className="bg-black/80 py-4 px-4 border-t border-slate-900 text-xs text-slate-400 text-center">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-          <div>{siteSettings?.copyrightText || '© 2026 Samachar First. सर्वाधिकार सुरक्षित।'}</div>
+      <div className="bg-black/80 py-4 px-4 border-t border-slate-900 text-xs text-slate-400">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div>{siteSettings?.copyrightText || '© 2026 Gadget Glow. सर्वाधिकार सुरक्षित।'}</div>
+          
+          <div className="flex items-center gap-3">
+            <span className="text-slate-400 text-xs hidden sm:inline">वेबसाइट थीम:</span>
+            <ThemeToggle variant="button" />
+          </div>
+
           <div className="text-slate-400 text-[11px]">
             Google News Ready & SEO Optimized Architecture
           </div>

@@ -17,6 +17,7 @@ import { Category, BreakingNews } from '../../types';
 import { dbService } from '../../services/db';
 import { LanguageSelector } from './LanguageSelector';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { ThemeToggle } from '../common/ThemeToggle';
 
 export interface HeaderProps {
   currentPath?: string;
@@ -124,9 +125,9 @@ export const Header: React.FC<HeaderProps> = ({
   const currentBreaking = breakingNews && breakingNews.length > 0 ? breakingNews[currentBreakingIndex] : null;
 
   return (
-    <header className="w-full bg-white text-slate-900 border-b border-neutral-200 sticky top-0 z-40 shadow-sm">
+    <header className="w-full bg-white dark:bg-slate-900 text-slate-900 dark:text-white border-b border-neutral-200 dark:border-slate-800 sticky top-0 z-40 shadow-sm transition-colors">
       {/* 1. TOP UTILITY BAR */}
-      <div className="bg-slate-900 text-slate-200 text-xs py-1.5 px-4">
+      <div className="bg-slate-900 dark:bg-slate-950 text-slate-200 text-xs py-1.5 px-4 border-b border-slate-800">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
           {/* Left: Date, Location, Weather */}
           <div className="flex items-center space-x-3 text-slate-300">
@@ -140,34 +141,57 @@ export const Header: React.FC<HeaderProps> = ({
             </span>
           </div>
 
-          {/* Right: Language Selector, Quick Links, E-Paper, Admin Panel */}
+          {/* Right: Theme Toggle, Language Selector, Quick Links, E-Paper, Admin Panel */}
           <div className="flex items-center space-x-2 sm:space-x-3">
+            {/* Dark/Light Theme Toggle */}
+            <ThemeToggle variant="icon" />
+
             {/* Top Right Indian Languages + English Selector */}
             <LanguageSelector />
 
-            <button
-              onClick={() => (onNavigateEPaper ? onNavigateEPaper() : navigate('/e-paper'))}
+            <a
+              href="/e-paper"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                  e.preventDefault();
+                  if (onNavigateEPaper) onNavigateEPaper();
+                  else navigate('/e-paper');
+                }
+              }}
               id="header-epaper-btn"
               className="text-amber-300 hover:text-amber-200 font-semibold flex items-center gap-1 transition-colors"
             >
               <FileText className="w-3.5 h-3.5" />
               ई-पेपर (E-Paper)
-            </button>
-            <button
-              onClick={() => navigate('/contact')}
+            </a>
+            <a
+              href="/contact"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                  e.preventDefault();
+                  navigate('/contact');
+                }
+              }}
               id="header-contact-btn"
               className="text-slate-300 hover:text-white transition-colors hidden sm:inline"
             >
               संपर्क करें
-            </button>
-            <button
-              onClick={() => (onNavigateAdmin ? onNavigateAdmin() : navigate('/admin'))}
+            </a>
+            <a
+              href="/admin"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                  e.preventDefault();
+                  if (onNavigateAdmin) onNavigateAdmin();
+                  else navigate('/admin');
+                }
+              }}
               id="header-admin-login-btn"
               className="bg-red-600 hover:bg-red-700 text-white px-2.5 py-0.5 rounded text-[11px] font-semibold flex items-center gap-1 transition-colors shadow-xs"
             >
               <User className="w-3 h-3" />
               CMS / एडमिन
-            </button>
+            </a>
           </div>
         </div>
       </div>
@@ -175,24 +199,31 @@ export const Header: React.FC<HeaderProps> = ({
       {/* 2. MAIN BRAND HEADER */}
       <div className="max-w-7xl mx-auto px-4 py-3 sm:py-4 flex items-center justify-between">
         {/* Brand Logo & Tagline */}
-        <div
-          onClick={() => (onNavigateHome ? onNavigateHome() : navigate('/'))}
+        <a
+          href="/"
+          onClick={(e) => {
+            if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+              e.preventDefault();
+              if (onNavigateHome) onNavigateHome();
+              else navigate('/');
+            }
+          }}
           className="cursor-pointer flex items-center space-x-3 select-none"
         >
           <div className="flex flex-col">
             <div className="flex items-center space-x-1.5">
-              <span className="bg-red-600 text-white font-black text-2xl sm:text-3xl px-2.5 py-0.5 rounded font-serif tracking-tight shadow-xs">
-                समाचार
+              <span className="bg-gradient-to-r from-red-600 to-rose-600 text-white font-black text-2xl sm:text-3xl px-2.5 py-0.5 rounded-lg font-serif tracking-tight shadow-sm">
+                GADGET
               </span>
-              <span className="text-slate-900 font-black text-2xl sm:text-3xl font-serif tracking-tight">
-                FIRST
+              <span className="text-slate-900 dark:text-white font-black text-2xl sm:text-3xl font-serif tracking-tight">
+                GLOW
               </span>
             </div>
-            <p className="text-[10px] sm:text-xs text-red-600 font-bold tracking-widest uppercase mt-0.5 pl-0.5">
-              आपकी खबर, सबसे पहले • 24x7 लाइव
+            <p className="text-[10px] sm:text-xs text-red-600 dark:text-red-400 font-bold tracking-widest uppercase mt-0.5 pl-0.5">
+              गैजेट, टेक और डिजिटल दुनिया की हर खबर • 24x7 लाइव
             </p>
           </div>
-        </div>
+        </a>
 
         {/* Header Right Actions: Search Bar & Live TV Badge */}
         <div className="flex items-center space-x-3">
@@ -203,7 +234,7 @@ export const Header: React.FC<HeaderProps> = ({
               placeholder="खबरें, जिला या विषय खोजें..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-48 md:w-64 pl-8 pr-3 py-1.5 text-xs bg-slate-100 border border-neutral-200 rounded-full focus:outline-none focus:border-red-500 focus:bg-white transition-all text-slate-800"
+              className="w-48 md:w-64 pl-8 pr-3 py-1.5 text-xs bg-slate-100 dark:bg-slate-800 border border-neutral-200 dark:border-slate-700 rounded-full focus:outline-none focus:border-red-500 focus:bg-white dark:focus:bg-slate-900 transition-all text-slate-800 dark:text-slate-200"
             />
             <Search className="w-4 h-4 text-slate-400 absolute left-2.5 pointer-events-none" />
           </form>
@@ -211,7 +242,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Live Bulletin Indicator */}
           <button
             onClick={() => (onNavigateVideos ? onNavigateVideos() : navigate('/videos'))}
-            className="flex items-center space-x-1.5 bg-red-50 text-red-700 border border-red-200 px-3 py-1.5 rounded-full text-xs font-bold hover:bg-red-100 transition-colors"
+            className="flex items-center space-x-1.5 bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800/60 px-3 py-1.5 rounded-full text-xs font-bold hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors cursor-pointer"
           >
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
@@ -223,7 +254,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Mobile Search Toggle */}
           <button
             onClick={() => setSearchOpen(!searchOpen)}
-            className="p-2 sm:hidden text-slate-700 hover:text-red-600 rounded-md"
+            className="p-2 sm:hidden text-slate-700 dark:text-slate-200 hover:text-red-600 rounded-md"
             aria-label="खोजें"
           >
             <Search className="w-5 h-5" />
@@ -232,7 +263,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Mobile Hamburger Toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 md:hidden text-slate-700 hover:text-red-600 rounded-md"
+            className="p-2 md:hidden text-slate-700 dark:text-slate-200 hover:text-red-600 rounded-md"
             aria-label="मेनू खोलें"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -261,19 +292,33 @@ export const Header: React.FC<HeaderProps> = ({
       <nav className="hidden md:block bg-slate-900 text-white border-t border-slate-800 shadow-xs">
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between overflow-x-auto no-scrollbar">
           <div className="flex items-center space-x-1 py-1">
-            <button
-              onClick={() => (onNavigateHome ? onNavigateHome() : navigate('/'))}
+            <a
+              href="/"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                  e.preventDefault();
+                  if (onNavigateHome) onNavigateHome();
+                  else navigate('/');
+                }
+              }}
               className={`px-3.5 py-2 rounded text-sm font-semibold whitespace-nowrap transition-colors ${
                 currentPath === '/' ? 'bg-red-600 text-white' : 'text-slate-200 hover:bg-slate-800'
               }`}
             >
               होम
-            </button>
+            </a>
 
             {activeCategories.slice(0, 10).map((cat) => (
-              <button
+              <a
                 key={cat.id}
-                onClick={() => (onSelectCategory ? onSelectCategory(cat.slug) : navigate(`/category/${cat.slug}`))}
+                href={`/category/${cat.slug}`}
+                onClick={(e) => {
+                  if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                    e.preventDefault();
+                    if (onSelectCategory) onSelectCategory(cat.slug);
+                    else navigate(`/category/${cat.slug}`);
+                  }
+                }}
                 className={`px-3 py-2 rounded text-sm font-medium whitespace-nowrap transition-colors ${
                   currentPath === `/category/${cat.slug}`
                     ? 'bg-red-600 text-white'
@@ -281,36 +326,55 @@ export const Header: React.FC<HeaderProps> = ({
                 }`}
               >
                 {cat.nameHi}
-              </button>
+              </a>
             ))}
 
-            <button
-              onClick={() => (onNavigateVideos ? onNavigateVideos() : navigate('/videos'))}
+            <a
+              href="/videos"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                  e.preventDefault();
+                  if (onNavigateVideos) onNavigateVideos();
+                  else navigate('/videos');
+                }
+              }}
               className={`px-3 py-2 rounded text-sm font-medium whitespace-nowrap transition-colors ${
                 currentPath === '/videos' ? 'bg-red-600 text-white' : 'text-slate-200 hover:bg-slate-800'
               }`}
             >
               वीडियो
-            </button>
+            </a>
 
-            <button
-              onClick={() => navigate('/photos')}
+            <a
+              href="/photos"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                  e.preventDefault();
+                  navigate('/photos');
+                }
+              }}
               className={`px-3 py-2 rounded text-sm font-medium whitespace-nowrap transition-colors ${
                 currentPath === '/photos' ? 'bg-red-600 text-white' : 'text-slate-200 hover:bg-slate-800'
               }`}
             >
               फोटो
-            </button>
+            </a>
           </div>
 
           <div className="flex items-center pl-2">
-            <button
-              onClick={() => navigate('/latest-news')}
-              className="text-xs bg-red-800 hover:bg-red-700 text-white font-semibold px-2.5 py-1.5 rounded flex items-center gap-1 whitespace-nowrap"
+            <a
+              href="/latest-news"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                  e.preventDefault();
+                  navigate('/latest-news');
+                }
+              }}
+              className="text-xs bg-red-800 hover:bg-red-700 text-white font-semibold px-2.5 py-1.5 rounded flex items-center gap-1 whitespace-nowrap cursor-pointer"
             >
               <TrendingUp className="w-3.5 h-3.5" />
               ताजा खबरें
-            </button>
+            </a>
           </div>
         </div>
       </nav>
@@ -353,104 +417,141 @@ export const Header: React.FC<HeaderProps> = ({
       {mobileMenuOpen && (
         <div className="md:hidden bg-slate-950 text-white border-t border-slate-800 p-4 space-y-4 shadow-xl">
           <div className="space-y-1">
-            <button
-              onClick={() => {
-                if (onNavigateHome) onNavigateHome();
-                else navigate('/');
+            <a
+              href="/"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                  e.preventDefault();
+                  if (onNavigateHome) onNavigateHome();
+                  else navigate('/');
+                }
                 setMobileMenuOpen(false);
               }}
-              className="w-full text-left px-3 py-2 rounded text-sm font-semibold hover:bg-slate-800 flex items-center justify-between text-white"
+              className="w-full text-left px-3 py-2 rounded text-sm font-semibold hover:bg-slate-800 flex items-center justify-between text-white block"
             >
               <span>होम (Home)</span>
               <ChevronRight className="w-4 h-4 text-slate-500" />
-            </button>
+            </a>
 
             {activeCategories.map((cat) => (
-              <button
+              <a
                 key={cat.id}
-                onClick={() => {
-                  if (onSelectCategory) onSelectCategory(cat.slug);
-                  else navigate(`/category/${cat.slug}`);
+                href={`/category/${cat.slug}`}
+                onClick={(e) => {
+                  if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                    e.preventDefault();
+                    if (onSelectCategory) onSelectCategory(cat.slug);
+                    else navigate(`/category/${cat.slug}`);
+                  }
                   setMobileMenuOpen(false);
                 }}
-                className="w-full text-left px-3 py-2 rounded text-sm font-medium hover:bg-slate-800 flex items-center justify-between text-slate-300"
+                className="w-full text-left px-3 py-2 rounded text-sm font-medium hover:bg-slate-800 flex items-center justify-between text-slate-300 block"
               >
                 <span>{cat.nameHi} ({cat.name})</span>
                 <ChevronRight className="w-4 h-4 text-slate-500" />
-              </button>
+              </a>
             ))}
 
-            <button
-              onClick={() => {
-                if (onNavigateVideos) onNavigateVideos();
-                else navigate('/videos');
+            <a
+              href="/videos"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                  e.preventDefault();
+                  if (onNavigateVideos) onNavigateVideos();
+                  else navigate('/videos');
+                }
                 setMobileMenuOpen(false);
               }}
-              className="w-full text-left px-3 py-2 rounded text-sm font-medium hover:bg-slate-800 flex items-center justify-between text-slate-300"
+              className="w-full text-left px-3 py-2 rounded text-sm font-medium hover:bg-slate-800 flex items-center justify-between text-slate-300 block"
             >
               <span>वीडियो बुलेटिन (Videos)</span>
               <ChevronRight className="w-4 h-4 text-slate-500" />
-            </button>
+            </a>
 
-            <button
-              onClick={() => {
-                navigate('/photos');
+            <a
+              href="/photos"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                  e.preventDefault();
+                  navigate('/photos');
+                }
                 setMobileMenuOpen(false);
               }}
-              className="w-full text-left px-3 py-2 rounded text-sm font-medium hover:bg-slate-800 flex items-center justify-between text-slate-300"
+              className="w-full text-left px-3 py-2 rounded text-sm font-medium hover:bg-slate-800 flex items-center justify-between text-slate-300 block"
             >
               <span>फोटो गैलरी (Photos)</span>
               <ChevronRight className="w-4 h-4 text-slate-500" />
-            </button>
+            </a>
 
-            <button
-              onClick={() => {
-                if (onNavigateEPaper) onNavigateEPaper();
-                else navigate('/e-paper');
+            <a
+              href="/e-paper"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                  e.preventDefault();
+                  if (onNavigateEPaper) onNavigateEPaper();
+                  else navigate('/e-paper');
+                }
                 setMobileMenuOpen(false);
               }}
-              className="w-full text-left px-3 py-2 rounded text-sm font-medium hover:bg-slate-800 flex items-center justify-between text-amber-400"
+              className="w-full text-left px-3 py-2 rounded text-sm font-medium hover:bg-slate-800 flex items-center justify-between text-amber-400 block"
             >
               <span>ई-पेपर (Digital E-Paper)</span>
               <ChevronRight className="w-4 h-4 text-slate-500" />
-            </button>
+            </a>
           </div>
 
           <div className="pt-4 border-t border-slate-800 space-y-3">
+            <div className="flex items-center justify-between px-1">
+              <span className="text-xs text-slate-400 font-medium">थीम (Theme):</span>
+              <ThemeToggle variant="button" />
+            </div>
+
             <div className="flex items-center justify-between px-1">
               <span className="text-xs text-slate-400 font-medium">भाषा (Language):</span>
               <LanguageSelector />
             </div>
 
             <div className="grid grid-cols-2 gap-2 text-xs">
-              <button
-                onClick={() => {
-                  navigate('/about');
+              <a
+                href="/about"
+                onClick={(e) => {
+                  if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                    e.preventDefault();
+                    navigate('/about');
+                  }
                   setMobileMenuOpen(false);
                 }}
-                className="p-2 bg-slate-900 rounded text-slate-300 hover:text-white"
+                className="p-2 bg-slate-900 rounded text-slate-300 hover:text-white text-center block"
               >
                 हमारे बारे में
-              </button>
-              <button
-                onClick={() => {
-                  navigate('/contact');
+              </a>
+              <a
+                href="/contact"
+                onClick={(e) => {
+                  if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                    e.preventDefault();
+                    navigate('/contact');
+                  }
                   setMobileMenuOpen(false);
                 }}
-                className="p-2 bg-slate-900 rounded text-slate-300 hover:text-white"
+                className="p-2 bg-slate-900 rounded text-slate-300 hover:text-white text-center block"
               >
                 संपर्क करें
-              </button>
-              <button
-                onClick={() => {
-                  if (onNavigateAdmin) onNavigateAdmin();
-                  else navigate('/admin');
+              </a>
+              <a
+                href="/admin"
+                onClick={(e) => {
+                  if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                    e.preventDefault();
+                    if (onNavigateAdmin) onNavigateAdmin();
+                    else navigate('/admin');
+                  }
                   setMobileMenuOpen(false);
                 }}
-                className="col-span-2 p-2 bg-red-600 rounded text-white font-bold text-center"
+                className="col-span-2 p-2 bg-red-600 rounded text-white font-bold text-center block"
               >
                 CMS / एडमिन पोर्टल
-              </button>
+              </a>
             </div>
           </div>
         </div>

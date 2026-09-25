@@ -76,9 +76,9 @@ export const CategoryPage: React.FC<CategoryPageProps> = ({
     });
 
     updateMetaTags({
-      title: `${currentCategory.nameHi} समाचार - Samachar First`,
-      description: `${currentCategory.nameHi} की ताजा और महत्वपूर्ण खबरें समाचार फर्स्ट पर पढ़ें।`,
-      keywords: [currentCategory.nameHi, currentCategory.name, 'Samachar First'],
+      title: `${currentCategory.nameHi} समाचार - Gadget Glow`,
+      description: `${currentCategory.nameHi} की ताजा और महत्वपूर्ण खबरें गैजेट ग्लो पर पढ़ें।`,
+      keywords: [currentCategory.nameHi, currentCategory.name, 'Gadget Glow', 'गैजेट ग्लो'],
       url: `${window.location.origin}/category/${currentCategory.slug}`,
     });
 
@@ -104,9 +104,18 @@ export const CategoryPage: React.FC<CategoryPageProps> = ({
     <div className="max-w-7xl mx-auto px-4 py-6">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-4">
-        <button onClick={() => handleNavigate('/')} className="hover:text-red-600">
+        <a
+          href="/"
+          onClick={(e) => {
+            if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+              e.preventDefault();
+              handleNavigate('/');
+            }
+          }}
+          className="hover:text-red-600"
+        >
           होम
-        </button>
+        </a>
         <ChevronRight className="w-3.5 h-3.5" />
         <span className="font-bold text-slate-900">{currentCategory.nameHi}</span>
         {selectedSub !== 'all' && (
@@ -176,10 +185,16 @@ export const CategoryPage: React.FC<CategoryPageProps> = ({
       {filtered.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filtered.map((art) => (
-            <div
+            <a
               key={art.id}
-              onClick={() => handleArticleClick(art.slug)}
-              className="group cursor-pointer bg-white border border-neutral-200 rounded-xl overflow-hidden hover:shadow-md transition-all flex flex-col justify-between"
+              href={`/news/${encodeURIComponent(art.slug)}`}
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                  e.preventDefault();
+                  handleArticleClick(art.slug);
+                }
+              }}
+              className="group cursor-pointer bg-white border border-neutral-200 rounded-xl overflow-hidden hover:shadow-md transition-all flex flex-col justify-between block"
             >
               <div className="aspect-16/10 overflow-hidden bg-slate-900">
                 <img
@@ -210,7 +225,7 @@ export const CategoryPage: React.FC<CategoryPageProps> = ({
                   </span>
                 </div>
               </div>
-            </div>
+            </a>
           ))}
         </div>
       ) : (

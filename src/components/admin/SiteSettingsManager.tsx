@@ -51,96 +51,96 @@ export const SiteSettingsManager: React.FC<SiteSettingsManagerProps> = ({ siteSe
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-serif font-black text-xl text-white flex items-center gap-2">
+          <h1 className="font-bold text-xl sm:text-2xl text-white flex items-center gap-2">
             <Settings className="w-5 h-5 text-red-500" />
-            वेबसाइट सेटिंग्स एवं ब्रांडिंग (Site Settings)
+            Website Settings & Branding
           </h1>
-          <p className="text-xs text-slate-400 mt-0.5">
-            वेबसाइट का नाम, टैगलाइन, संपर्क विवरण और सोशल मीडिया प्रोफाइल्स का प्रबंधन
+          <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
+            Configure site identity, slogan, contact information, and official social media channels
           </p>
         </div>
       </div>
 
       <form onSubmit={handleSave} className="space-y-6">
         {/* Brand & Contact */}
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-xs space-y-4">
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl space-y-4">
           <h2 className="font-bold text-sm text-white border-b border-slate-800 pb-3">
-            ब्रांड पहचान व पता (Brand Identity)
+            Brand Identity & General Info
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-slate-300 mb-1">वेबसाइट का नाम (Portal Name)*</label>
+              <label className="block text-xs font-bold text-slate-300 mb-1">Website Portal Name *</label>
               <input
                 type="text"
                 required
                 value={websiteName}
                 onChange={(e) => setWebsiteName(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 text-white rounded p-2 text-xs font-serif font-bold"
+                className="w-full bg-slate-950 border border-slate-700 text-white rounded-xl p-2.5 text-xs sm:text-sm font-bold focus:outline-none focus:border-red-500"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-slate-300 mb-1">टैगलाइन (Tagline / Slogan)*</label>
+              <label className="block text-xs font-bold text-slate-300 mb-1">Tagline / Mission Statement *</label>
               <input
                 type="text"
                 required
                 value={tagline}
                 onChange={(e) => setTagline(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 text-white rounded p-2 text-xs font-bold text-red-400"
+                className="w-full bg-slate-950 border border-slate-700 text-red-400 font-medium rounded-xl p-2.5 text-xs sm:text-sm focus:outline-none focus:border-red-500"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-slate-300 mb-1">संपादकीय ईमेल (Contact Email)*</label>
+              <label className="block text-xs font-bold text-slate-300 mb-1">Editorial Contact Email *</label>
               <input
                 type="email"
                 required
                 value={contactEmail}
                 onChange={(e) => setContactEmail(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 text-white rounded p-2 text-xs"
+                className="w-full bg-slate-950 border border-slate-700 text-white rounded-xl p-2.5 text-xs focus:outline-none focus:border-red-500"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-slate-300 mb-1">फोन नंबर (Phone Number)*</label>
+              <label className="block text-xs font-bold text-slate-300 mb-1">Phone Number *</label>
               <input
                 type="text"
                 required
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 text-white rounded p-2 text-xs"
+                className="w-full bg-slate-950 border border-slate-700 text-white rounded-xl p-2.5 text-xs focus:outline-none focus:border-red-500"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-300 mb-1">प्रधान कार्यालय का पता (Registered Address)*</label>
+            <label className="block text-xs font-bold text-slate-300 mb-1">Headquarters / Bureau Address *</label>
             <input
               type="text"
               required
               value={address}
               onChange={(e) => setAddress(e.target.value)}
-              className="w-full bg-slate-800 border border-slate-700 text-white rounded p-2 text-xs"
+              className="w-full bg-slate-950 border border-slate-700 text-white rounded-xl p-2.5 text-xs focus:outline-none focus:border-red-500"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-300 mb-1">कॉपीराइट पाठ (Copyright Text)</label>
+            <label className="block text-xs font-bold text-slate-300 mb-1">Footer Copyright Notice</label>
             <input
               type="text"
               value={copyrightText}
               onChange={(e) => setCopyrightText(e.target.value)}
-              className="w-full bg-slate-800 border border-slate-700 text-white rounded p-2 text-xs"
+              className="w-full bg-slate-950 border border-slate-700 text-white rounded-xl p-2.5 text-xs focus:outline-none focus:border-red-500"
             />
           </div>
         </div>
 
         {/* Social Media Links */}
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-xs space-y-4">
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl space-y-4">
           <h2 className="font-bold text-sm text-white border-b border-slate-800 pb-3 flex items-center gap-2">
             <Share2 className="w-4 h-4 text-sky-400" />
-            सोशल मीडिया प्रोफाइल्स (Social Media Channels)
+            Official Social Media Channels
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -150,16 +150,16 @@ export const SiteSettingsManager: React.FC<SiteSettingsManagerProps> = ({ siteSe
                 type="url"
                 value={facebook}
                 onChange={(e) => setFacebook(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 text-white rounded p-2 text-xs"
+                className="w-full bg-slate-950 border border-slate-700 text-white rounded-xl p-2 text-xs focus:outline-none focus:border-red-500"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-slate-300 mb-1">Twitter / X Profile URL</label>
+              <label className="block text-xs font-bold text-slate-300 mb-1">Twitter / 𝕏 Profile URL</label>
               <input
                 type="url"
                 value={twitter}
                 onChange={(e) => setTwitter(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 text-white rounded p-2 text-xs"
+                className="w-full bg-slate-950 border border-slate-700 text-white rounded-xl p-2 text-xs focus:outline-none focus:border-red-500"
               />
             </div>
             <div>
@@ -168,7 +168,7 @@ export const SiteSettingsManager: React.FC<SiteSettingsManagerProps> = ({ siteSe
                 type="url"
                 value={youtube}
                 onChange={(e) => setYoutube(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 text-white rounded p-2 text-xs"
+                className="w-full bg-slate-950 border border-slate-700 text-white rounded-xl p-2 text-xs focus:outline-none focus:border-red-500"
               />
             </div>
             <div>
@@ -177,7 +177,7 @@ export const SiteSettingsManager: React.FC<SiteSettingsManagerProps> = ({ siteSe
                 type="url"
                 value={instagram}
                 onChange={(e) => setInstagram(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 text-white rounded p-2 text-xs"
+                className="w-full bg-slate-950 border border-slate-700 text-white rounded-xl p-2 text-xs focus:outline-none focus:border-red-500"
               />
             </div>
             <div>
@@ -186,7 +186,7 @@ export const SiteSettingsManager: React.FC<SiteSettingsManagerProps> = ({ siteSe
                 type="url"
                 value={whatsapp}
                 onChange={(e) => setWhatsapp(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 text-white rounded p-2 text-xs"
+                className="w-full bg-slate-950 border border-slate-700 text-white rounded-xl p-2 text-xs focus:outline-none focus:border-red-500"
               />
             </div>
             <div>
@@ -195,7 +195,7 @@ export const SiteSettingsManager: React.FC<SiteSettingsManagerProps> = ({ siteSe
                 type="url"
                 value={telegram}
                 onChange={(e) => setTelegram(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 text-white rounded p-2 text-xs"
+                className="w-full bg-slate-950 border border-slate-700 text-white rounded-xl p-2 text-xs focus:outline-none focus:border-red-500"
               />
             </div>
           </div>
@@ -206,15 +206,15 @@ export const SiteSettingsManager: React.FC<SiteSettingsManagerProps> = ({ siteSe
           {saved && (
             <div className="text-emerald-400 text-xs font-bold flex items-center gap-1.5">
               <CheckCircle className="w-4 h-4" />
-              वेबसाइट सेटिंग्स सफलतापूर्वक सुरक्षित की गईं!
+              Settings saved successfully!
             </div>
           )}
           <button
             type="submit"
-            className="bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-2.5 rounded-lg text-xs flex items-center gap-1.5 shadow-md ml-auto transition-colors"
+            className="bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-2.5 rounded-xl text-xs flex items-center gap-1.5 shadow-lg ml-auto transition-colors"
           >
             <Save className="w-4 h-4" />
-            सेटिंग्स सहेजें
+            <span>Save Settings</span>
           </button>
         </div>
       </form>

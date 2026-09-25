@@ -1,6 +1,6 @@
 import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
 import { getAuth, Auth } from 'firebase/auth';
-import { getFirestore, Firestore } from 'firebase/firestore';
+import { getFirestore, initializeFirestore, Firestore } from 'firebase/firestore';
 import { getStorage, FirebaseStorage } from 'firebase/storage';
 import firebaseAppletConfig from '../../firebase-applet-config.json';
 
@@ -55,7 +55,15 @@ export function initFirebase(customConfig?: FirebaseClientConfig) {
     }
     
     auth = getAuth(app);
-    db = config.firestoreDatabaseId ? getFirestore(app, config.firestoreDatabaseId) : getFirestore(app);
+    try {
+      if (config.firestoreDatabaseId) {
+        db = initializeFirestore(app, { ignoreUndefinedProperties: true }, config.firestoreDatabaseId);
+      } else {
+        db = initializeFirestore(app, { ignoreUndefinedProperties: true });
+      }
+    } catch {
+      db = config.firestoreDatabaseId ? getFirestore(app, config.firestoreDatabaseId) : getFirestore(app);
+    }
     storage = getStorage(app);
 
     return { app, auth, db, storage, isLive: true };

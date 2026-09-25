@@ -23,116 +23,82 @@ export interface MediaEmbedToolbarProps {
 
 export const STOCK_NEWS_IMAGES = [
   {
-    category: 'राजनीति (Politics)',
+    category: 'Politics & Governance',
     images: [
       {
-        title: 'संसद भवन / Parliament House',
+        title: 'Parliament House',
         url: 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=1200&auto=format&fit=crop&q=80',
-        caption: 'संसद भवन, नई दिल्ली',
-        credit: 'पीटीआई / समाचार फर्स्ट',
+        caption: 'Parliament House, New Delhi',
+        credit: 'News Bureau',
       },
       {
-        title: 'प्रेस वार्ता / Press Conference',
+        title: 'Press Conference',
         url: 'https://images.unsplash.com/photo-1576267423445-b2e0074d68a4?w=1200&auto=format&fit=crop&q=80',
-        caption: 'विशेष प्रेस कॉन्फ्रेंस का आयोजन',
-        credit: 'समाचार फर्स्ट ब्यूरो',
+        caption: 'Official Press Briefing',
+        credit: 'Media Bureau',
       },
       {
-        title: 'मतदान / Election Voting',
+        title: 'Elections & Voting',
         url: 'https://images.unsplash.com/photo-1540910419892-4a36d2c3266c?w=1200&auto=format&fit=crop&q=80',
-        caption: 'लोकतांत्रिक मतदान प्रक्रिया',
-        credit: 'चुनाव आयोग / समाचार फर्स्ट',
+        caption: 'Democratic Polling & Electoral Process',
+        credit: 'Election Commission',
       },
     ],
   },
   {
-    category: 'हरियाणा एवं क्षेत्रीय (Haryana News)',
+    category: 'Infrastructure & Regional',
     images: [
       {
-        title: 'हरियाणा सचिवालय चंडीगढ़',
+        title: 'Secretariat & Administration',
         url: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=1200&auto=format&fit=crop&q=80',
-        caption: 'हरियाणा सिविल सचिवालय, चंडीगढ़',
-        credit: 'डीपीआर हरियाणा',
+        caption: 'Civil Secretariat Headquarters',
+        credit: 'DPR Bureau',
       },
       {
-        title: 'किसान एवं कृषि / Farming',
+        title: 'Agriculture & Farming',
         url: 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=1200&auto=format&fit=crop&q=80',
-        caption: 'हरियाणा में रबी फसल की तैयारी व कृषि विकास',
-        credit: 'कृषि विभाग',
+        caption: 'Agricultural Development & Crop Harvesting',
+        credit: 'Agri Dept',
       },
       {
-        title: 'हाईवे एवं एक्सप्रेसवे / GT Road Infrastructure',
+        title: 'Highways & Expressways',
         url: 'https://images.unsplash.com/photo-1519817650390-64a93db51149?w=1200&auto=format&fit=crop&q=80',
-        caption: 'राष्ट्रीय राजमार्ग एवं एक्सप्रेसवे निर्माण',
-        credit: 'एनएचएआई',
+        caption: 'National Highway and Expressway Network',
+        credit: 'NHAI',
       },
     ],
   },
   {
-    category: 'अपराध एवं कानून (Crime & Law)',
+    category: 'Law, Justice & Security',
     images: [
       {
-        title: 'पुलिस एवं सुरक्षा दल',
+        title: 'Police & Public Safety',
         url: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1200&auto=format&fit=crop&q=80',
-        caption: 'पुलिस विभाग द्वारा सुरक्षा व्यवस्था चाक-चौबंद',
-        credit: 'पुलिस ब्यूरो',
+        caption: 'Police Department Security Operations',
+        credit: 'Police Bureau',
       },
       {
-        title: 'न्यायालय / High Court & Justice',
+        title: 'Judiciary & High Court',
         url: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1200&auto=format&fit=crop&q=80',
-        caption: 'उच्च न्यायालय में अहम मामले पर सुनवाई',
-        credit: 'लीगल सेल',
+        caption: 'Judicial Hearing at High Court',
+        credit: 'Legal Bureau',
       },
     ],
   },
   {
-    category: 'व्यापार एवं अर्थव्यवस्था (Business & Market)',
+    category: 'Economy, Business & Markets',
     images: [
       {
-        title: 'शेयर बाजार / Stock Market & Sensex',
+        title: 'Stock Exchange & Markets',
         url: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1200&auto=format&fit=crop&q=80',
-        caption: 'सेंसेक्स व निफ्टी में नया रिकॉर्ड स्तर',
-        credit: 'मार्केट डेस्क',
+        caption: 'Stock Index and Financial Exchange',
+        credit: 'Market Desk',
       },
       {
-        title: 'भारतीय रुपया व बजट',
+        title: 'Banking & Budget',
         url: 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=1200&auto=format&fit=crop&q=80',
-        caption: 'वार्षिक बजट एवं वित्तीय नीतियां',
-        credit: 'वित्त मंत्रालय',
-      },
-    ],
-  },
-  {
-    category: 'खेल (Sports & Cricket)',
-    images: [
-      {
-        title: 'क्रिकेट मैदान / Cricket Match',
-        url: 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=1200&auto=format&fit=crop&q=80',
-        caption: 'भारत बनाम प्रतिद्वंद्वी रोमांचक मुकाबला',
-        credit: 'बीसीसीआई / खेल ब्यूरो',
-      },
-      {
-        title: 'स्वर्ण पदक एवं एथलेटिक्स',
-        url: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=1200&auto=format&fit=crop&q=80',
-        caption: 'हरियाणवी खिलाड़ियों ने लहराया तिरंगा',
-        credit: 'स्पोर्ट्स डेस्क',
-      },
-    ],
-  },
-  {
-    category: 'मौसम एवं पर्यावरण (Weather & Climate)',
-    images: [
-      {
-        title: 'मानसून एवं भारी बारिश',
-        url: 'https://images.unsplash.com/photo-1519692933481-e162a57d6721?w=1200&auto=format&fit=crop&q=80',
-        caption: 'मौसम विभाग द्वारा भारी बारिश का अलर्ट जारी',
-        credit: 'मौसम केंद्र',
-      },
-      {
-        title: 'धुंध एवं शीत लहर',
-        url: 'https://images.unsplash.com/photo-1485236715568-ddc5ee6ca227?w=1200&auto=format&fit=crop&q=80',
-        caption: 'घने कोहरे और कड़ाके की ठंड से जनजीवन प्रभावित',
-        credit: 'समाचार फर्स्ट ब्यूरो',
+        caption: 'Annual Budget & Fiscal Policy',
+        credit: 'Finance Bureau',
       },
     ],
   },
@@ -143,60 +109,63 @@ export const MediaEmbedToolbar: React.FC<MediaEmbedToolbarProps> = ({
   onSelectFeaturedImage,
 }) => {
   const [activeModal, setActiveModal] = useState<
-    'none' | 'youtube' | 'social' | 'image' | 'presets' | 'custom_html'
+    'none' | 'youtube' | 'social' | 'image' | 'custom_html' | 'presets'
   >('none');
 
-  // YouTube State
+  // YouTube modal states
   const [ytUrl, setYtUrl] = useState('');
   const [ytCaption, setYtCaption] = useState('');
 
-  // Social State
-  const [socialPlatform, setSocialPlatform] = useState<'twitter' | 'facebook' | 'instagram'>(
-    'twitter'
-  );
+  // Social embed states
+  const [socialPlatform, setSocialPlatform] = useState<'twitter' | 'facebook' | 'instagram'>('twitter');
   const [socialUrl, setSocialUrl] = useState('');
   const [socialAuthor, setSocialAuthor] = useState('');
   const [socialText, setSocialText] = useState('');
 
-  // Inline Image State
+  // Image states
   const [imgUrl, setImgUrl] = useState('');
   const [imgCaption, setImgCaption] = useState('');
   const [imgCredit, setImgCredit] = useState('');
-  const [imgAlign, setImgAlign] = useState<'center' | 'left' | 'right' | 'full'>('center');
+  const [imgAlign, setImgAlign] = useState<'center' | 'left' | 'right'>('center');
 
-  // Custom HTML / Iframe State
+  // Custom HTML state
   const [rawHtml, setRawHtml] = useState('');
 
-  // Helpers to extract YouTube ID
-  const extractYouTubeId = (url: string): string => {
-    if (!url) return '';
+  // Helper: Extract YouTube ID
+  const extractYouTubeId = (url: string): string | null => {
+    if (!url) return null;
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = url.match(regExp);
-    return match && match[2].length === 11 ? match[2] : url.trim();
+    return match && match[2].length === 11 ? match[2] : url.length === 11 ? url : null;
   };
 
-  // Helper for Local File Upload
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, isFeatured = false) => {
+  // Helper: Upload file to base64
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, isFeatured: boolean) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (uploadEvent) => {
-        const base64 = uploadEvent.target?.result as string;
-        if (isFeatured && onSelectFeaturedImage) {
-          onSelectFeaturedImage(base64, file.name, 'स्थानीय अपलोड');
-        } else {
-          setImgUrl(base64);
-        }
-      };
-      reader.readAsDataURL(file);
-    }
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (uploadEvent) => {
+      const base64 = uploadEvent.target?.result as string;
+      if (isFeatured && onSelectFeaturedImage) {
+        onSelectFeaturedImage(base64, file.name.replace(/\.[^/.]+$/, ''), 'Uploaded Media');
+      } else {
+        setImgUrl(base64);
+        if (!imgCaption) setImgCaption(file.name.replace(/\.[^/.]+$/, ''));
+        if (!imgCredit) setImgCredit('Staff Photo');
+      }
+    };
+    reader.readAsDataURL(file);
   };
 
   // Insert YouTube Embed
   const handleInsertYouTube = (e: React.FormEvent) => {
     e.preventDefault();
     const videoId = extractYouTubeId(ytUrl);
-    if (!videoId) return;
+    if (!videoId) {
+      alert('Please enter a valid YouTube URL or Video ID');
+      return;
+    }
 
     const embedHtml = `
 <div class="video-embed-container" data-embed-type="youtube" data-video-id="${videoId}">
@@ -227,18 +196,18 @@ export const MediaEmbedToolbar: React.FC<MediaEmbedToolbarProps> = ({
     if (socialPlatform === 'twitter') {
       embedHtml = `
 <div class="social-embed-card twitter-embed" data-embed-type="twitter" data-url="${socialUrl}">
-  <div class="embed-header bg-slate-900 text-white flex items-center justify-between">
+  <div class="embed-header bg-slate-900 text-white flex items-center justify-between p-2 rounded-t">
     <div class="flex items-center gap-2">
       <span class="text-sky-400 font-bold">𝕏 / Twitter</span>
-      <span class="text-xs text-slate-400">${socialAuthor || 'आधिकारिक पोस्ट'}</span>
+      <span class="text-xs text-slate-400">${socialAuthor || 'Official Post'}</span>
     </div>
-    <a href="${socialUrl}" target="_blank" rel="noreferrer" class="text-[11px] text-sky-400 hover:underline">मूल पोस्ट देखें ↗</a>
+    <a href="${socialUrl}" target="_blank" rel="noreferrer" class="text-[11px] text-sky-400 hover:underline">View original post ↗</a>
   </div>
   <div class="embed-body p-4 bg-slate-50 text-slate-800 text-sm italic">
-    ${socialText ? `"${socialText}"` : 'ट्विटर पर यह पोस्ट देखने के लिए नीचे दिए लिंक पर क्लिक करें।'}
+    ${socialText ? `"${socialText}"` : 'Click the button below to view this update directly on X/Twitter.'}
   </div>
   <div class="px-4 py-2 bg-slate-100 border-t border-slate-200 text-right">
-    <a href="${socialUrl}" target="_blank" rel="noreferrer" class="inline-block bg-slate-900 text-white text-xs px-3 py-1 rounded font-bold">𝕏 पर खोलें</a>
+    <a href="${socialUrl}" target="_blank" rel="noreferrer" class="inline-block bg-slate-900 text-white text-xs px-3 py-1 rounded font-bold">Open on 𝕏</a>
   </div>
 </div>
 `;
@@ -246,12 +215,12 @@ export const MediaEmbedToolbar: React.FC<MediaEmbedToolbarProps> = ({
       const fbEncoded = encodeURIComponent(socialUrl);
       embedHtml = `
 <div class="social-embed-card facebook-embed" data-embed-type="facebook" data-url="${socialUrl}">
-  <div class="embed-header bg-blue-700 text-white flex items-center justify-between">
+  <div class="embed-header bg-blue-700 text-white flex items-center justify-between p-2 rounded-t">
     <div class="flex items-center gap-2">
       <span class="font-bold">Facebook Post</span>
-      <span class="text-xs text-blue-200">${socialAuthor || 'फेसबुक'}</span>
+      <span class="text-xs text-blue-200">${socialAuthor || 'Facebook'}</span>
     </div>
-    <a href="${socialUrl}" target="_blank" rel="noreferrer" class="text-[11px] text-blue-200 hover:underline">फेसबुक पर देखें ↗</a>
+    <a href="${socialUrl}" target="_blank" rel="noreferrer" class="text-[11px] text-blue-200 hover:underline">View on Facebook ↗</a>
   </div>
   <div class="embed-body p-4 bg-slate-50 text-slate-800 text-sm">
     <div class="video-embed-wrapper">
@@ -274,12 +243,12 @@ export const MediaEmbedToolbar: React.FC<MediaEmbedToolbarProps> = ({
       const embedUrl = cleanIg.includes('/embed') ? cleanIg : `${cleanIg}/embed`;
       embedHtml = `
 <div class="social-embed-card instagram-embed" data-embed-type="instagram" data-url="${socialUrl}">
-  <div class="embed-header bg-gradient-to-r from-purple-600 via-pink-600 to-amber-600 text-white flex items-center justify-between">
+  <div class="embed-header bg-gradient-to-r from-purple-600 via-pink-600 to-amber-600 text-white flex items-center justify-between p-2 rounded-t">
     <div class="flex items-center gap-2">
       <span class="font-bold">Instagram Reel / Post</span>
-      <span class="text-xs text-pink-100">${socialAuthor || '@samacharfirst'}</span>
+      <span class="text-xs text-pink-100">${socialAuthor || '@gadgetglow'}</span>
     </div>
-    <a href="${socialUrl}" target="_blank" rel="noreferrer" class="text-[11px] text-pink-100 hover:underline">इंस्टाग्राम पर देखें ↗</a>
+    <a href="${socialUrl}" target="_blank" rel="noreferrer" class="text-[11px] text-pink-100 hover:underline">View on Instagram ↗</a>
   </div>
   <div class="embed-body p-2 bg-slate-50 flex justify-center">
     <iframe
@@ -314,8 +283,8 @@ export const MediaEmbedToolbar: React.FC<MediaEmbedToolbarProps> = ({
 
     const figureHtml = `
 <figure class="${alignClasses}">
-  <img src="${imgUrl}" alt="${imgCaption || 'समाचार फर्स्ट विशेष तस्वीर'}" class="rounded-lg shadow-sm w-full object-cover" />
-  ${imgCaption || imgCredit ? `<figcaption class="text-xs text-slate-500 text-center mt-1.5">${imgCaption} ${imgCredit ? `(फोटो: ${imgCredit})` : ''}</figcaption>` : ''}
+  <img src="${imgUrl}" alt="${imgCaption || 'News Article Media'}" class="rounded-lg shadow-sm w-full object-cover" />
+  ${imgCaption || imgCredit ? `<figcaption class="text-xs text-slate-500 text-center mt-1.5">${imgCaption} ${imgCredit ? `(Photo: ${imgCredit})` : ''}</figcaption>` : ''}
 </figure>
 `;
     onInsertContent(figureHtml);
@@ -335,12 +304,12 @@ export const MediaEmbedToolbar: React.FC<MediaEmbedToolbarProps> = ({
   };
 
   return (
-    <div className="bg-slate-950 border border-slate-800 rounded-xl p-2.5 space-y-2 text-slate-200">
+    <div className="bg-slate-950 border border-slate-800 rounded-xl p-3 space-y-2 text-slate-200">
       {/* Action Toolbar Header */}
       <div className="flex flex-wrap items-center justify-between gap-2">
         <span className="text-[11px] font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
           <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-          मीडिया और सोशल एम्बेड टूलबार (Rich Media Tools)
+          Rich Media & Embed Tools
         </span>
 
         <div className="flex flex-wrap items-center gap-1.5">
@@ -348,114 +317,114 @@ export const MediaEmbedToolbar: React.FC<MediaEmbedToolbarProps> = ({
           <button
             type="button"
             onClick={() => setActiveModal(activeModal === 'youtube' ? 'none' : 'youtube')}
-            className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold transition-colors ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
               activeModal === 'youtube'
                 ? 'bg-red-600 text-white'
-                : 'bg-slate-800 hover:bg-slate-700 text-red-400'
+                : 'bg-slate-900 hover:bg-slate-800 text-red-400 border border-slate-800'
             }`}
           >
             <Youtube className="w-3.5 h-3.5" />
-            <span>YouTube वीडियो</span>
+            <span>YouTube Video</span>
           </button>
 
           {/* Social Media Embed Button */}
           <button
             type="button"
             onClick={() => setActiveModal(activeModal === 'social' ? 'none' : 'social')}
-            className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold transition-colors ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
               activeModal === 'social'
                 ? 'bg-sky-600 text-white'
-                : 'bg-slate-800 hover:bg-slate-700 text-sky-400'
+                : 'bg-slate-900 hover:bg-slate-800 text-sky-400 border border-slate-800'
             }`}
           >
-            <Twitter className="w-3 h-3" />
-            <span>सोशल एम्बेड (X/FB/IG)</span>
+            <Twitter className="w-3.5 h-3.5" />
+            <span>Social Embed (X/FB/IG)</span>
           </button>
 
           {/* Inline Image Insert Button */}
           <button
             type="button"
             onClick={() => setActiveModal(activeModal === 'image' ? 'none' : 'image')}
-            className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold transition-colors ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
               activeModal === 'image'
                 ? 'bg-emerald-600 text-white'
-                : 'bg-slate-800 hover:bg-slate-700 text-emerald-400'
+                : 'bg-slate-900 hover:bg-slate-800 text-emerald-400 border border-slate-800'
             }`}
           >
             <ImageIcon className="w-3.5 h-3.5" />
-            <span>इनलाइन फोटो जोड़ें</span>
+            <span>Inline Photo</span>
           </button>
 
           {/* Stock News Image Library */}
           <button
             type="button"
             onClick={() => setActiveModal(activeModal === 'presets' ? 'none' : 'presets')}
-            className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold transition-colors ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
               activeModal === 'presets'
                 ? 'bg-amber-600 text-white'
-                : 'bg-slate-800 hover:bg-slate-700 text-amber-300'
+                : 'bg-slate-900 hover:bg-slate-800 text-amber-300 border border-slate-800'
             }`}
           >
             <Sparkles className="w-3.5 h-3.5" />
-            <span>स्टॉक फोटो गैलरी</span>
+            <span>Stock Library</span>
           </button>
 
           {/* Custom HTML Code Insert */}
           <button
             type="button"
             onClick={() => setActiveModal(activeModal === 'custom_html' ? 'none' : 'custom_html')}
-            className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold transition-colors ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
               activeModal === 'custom_html'
                 ? 'bg-purple-600 text-white'
-                : 'bg-slate-800 hover:bg-slate-700 text-purple-300'
+                : 'bg-slate-900 hover:bg-slate-800 text-purple-300 border border-slate-800'
             }`}
           >
             <Code className="w-3.5 h-3.5" />
-            <span>कस्टम HTML/Iframe</span>
+            <span>Custom HTML</span>
           </button>
         </div>
       </div>
 
       {/* 1. YouTube Video Modal */}
       {activeModal === 'youtube' && (
-        <form onSubmit={handleInsertYouTube} className="bg-slate-900 border border-slate-700 rounded-lg p-3 space-y-2.5 animate-in fade-in">
+        <form onSubmit={handleInsertYouTube} className="bg-slate-900 border border-slate-700 rounded-xl p-4 space-y-3 animate-in fade-in">
           <div className="flex items-center justify-between text-xs font-bold text-red-400">
             <span className="flex items-center gap-1.5">
-              <Youtube className="w-4 h-4" /> YouTube वीडियो टेक्स्ट एडिटर में जोड़ें
+              <Youtube className="w-4 h-4" /> Embed YouTube Video into Article
             </span>
             <button type="button" onClick={() => setActiveModal('none')} className="text-slate-400 hover:text-white">
               <X className="w-4 h-4" />
             </button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
             <div>
-              <label className="block text-[11px] text-slate-300 mb-1">YouTube URL या Video ID*</label>
+              <label className="block text-xs font-bold text-slate-300 mb-1">YouTube URL or Video ID *</label>
               <input
                 type="text"
                 required
                 value={ytUrl}
                 onChange={(e) => setYtUrl(e.target.value)}
-                placeholder="https://www.youtube.com/watch?v=... या dQw4w9WgXcQ"
-                className="w-full bg-slate-800 border border-slate-700 rounded p-2 text-xs text-white focus:outline-none focus:border-red-500"
+                placeholder="https://www.youtube.com/watch?v=... or ID"
+                className="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-red-500"
               />
             </div>
             <div>
-              <label className="block text-[11px] text-slate-300 mb-1">वीडियो कैप्शन / शीर्षक (वैकल्पिक)</label>
+              <label className="block text-xs font-bold text-slate-300 mb-1">Video Caption / Title (Optional)</label>
               <input
                 type="text"
                 value={ytCaption}
                 onChange={(e) => setYtCaption(e.target.value)}
-                placeholder="उदा: ग्राउंड रिपोर्ट: विधानसभा चुनाव पर जनता की राय"
-                className="w-full bg-slate-800 border border-slate-700 rounded p-2 text-xs text-white"
+                placeholder="e.g., Live Press Conference Coverage"
+                className="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-red-500"
               />
             </div>
           </div>
 
           {/* Live Preview if valid ID */}
           {ytUrl && (
-            <div className="p-2 bg-slate-950 rounded border border-slate-800 flex items-center gap-3">
-              <span className="text-[10px] text-slate-400">वीडियो आईडी:</span>
+            <div className="p-2.5 bg-slate-950 rounded-xl border border-slate-800 flex items-center gap-3">
+              <span className="text-[11px] text-slate-400">Extracted Video ID:</span>
               <span className="text-xs font-mono text-emerald-400">{extractYouTubeId(ytUrl)}</span>
             </div>
           )}
@@ -464,16 +433,16 @@ export const MediaEmbedToolbar: React.FC<MediaEmbedToolbarProps> = ({
             <button
               type="button"
               onClick={() => setActiveModal('none')}
-              className="px-3 py-1.5 rounded text-xs bg-slate-800 text-slate-300"
+              className="px-3 py-1.5 rounded-xl text-xs bg-slate-800 text-slate-300 hover:text-white"
             >
-              रद्द करें
+              Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-1.5 rounded text-xs font-bold bg-red-600 hover:bg-red-700 text-white flex items-center gap-1"
+              className="px-4 py-1.5 rounded-xl text-xs font-bold bg-red-600 hover:bg-red-700 text-white flex items-center gap-1.5 transition-colors"
             >
               <Youtube className="w-3.5 h-3.5" />
-              एडिटर में वीडियो डालें (Insert Video)
+              <span>Insert Video Embed</span>
             </button>
           </div>
         </form>
@@ -481,10 +450,10 @@ export const MediaEmbedToolbar: React.FC<MediaEmbedToolbarProps> = ({
 
       {/* 2. Social Media Embed Modal (Twitter, FB, IG) */}
       {activeModal === 'social' && (
-        <form onSubmit={handleInsertSocial} className="bg-slate-900 border border-slate-700 rounded-lg p-3 space-y-2.5 animate-in fade-in">
+        <form onSubmit={handleInsertSocial} className="bg-slate-900 border border-slate-700 rounded-xl p-4 space-y-3 animate-in fade-in">
           <div className="flex items-center justify-between text-xs font-bold text-sky-400">
             <span className="flex items-center gap-1.5">
-              <Twitter className="w-4 h-4" /> सोशल मीडिया एम्बेड (YouTube / X / Facebook / Instagram)
+              <Twitter className="w-4 h-4" /> Embed Social Media Post (X / Twitter / Facebook / Instagram)
             </span>
             <button type="button" onClick={() => setActiveModal('none')} className="text-slate-400 hover:text-white">
               <X className="w-4 h-4" />
@@ -496,7 +465,7 @@ export const MediaEmbedToolbar: React.FC<MediaEmbedToolbarProps> = ({
             <button
               type="button"
               onClick={() => setSocialPlatform('twitter')}
-              className={`px-3 py-1 rounded text-xs font-bold flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 ${
                 socialPlatform === 'twitter' ? 'bg-slate-950 text-white border border-slate-700' : 'bg-slate-800 text-slate-400'
               }`}
             >
@@ -506,7 +475,7 @@ export const MediaEmbedToolbar: React.FC<MediaEmbedToolbarProps> = ({
             <button
               type="button"
               onClick={() => setSocialPlatform('facebook')}
-              className={`px-3 py-1 rounded text-xs font-bold flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 ${
                 socialPlatform === 'facebook' ? 'bg-blue-900 text-white border border-blue-700' : 'bg-slate-800 text-slate-400'
               }`}
             >
@@ -516,21 +485,21 @@ export const MediaEmbedToolbar: React.FC<MediaEmbedToolbarProps> = ({
             <button
               type="button"
               onClick={() => setSocialPlatform('instagram')}
-              className={`px-3 py-1 rounded text-xs font-bold flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 ${
                 socialPlatform === 'instagram' ? 'bg-pink-950 text-white border border-pink-700' : 'bg-slate-800 text-slate-400'
               }`}
             >
               <Instagram className="w-3.5 h-3.5 text-pink-400" />
-              <span>Instagram (Reel/Post)</span>
+              <span>Instagram</span>
             </button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
             <div>
-              <label className="block text-[11px] text-slate-300 mb-1">
-                {socialPlatform === 'twitter' && 'Tweet URL (उदा: https://x.com/PMOIndia/status/...)'}
-                {socialPlatform === 'facebook' && 'Facebook Post या Video URL'}
-                {socialPlatform === 'instagram' && 'Instagram Post / Reel URL (उदा: https://www.instagram.com/p/...)'}
+              <label className="block text-xs font-bold text-slate-300 mb-1">
+                {socialPlatform === 'twitter' && 'Tweet URL (e.g., https://x.com/user/status/...)'}
+                {socialPlatform === 'facebook' && 'Facebook Post or Video URL'}
+                {socialPlatform === 'instagram' && 'Instagram Post / Reel URL (e.g., https://www.instagram.com/p/...)'}
                 *
               </label>
               <input
@@ -539,30 +508,30 @@ export const MediaEmbedToolbar: React.FC<MediaEmbedToolbarProps> = ({
                 value={socialUrl}
                 onChange={(e) => setSocialUrl(e.target.value)}
                 placeholder="https://..."
-                className="w-full bg-slate-800 border border-slate-700 rounded p-2 text-xs text-white focus:outline-none focus:border-sky-500"
+                className="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-sky-500"
               />
             </div>
             <div>
-              <label className="block text-[11px] text-slate-300 mb-1">अकाउंट नाम / हैंडल (उदा: @cmohry)</label>
+              <label className="block text-xs font-bold text-slate-300 mb-1">Account Handle (e.g., @user)</label>
               <input
                 type="text"
                 value={socialAuthor}
                 onChange={(e) => setSocialAuthor(e.target.value)}
                 placeholder="@username"
-                className="w-full bg-slate-800 border border-slate-700 rounded p-2 text-xs text-white"
+                className="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-sky-500"
               />
             </div>
           </div>
 
           {socialPlatform === 'twitter' && (
             <div>
-              <label className="block text-[11px] text-slate-300 mb-1">ट्वीट का मुख्य सारांश / टेक्स्ट (वैकल्पिक)</label>
+              <label className="block text-xs font-bold text-slate-300 mb-1">Tweet Text / Quote (Optional)</label>
               <textarea
                 rows={2}
                 value={socialText}
                 onChange={(e) => setSocialText(e.target.value)}
-                placeholder="ट्वीट का मुख्य अंश लिखें..."
-                className="w-full bg-slate-800 border border-slate-700 rounded p-2 text-xs text-white"
+                placeholder="Key excerpt or quote from the tweet..."
+                className="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-sky-500"
               />
             </div>
           )}
@@ -571,15 +540,15 @@ export const MediaEmbedToolbar: React.FC<MediaEmbedToolbarProps> = ({
             <button
               type="button"
               onClick={() => setActiveModal('none')}
-              className="px-3 py-1.5 rounded text-xs bg-slate-800 text-slate-300"
+              className="px-3.5 py-1.5 rounded-xl text-xs bg-slate-800 text-slate-300 hover:text-white"
             >
-              रद्द करें
+              Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-1.5 rounded text-xs font-bold bg-sky-600 hover:bg-sky-700 text-white flex items-center gap-1"
+              className="px-4 py-1.5 rounded-xl text-xs font-bold bg-sky-600 hover:bg-sky-700 text-white flex items-center gap-1.5 transition-colors"
             >
-              एम्बेड कार्ड जोड़ें (Insert Embed)
+              <span>Insert Embed Card</span>
             </button>
           </div>
         </form>
@@ -587,35 +556,35 @@ export const MediaEmbedToolbar: React.FC<MediaEmbedToolbarProps> = ({
 
       {/* 3. Inline Image Insert Modal */}
       {activeModal === 'image' && (
-        <form onSubmit={handleInsertImage} className="bg-slate-900 border border-slate-700 rounded-lg p-3 space-y-2.5 animate-in fade-in">
+        <form onSubmit={handleInsertImage} className="bg-slate-900 border border-slate-700 rounded-xl p-4 space-y-3 animate-in fade-in">
           <div className="flex items-center justify-between text-xs font-bold text-emerald-400">
             <span className="flex items-center gap-1.5">
-              <ImageIcon className="w-4 h-4" /> इनलाइन फोटो / विवरण चित्र जोड़ें
+              <ImageIcon className="w-4 h-4" /> Insert Inline Photo / Diagram
             </span>
             <button type="button" onClick={() => setActiveModal('none')} className="text-slate-400 hover:text-white">
               <X className="w-4 h-4" />
             </button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 text-xs">
-            <div className="sm:col-span-8 space-y-2">
+          <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 text-xs">
+            <div className="sm:col-span-8 space-y-3">
               <div>
-                <label className="block text-[11px] text-slate-300 mb-1">फोटो वेब लिंक (URL)*</label>
+                <label className="block text-xs font-bold text-slate-300 mb-1">Image Web URL *</label>
                 <input
                   type="url"
                   required
                   value={imgUrl}
                   onChange={(e) => setImgUrl(e.target.value)}
                   placeholder="https://images.unsplash.com/..."
-                  className="w-full bg-slate-800 border border-slate-700 rounded p-2 text-xs text-white focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
               {/* Local File Upload Option */}
               <div className="flex items-center gap-2">
-                <label className="cursor-pointer bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded text-[11px] font-semibold border border-slate-700 flex items-center gap-1">
+                <label className="cursor-pointer bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-xl text-xs font-semibold border border-slate-700 flex items-center gap-1.5">
                   <Upload className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>कंप्यूटर / मोबाइल से फोटो अपलोड करें</span>
+                  <span>Upload from Local Device</span>
                   <input
                     type="file"
                     accept="image/*"
@@ -630,51 +599,51 @@ export const MediaEmbedToolbar: React.FC<MediaEmbedToolbarProps> = ({
                   type="text"
                   value={imgCaption}
                   onChange={(e) => setImgCaption(e.target.value)}
-                  placeholder="छवि विवरण (Caption)"
-                  className="w-full bg-slate-800 border border-slate-700 rounded p-1.5 text-xs text-white"
+                  placeholder="Image Caption"
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-white"
                 />
                 <input
                   type="text"
                   value={imgCredit}
                   onChange={(e) => setImgCredit(e.target.value)}
-                  placeholder="फोटो साभार / क्रेडिट (उदा: विशेष संवाददाता)"
-                  className="w-full bg-slate-800 border border-slate-700 rounded p-1.5 text-xs text-white"
+                  placeholder="Photo Credit (e.g., Staff Photographer)"
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-white"
                 />
               </div>
 
               {/* Alignment Selector */}
               <div className="flex items-center gap-2 pt-1">
-                <span className="text-[11px] text-slate-400">फोटो अलाइनमेंट:</span>
-                <div className="flex gap-1">
+                <span className="text-xs text-slate-400">Photo Alignment:</span>
+                <div className="flex gap-1.5">
                   <button
                     type="button"
                     onClick={() => setImgAlign('center')}
-                    className={`px-2 py-1 rounded text-[11px] flex items-center gap-1 ${
+                    className={`px-2.5 py-1 rounded-lg text-xs flex items-center gap-1 ${
                       imgAlign === 'center' ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-400'
                     }`}
                   >
                     <AlignCenter className="w-3 h-3" />
-                    <span>मध्य (Center)</span>
+                    <span>Center</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => setImgAlign('left')}
-                    className={`px-2 py-1 rounded text-[11px] flex items-center gap-1 ${
+                    className={`px-2.5 py-1 rounded-lg text-xs flex items-center gap-1 ${
                       imgAlign === 'left' ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-400'
                     }`}
                   >
                     <AlignLeft className="w-3 h-3" />
-                    <span>बाएं (Left Wrap)</span>
+                    <span>Left Wrap</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => setImgAlign('right')}
-                    className={`px-2 py-1 rounded text-[11px] flex items-center gap-1 ${
+                    className={`px-2.5 py-1 rounded-lg text-xs flex items-center gap-1 ${
                       imgAlign === 'right' ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-400'
                     }`}
                   >
                     <AlignRight className="w-3 h-3" />
-                    <span>दाएं (Right Wrap)</span>
+                    <span>Right Wrap</span>
                   </button>
                 </div>
               </div>
@@ -682,11 +651,11 @@ export const MediaEmbedToolbar: React.FC<MediaEmbedToolbarProps> = ({
 
             {/* Preview Box */}
             <div className="sm:col-span-4">
-              <div className="w-full h-32 bg-slate-950 border border-slate-800 rounded-lg overflow-hidden flex items-center justify-center">
+              <div className="w-full h-32 bg-slate-950 border border-slate-800 rounded-xl overflow-hidden flex items-center justify-center">
                 {imgUrl ? (
                   <img src={imgUrl} alt="Preview" className="w-full h-full object-cover" />
                 ) : (
-                  <span className="text-[10px] text-slate-500">फोटो पूर्वावलोकन</span>
+                  <span className="text-xs text-slate-500">Image Preview</span>
                 )}
               </div>
             </div>
@@ -696,16 +665,16 @@ export const MediaEmbedToolbar: React.FC<MediaEmbedToolbarProps> = ({
             <button
               type="button"
               onClick={() => setActiveModal('none')}
-              className="px-3 py-1.5 rounded text-xs bg-slate-800 text-slate-300"
+              className="px-3.5 py-1.5 rounded-xl text-xs bg-slate-800 text-slate-300 hover:text-white"
             >
-              रद्द करें
+              Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-1.5 rounded text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-1"
+              className="px-4 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-1.5 transition-colors"
             >
               <ImageIcon className="w-3.5 h-3.5" />
-              समाचार में फोटो जोड़ें (Insert Photo)
+              <span>Insert Photo</span>
             </button>
           </div>
         </form>
@@ -713,10 +682,10 @@ export const MediaEmbedToolbar: React.FC<MediaEmbedToolbarProps> = ({
 
       {/* 4. Stock News Image Library Presets */}
       {activeModal === 'presets' && (
-        <div className="bg-slate-900 border border-slate-700 rounded-lg p-3 space-y-3 animate-in fade-in">
+        <div className="bg-slate-900 border border-slate-700 rounded-xl p-4 space-y-3 animate-in fade-in">
           <div className="flex items-center justify-between text-xs font-bold text-amber-400">
             <span className="flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4" /> मानक समाचार फोटो गैलरी (1-Click Presets)
+              <Sparkles className="w-4 h-4" /> Editorial Photo Library (1-Click Presets)
             </span>
             <button type="button" onClick={() => setActiveModal('none')} className="text-slate-400 hover:text-white">
               <X className="w-4 h-4" />
@@ -725,15 +694,15 @@ export const MediaEmbedToolbar: React.FC<MediaEmbedToolbarProps> = ({
 
           <div className="max-h-72 overflow-y-auto space-y-3 pr-1">
             {STOCK_NEWS_IMAGES.map((group, gIdx) => (
-              <div key={gIdx} className="space-y-1.5">
-                <h4 className="text-[11px] font-bold text-slate-300 border-b border-slate-800 pb-1">
+              <div key={gIdx} className="space-y-2">
+                <h4 className="text-xs font-bold text-slate-300 border-b border-slate-800 pb-1">
                   {group.category}
                 </h4>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                   {group.images.map((img, iIdx) => (
                     <div
                       key={iIdx}
-                      className="bg-slate-950 border border-slate-800 rounded-lg overflow-hidden group hover:border-amber-500 transition-colors"
+                      className="bg-slate-950 border border-slate-800 rounded-xl overflow-hidden group hover:border-amber-500 transition-colors"
                     >
                       <div className="aspect-16/10 overflow-hidden relative">
                         <img
@@ -742,9 +711,9 @@ export const MediaEmbedToolbar: React.FC<MediaEmbedToolbarProps> = ({
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                         />
                       </div>
-                      <div className="p-1.5 text-[10px]">
+                      <div className="p-2 text-xs">
                         <p className="font-bold text-white truncate">{img.title}</p>
-                        <div className="flex gap-1 mt-1">
+                        <div className="flex gap-1.5 mt-2">
                           {onSelectFeaturedImage && (
                             <button
                               type="button"
@@ -752,9 +721,9 @@ export const MediaEmbedToolbar: React.FC<MediaEmbedToolbarProps> = ({
                                 onSelectFeaturedImage(img.url, img.caption, img.credit);
                                 setActiveModal('none');
                               }}
-                              className="bg-red-600 hover:bg-red-700 text-white px-1.5 py-0.5 rounded text-[9px] font-bold flex-1"
+                              className="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded-lg text-[10px] font-bold flex-1"
                             >
-                              मुख्य छवि बनाएं
+                              Set Lead
                             </button>
                           )}
                           <button
@@ -763,15 +732,15 @@ export const MediaEmbedToolbar: React.FC<MediaEmbedToolbarProps> = ({
                               const figureHtml = `
 <figure class="w-full my-4">
   <img src="${img.url}" alt="${img.title}" class="rounded-lg shadow-sm w-full object-cover" />
-  <figcaption class="text-xs text-slate-500 text-center mt-1.5">${img.caption} (फोटो: ${img.credit})</figcaption>
+  <figcaption class="text-xs text-slate-500 text-center mt-1.5">${img.caption} (Photo: ${img.credit})</figcaption>
 </figure>
 `;
                               onInsertContent(figureHtml);
                               setActiveModal('none');
                             }}
-                            className="bg-slate-800 hover:bg-slate-700 text-amber-300 px-1.5 py-0.5 rounded text-[9px] font-bold flex-1"
+                            className="bg-slate-800 hover:bg-slate-700 text-amber-300 px-2 py-1 rounded-lg text-[10px] font-bold flex-1"
                           >
-                            लेख में डालें
+                            Insert
                           </button>
                         </div>
                       </div>
@@ -786,10 +755,10 @@ export const MediaEmbedToolbar: React.FC<MediaEmbedToolbarProps> = ({
 
       {/* 5. Custom HTML / Iframe Modal */}
       {activeModal === 'custom_html' && (
-        <form onSubmit={handleInsertCustomHtml} className="bg-slate-900 border border-slate-700 rounded-lg p-3 space-y-2.5 animate-in fade-in">
+        <form onSubmit={handleInsertCustomHtml} className="bg-slate-900 border border-slate-700 rounded-xl p-4 space-y-3 animate-in fade-in">
           <div className="flex items-center justify-between text-xs font-bold text-purple-400">
             <span className="flex items-center gap-1.5">
-              <Code className="w-4 h-4" /> कस्टम HTML, Iframe या लाइव विजेट कोड
+              <Code className="w-4 h-4" /> Custom HTML, Iframe Embed or Widget Code
             </span>
             <button type="button" onClick={() => setActiveModal('none')} className="text-slate-400 hover:text-white">
               <X className="w-4 h-4" />
@@ -803,7 +772,7 @@ export const MediaEmbedToolbar: React.FC<MediaEmbedToolbarProps> = ({
               value={rawHtml}
               onChange={(e) => setRawHtml(e.target.value)}
               placeholder="<iframe src='...' width='100%' height='400'></iframe>"
-              className="w-full bg-slate-800 border border-slate-700 rounded p-2 text-xs font-mono text-emerald-400 focus:outline-none focus:border-purple-500"
+              className="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs font-mono text-emerald-400 focus:outline-none focus:border-purple-500"
             />
           </div>
 
@@ -811,15 +780,15 @@ export const MediaEmbedToolbar: React.FC<MediaEmbedToolbarProps> = ({
             <button
               type="button"
               onClick={() => setActiveModal('none')}
-              className="px-3 py-1.5 rounded text-xs bg-slate-800 text-slate-300"
+              className="px-3.5 py-1.5 rounded-xl text-xs bg-slate-800 text-slate-300 hover:text-white"
             >
-              रद्द करें
+              Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-1.5 rounded text-xs font-bold bg-purple-600 hover:bg-purple-700 text-white flex items-center gap-1"
+              className="px-4 py-1.5 rounded-xl text-xs font-bold bg-purple-600 hover:bg-purple-700 text-white flex items-center gap-1.5 transition-colors"
             >
-              HTML कोड डालें (Insert HTML)
+              <span>Insert HTML Snippet</span>
             </button>
           </div>
         </form>

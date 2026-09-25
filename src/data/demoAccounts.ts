@@ -20,11 +20,11 @@ export const DEMO_ACCOUNTS: DemoAccount[] = [
   {
     id: 'user-superadmin',
     name: 'प्रदीप सैनी (Pradeep Saini)',
-    email: 'superadmin@samacharfirst.com',
+    email: 'superadmin@gadgetglow.com',
     password: 'SuperAdmin@2026',
     role: 'super_admin',
     designation: 'प्रधान संपादक (Editor-in-Chief & Super Admin)',
-    bio: 'समाचार फर्स्ट के संस्थापक एवं प्रधान संपादक। समस्त पोर्टल, डेटाबेस, यूजर्स व संपादकीय नीति का पूर्ण नियंत्रण।',
+    bio: 'गैजेट ग्लो (Gadget Glow) के संस्थापक एवं प्रधान संपादक। समस्त पोर्टल, डेटाबेस, यूजर्स व संपादकीय नीति का पूर्ण नियंत्रण।',
     location: 'चंडीगढ़ / नई दिल्ली',
     photoURL: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
     badge: 'सुपर एडमिन (Super Admin)',
@@ -35,7 +35,7 @@ export const DEMO_ACCOUNTS: DemoAccount[] = [
   {
     id: 'user-admin',
     name: 'राजेश कुमार (Rajesh Kumar)',
-    email: 'admin@samacharfirst.com',
+    email: 'admin@gadgetglow.com',
     password: 'Admin@2026',
     role: 'admin',
     designation: 'मुख्य प्रशासक (Chief Administrator & General Manager)',
@@ -50,7 +50,7 @@ export const DEMO_ACCOUNTS: DemoAccount[] = [
   {
     id: 'user-editor',
     name: 'अमित भारद्वाज (Amit Bhardwaj)',
-    email: 'editor@samacharfirst.com',
+    email: 'editor@gadgetglow.com',
     password: 'Editor@2026',
     role: 'editor',
     designation: 'वरिष्ठ उप-संपादक (Senior Desk Editor & Content Head)',
@@ -65,7 +65,7 @@ export const DEMO_ACCOUNTS: DemoAccount[] = [
   {
     id: 'user-reporter',
     name: 'पूजा शर्मा (Pooja Sharma)',
-    email: 'reporter@samacharfirst.com',
+    email: 'reporter@gadgetglow.com',
     password: 'Reporter@2026',
     role: 'reporter',
     designation: 'विशेष संवाददाता - हरियाणा ब्यूरो (Special Correspondent)',
@@ -80,7 +80,7 @@ export const DEMO_ACCOUNTS: DemoAccount[] = [
   {
     id: 'user-moderator',
     name: 'राहुल वर्मा (Rahul Verma)',
-    email: 'user@samacharfirst.com',
+    email: 'user@gadgetglow.com',
     password: 'User@2026',
     role: 'moderator',
     designation: 'कम्युनिटी मॉडरेटर व पाठक प्रतिनिधि (Community Moderator & User)',
@@ -96,12 +96,19 @@ export const DEMO_ACCOUNTS: DemoAccount[] = [
 
 export function findDemoAccount(identifier: string): DemoAccount | undefined {
   const cleanId = identifier.trim().toLowerCase();
+  const normalized = cleanId.replace('@samacharfirst.com', '@gadgetglow.com');
   return DEMO_ACCOUNTS.find(
     (acc) =>
       acc.email.toLowerCase() === cleanId ||
+      acc.email.toLowerCase() === normalized ||
       acc.id.toLowerCase() === cleanId ||
       acc.role === cleanId ||
-      (cleanId === 'saini.pardeep45@gmail.com' && acc.role === 'super_admin')
+      (cleanId === 'saini.pardeep45@gmail.com' && acc.role === 'super_admin') ||
+      (cleanId.startsWith('superadmin@') && acc.role === 'super_admin') ||
+      (cleanId.startsWith('admin@') && acc.role === 'admin') ||
+      (cleanId.startsWith('editor@') && acc.role === 'editor') ||
+      (cleanId.startsWith('reporter@') && acc.role === 'reporter') ||
+      (cleanId.startsWith('user@') && acc.role === 'moderator')
   );
 }
 

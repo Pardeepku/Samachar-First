@@ -292,3 +292,5 @@ export interface AdminNotification {
   link?: string;
   createdAt: string;
 }
+
+export type StaticPageType = 'about' | 'contact' | 'privacy' | 'terms' | 'disclaimer' | 'editorial-policy';

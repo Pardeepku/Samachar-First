@@ -28,20 +28,32 @@ export const PoliticsCrimeSection: React.FC<PoliticsCrimeSectionProps> = ({
             <Landmark className="w-5 h-5 text-indigo-600" />
             <h2 className="font-serif font-black text-xl text-slate-900">सियासत & राजनीति</h2>
           </div>
-          <button
-            onClick={() => onNavigateToCategory('rajneeti')}
-            className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-0.5"
+          <a
+            href="/category/rajneeti"
+            onClick={(e) => {
+              if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                e.preventDefault();
+                onNavigateToCategory('rajneeti');
+              }
+            }}
+            className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-0.5 cursor-pointer"
           >
             और देखें <ChevronRight className="w-3.5 h-3.5" />
-          </button>
+          </a>
         </div>
 
         <div className="space-y-4">
-          {fallbackPolitics.map((art, idx) => (
-            <div
+          {fallbackPolitics.map((art) => (
+            <a
               key={art.id}
-              onClick={() => onArticleClick(art.slug)}
-              className="group cursor-pointer flex gap-3.5 items-center pb-3 border-b border-neutral-100 last:border-0 last:pb-0"
+              href={`/news/${encodeURIComponent(art.slug)}`}
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                  e.preventDefault();
+                  onArticleClick(art.slug);
+                }
+              }}
+              className="group cursor-pointer flex gap-3.5 items-center pb-3 border-b border-neutral-100 last:border-0 last:pb-0 block"
             >
               <div className="w-24 h-18 shrink-0 rounded overflow-hidden bg-slate-900">
                 <img
@@ -58,7 +70,7 @@ export const PoliticsCrimeSection: React.FC<PoliticsCrimeSectionProps> = ({
                   <span>{art.authorName}</span>
                 </div>
               </div>
-            </div>
+            </a>
           ))}
         </div>
       </div>
@@ -70,20 +82,32 @@ export const PoliticsCrimeSection: React.FC<PoliticsCrimeSectionProps> = ({
             <ShieldAlert className="w-5 h-5 text-rose-600" />
             <h2 className="font-serif font-black text-xl text-slate-900">क्राइम & खुलासे</h2>
           </div>
-          <button
-            onClick={() => onNavigateToCategory('apradh')}
-            className="text-xs font-bold text-rose-600 hover:text-rose-800 flex items-center gap-0.5"
+          <a
+            href="/category/apradh"
+            onClick={(e) => {
+              if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                e.preventDefault();
+                onNavigateToCategory('apradh');
+              }
+            }}
+            className="text-xs font-bold text-rose-600 hover:text-rose-800 flex items-center gap-0.5 cursor-pointer"
           >
             और देखें <ChevronRight className="w-3.5 h-3.5" />
-          </button>
+          </a>
         </div>
 
         <div className="space-y-4">
           {fallbackCrime.map((art) => (
-            <div
+            <a
               key={art.id}
-              onClick={() => onArticleClick(art.slug)}
-              className="group cursor-pointer flex gap-3.5 items-center pb-3 border-b border-neutral-100 last:border-0 last:pb-0"
+              href={`/news/${encodeURIComponent(art.slug)}`}
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                  e.preventDefault();
+                  onArticleClick(art.slug);
+                }
+              }}
+              className="group cursor-pointer flex gap-3.5 items-center pb-3 border-b border-neutral-100 last:border-0 last:pb-0 block"
             >
               <div className="w-24 h-18 shrink-0 rounded overflow-hidden bg-slate-900">
                 <img
@@ -102,7 +126,7 @@ export const PoliticsCrimeSection: React.FC<PoliticsCrimeSectionProps> = ({
                   <span>{art.authorName}</span>
                 </div>
               </div>
-            </div>
+            </a>
           ))}
         </div>
       </div>

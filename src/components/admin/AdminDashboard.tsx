@@ -20,6 +20,7 @@ import {
   Copy,
   Check,
   LogIn,
+  Globe,
 } from 'lucide-react';
 import { AdminTab } from './AdminLayout';
 import { DEMO_ACCOUNTS } from '../../data/demoAccounts';
@@ -70,7 +71,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         await onRefreshData();
       }
     } catch (e: any) {
-      setSeedSuccess(e.message || 'सीडिंग विफल');
+      setSeedSuccess(e.message || 'Seeding failed');
     } finally {
       setIsSeeding(false);
     }
@@ -84,44 +85,44 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   const stats = [
     {
-      title: 'कुल समाचार (Articles)',
+      title: 'Total Articles',
       value: articles.length,
-      sub: `${publishedCount} लाइव, ${draftCount} ड्राफ्ट`,
+      sub: `${publishedCount} Published, ${draftCount} Draft`,
       icon: <FileText className="w-5 h-5 text-red-500" />,
       tab: 'articles' as AdminTab,
     },
     {
-      title: 'बड़ी खबरें (Breaking)',
+      title: 'Breaking Alerts',
       value: breakingNews.filter((b) => b.isActive).length,
-      sub: `${breakingNews.length} कुल दर्ज`,
+      sub: `${breakingNews.length} in ticker`,
       icon: <Flame className="w-5 h-5 text-amber-500" />,
       tab: 'breaking' as AdminTab,
     },
     {
-      title: 'श्रेणियां व जिले',
+      title: 'Categories & Districts',
       value: categories.length,
-      sub: 'सक्रिय न्यूज़ श्रेणियां',
+      sub: 'Active news sections',
       icon: <FolderTree className="w-5 h-5 text-indigo-500" />,
       tab: 'categories' as AdminTab,
     },
     {
-      title: 'संवाददाता / रिपोर्टर',
+      title: 'Reporters & Authors',
       value: authors.length,
-      sub: 'संपादकीय टीम सदस्य',
+      sub: 'Newsroom journalists',
       icon: <Users className="w-5 h-5 text-emerald-500" />,
       tab: 'authors' as AdminTab,
     },
     {
-      title: 'वीडियो बुलेटिन',
+      title: 'Video Bulletins',
       value: videos.length,
-      sub: 'YouTube बुलेटिन',
+      sub: 'Video broadcasts',
       icon: <Video className="w-5 h-5 text-sky-500" />,
       tab: 'videos' as AdminTab,
     },
     {
-      title: 'कुल पाठक व्यूज (Views)',
+      title: 'Total Article Views',
       value: totalViews.toLocaleString(),
-      sub: 'डिजिटल न्यूज़ इंप्रेशन',
+      sub: 'Reader impressions',
       icon: <Eye className="w-5 h-5 text-purple-500" />,
       tab: 'articles' as AdminTab,
     },
@@ -130,37 +131,37 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   return (
     <div className="space-y-6">
       {/* Top Banner with Quick Actions */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xl">
         <div>
-          <h1 className="font-serif font-black text-xl text-white">
-            समाचार फर्स्ट संपादकीय डैशबोर्ड (Dashboard)
+          <h1 className="font-bold text-xl sm:text-2xl text-white tracking-tight">
+            Editorial CMS Dashboard
           </h1>
-          <p className="text-xs text-slate-400 mt-0.5">
-            वेबसाइट सामग्री, बड़ी खबरों और मल्टीमीडिया का लाइव नियंत्रण केंद्र
+          <p className="text-xs sm:text-sm text-slate-400 mt-1">
+            Central newsroom control center for reporting, multimedia, breaking alerts, and URL importing
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2.5">
           <button
             onClick={() => onNavigateTab('auto_fetch')}
-            className="bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 px-3.5 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors"
+            className="bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/40 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors shadow-sm"
           >
-            <Sparkles className="w-4 h-4 text-amber-400" />
-            दैनिक भास्कर ऑटो-फेच (AI)
+            <Globe className="w-4 h-4 text-sky-400" />
+            <span>Fetch News from URL</span>
           </button>
           <button
             onClick={onCreateArticle}
-            className="bg-red-600 hover:bg-red-700 text-white px-3.5 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-sm transition-colors"
+            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md transition-colors"
           >
             <Plus className="w-4 h-4" />
-            नया समाचार बनाएं
+            <span>Create Article</span>
           </button>
           <button
             onClick={() => onNavigateTab('breaking')}
-            className="bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-500/30 px-3.5 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors"
+            className="bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-500/30 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors"
           >
             <Flame className="w-4 h-4" />
-            Breaking News
+            <span>Breaking Ticker</span>
           </button>
         </div>
       </div>
@@ -171,15 +172,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           <div
             key={i}
             onClick={() => onNavigateTab(st.tab)}
-            className="bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-xl p-4 cursor-pointer transition-colors flex flex-col justify-between"
+            className="bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-2xl p-4 cursor-pointer transition-all hover:scale-[1.01] flex flex-col justify-between shadow-lg"
           >
             <div className="flex items-center justify-between mb-2">
-              <span className="p-2 bg-slate-800 rounded-lg">{st.icon}</span>
+              <span className="p-2 bg-slate-800 rounded-xl">{st.icon}</span>
               <ArrowUpRight className="w-3.5 h-3.5 text-slate-500" />
             </div>
             <div>
               <div className="text-xl font-bold text-white font-mono">{st.value}</div>
-              <div className="text-[11px] font-semibold text-slate-300 truncate">{st.title}</div>
+              <div className="text-xs font-semibold text-slate-300 truncate mt-0.5">{st.title}</div>
               <div className="text-[10px] text-slate-500 mt-0.5">{st.sub}</div>
             </div>
           </div>
@@ -187,16 +188,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       </div>
 
       {/* Demo Credentials & Firestore Seeding Quick Bar */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-4.5">
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 mb-3 border-b border-slate-800">
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-5 h-5 text-amber-400" />
             <div>
               <h2 className="font-bold text-sm text-white flex items-center gap-2">
-                डेमो लॉगिन क्रेडेंशियल्स व भूमिकाएं (5 Demo User Accounts)
+                Demo User Accounts & Role Switching (5 Profiles)
               </h2>
-              <p className="text-[11px] text-slate-400">
-                सुपर एडमिन, एडमिन, सीनियर एडिटर, रिपोर्टर व यूजर अकाउंट से 1-क्लिक में परीक्षण करें
+              <p className="text-xs text-slate-400">
+                1-Click test login as Super Admin, Editor, Reporter, or Moderator
               </p>
             </div>
           </div>
@@ -205,72 +206,72 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             <button
               onClick={handleSeed}
               disabled={isSeeding}
-              className="bg-emerald-600 hover:bg-emerald-500 disabled:opacity-60 text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors shadow-xs"
-              title="Firestore में सभी 14 लेख, 7 श्रेणियां, 5 रिपोर्टर, 4 वीडियो, 5 डेमो यूजर्स व सेटिंग्स लोड करें"
+              className="bg-emerald-600 hover:bg-emerald-500 disabled:opacity-60 text-white text-xs font-bold px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition-colors shadow-sm"
+              title="Seed all demo articles, categories, authors, and settings into Firestore"
             >
               {isSeeding ? (
                 <>
                   <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                  डेटाबेस सिंक हो रहा है...
+                  <span>Syncing database...</span>
                 </>
               ) : (
                 <>
                   <Database className="w-3.5 h-3.5" />
-                  डेटाबेस सिंक करें (Seed Demo Data)
+                  <span>Seed Demo Data</span>
                 </>
               )}
             </button>
             <button
               onClick={() => onNavigateTab('users')}
-              className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-3 py-1.5 rounded-lg border border-slate-700 transition-colors"
+              className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-3.5 py-2 rounded-xl border border-slate-700 transition-colors"
             >
-              पूर्ण यूजर सूची →
+              <span>Manage Users →</span>
             </button>
           </div>
         </div>
 
         {seedSuccess && (
-          <div className="mb-3 p-2.5 rounded-lg bg-emerald-950/50 border border-emerald-800 text-emerald-300 text-xs flex items-center justify-between">
+          <div className="mb-3 p-3 rounded-xl bg-emerald-950/60 border border-emerald-800 text-emerald-300 text-xs flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Check className="w-4 h-4 text-emerald-400" />
               <span>{seedSuccess}</span>
             </div>
-            <button onClick={() => setSeedSuccess(null)} className="underline text-[10px]">हटाएं</button>
+            <button onClick={() => setSeedSuccess(null)} className="underline text-xs">Dismiss</button>
           </div>
         )}
 
-        {/* 5 Demo Accounts Horizontal Carousel / Cards */}
+        {/* 5 Demo Accounts Horizontal Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
           {DEMO_ACCOUNTS.map((acc) => {
             const isActive = currentUser?.email === acc.email;
             return (
               <div
                 key={acc.id}
-                className={`bg-slate-950/80 rounded-lg p-3 border transition-colors flex flex-col justify-between ${
-                  isActive ? 'border-red-500 bg-red-950/10' : 'border-slate-800/80 hover:border-slate-700'
+                className={`bg-slate-950/80 rounded-xl p-3.5 border transition-all flex flex-col justify-between ${
+                  isActive ? 'border-red-500 bg-red-950/15' : 'border-slate-800/80 hover:border-slate-700'
                 }`}
               >
                 <div>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${acc.badgeColor}`}>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${acc.badgeColor}`}>
                       {acc.role.toUpperCase()}
                     </span>
                     {isActive && (
                       <span className="text-[10px] text-emerald-400 font-bold flex items-center gap-0.5">
-                        <Check className="w-3 h-3" /> सक्रिय
+                        <Check className="w-3 h-3" /> Active
                       </span>
                     )}
                   </div>
                   <div className="text-xs font-bold text-white truncate">{acc.name.split(' (')[0]}</div>
-                  <div className="text-[10px] text-slate-400 truncate mb-2">{acc.designation.split(' (')[0]}</div>
+                  <div className="text-[11px] text-slate-400 truncate mb-2">{acc.designation.split(' (')[0]}</div>
 
-                  <div className="space-y-1 bg-slate-900 p-2 rounded text-[10px] font-mono border border-slate-800/60 mb-2">
+                  <div className="space-y-1 bg-slate-900 p-2 rounded-lg text-[10px] font-mono border border-slate-800/60 mb-2">
                     <div className="flex items-center justify-between text-slate-300">
                       <span className="truncate text-emerald-400 select-all">{acc.email.split('@')[0]}@..</span>
                       <button
                         onClick={() => copyCreds(acc.email, `${acc.id}-em`)}
                         className="text-slate-400 hover:text-white p-0.5"
-                        title="ईमेल कॉपी करें"
+                        title="Copy Email"
                       >
                         {copiedId === `${acc.id}-em` ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
                       </button>
@@ -280,7 +281,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       <button
                         onClick={() => copyCreds(acc.password, `${acc.id}-pw`)}
                         className="text-slate-400 hover:text-white p-0.5"
-                        title="पासवर्ड कॉपी करें"
+                        title="Copy Password"
                       >
                         {copiedId === `${acc.id}-pw` ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
                       </button>
@@ -290,15 +291,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
                 <div>
                   {isActive ? (
-                    <div className="text-[10px] font-bold text-center text-emerald-400 py-1 bg-emerald-950/40 rounded border border-emerald-900/60">
-                      वर्तमान यूजर
+                    <div className="text-[10px] font-bold text-center text-emerald-400 py-1 bg-emerald-950/40 rounded-lg border border-emerald-900/60">
+                      Current User
                     </div>
                   ) : (
                     <button
                       onClick={() => quickDemoLogin(acc)}
-                      className="w-full bg-slate-800 hover:bg-red-600 hover:text-white text-slate-300 py-1 rounded text-[11px] font-bold flex items-center justify-center gap-1 transition-colors"
+                      className="w-full bg-slate-800 hover:bg-red-600 hover:text-white text-slate-300 py-1.5 rounded-lg text-xs font-bold flex items-center justify-center gap-1 transition-colors"
                     >
-                      <LogIn className="w-3 h-3" /> स्विच करें
+                      <LogIn className="w-3 h-3" /> Switch Role
                     </button>
                   )}
                 </div>
@@ -311,17 +312,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       {/* Main 2-Column Content: Recent Articles & Activity Log */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Recent Articles (8 cols) */}
-        <div className="lg:col-span-8 bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-xs">
+        <div className="lg:col-span-8 bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
           <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-800">
-            <h2 className="font-serif font-bold text-base text-white flex items-center gap-2">
+            <h2 className="font-bold text-base text-white flex items-center gap-2">
               <FileText className="w-4 h-4 text-red-500" />
-              हालिया प्रकाशित व ड्राफ्ट समाचार
+              Recent News Articles
             </h2>
             <button
               onClick={() => onNavigateTab('articles')}
               className="text-xs text-red-400 hover:text-red-300 font-semibold"
             >
-              सभी समाचार देखें ({articles.length}) →
+              View All Articles ({articles.length}) →
             </button>
           </div>
 
@@ -329,47 +330,51 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             <table className="w-full text-left text-xs text-slate-300">
               <thead className="bg-slate-950 text-slate-400 font-semibold uppercase text-[10px] border-b border-slate-800">
                 <tr>
-                  <th className="py-2.5 px-3">समाचार शीर्षक</th>
-                  <th className="py-2.5 px-3">श्रेणी / जिला</th>
-                  <th className="py-2.5 px-3">लेखक</th>
-                  <th className="py-2.5 px-3">स्थिति</th>
-                  <th className="py-2.5 px-3">व्यूज</th>
-                  <th className="py-2.5 px-3 text-right">कार्य</th>
+                  <th className="py-2.5 px-3">Headline</th>
+                  <th className="py-2.5 px-3">Category</th>
+                  <th className="py-2.5 px-3">Author</th>
+                  <th className="py-2.5 px-3">Status</th>
+                  <th className="py-2.5 px-3">Views</th>
+                  <th className="py-2.5 px-3 text-right">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800">
                 {articles.slice(0, 7).map((art) => (
                   <tr key={art.id} className="hover:bg-slate-800/50 transition-colors">
-                    <td className="py-2.5 px-3 max-w-[220px]">
+                    <td className="py-3 px-3 max-w-[240px]">
                       <div className="font-semibold text-white truncate">{art.title}</div>
                       <div className="text-[10px] text-slate-500">
-                        {new Date(art.publishedAt || art.createdAt).toLocaleDateString('hi-IN')}
+                        {new Date(art.publishedAt || art.createdAt).toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric',
+                        })}
                       </div>
                     </td>
-                    <td className="py-2.5 px-3">
-                      <span className="bg-slate-800 text-slate-300 px-2 py-0.5 rounded text-[10px]">
+                    <td className="py-3 px-3">
+                      <span className="bg-slate-800 text-slate-300 px-2 py-0.5 rounded text-[10px] border border-slate-700">
                         {art.categoryName}
                       </span>
                     </td>
-                    <td className="py-2.5 px-3 text-slate-400">{art.authorName}</td>
-                    <td className="py-2.5 px-3">
+                    <td className="py-3 px-3 text-slate-400">{art.authorName}</td>
+                    <td className="py-3 px-3">
                       {art.status === 'published' ? (
                         <span className="bg-emerald-950 text-emerald-300 border border-emerald-800 px-2 py-0.5 rounded text-[10px] font-semibold">
-                          प्रकाशित
+                          Published
                         </span>
                       ) : (
                         <span className="bg-amber-950 text-amber-300 border border-amber-800 px-2 py-0.5 rounded text-[10px] font-semibold">
-                          ड्राफ्ट
+                          Draft
                         </span>
                       )}
                     </td>
-                    <td className="py-2.5 px-3 font-mono">{art.views.toLocaleString()}</td>
-                    <td className="py-2.5 px-3 text-right">
+                    <td className="py-3 px-3 font-mono">{art.views.toLocaleString()}</td>
+                    <td className="py-3 px-3 text-right">
                       <button
                         onClick={() => onEditArticle(art)}
-                        className="bg-slate-800 hover:bg-slate-700 text-slate-200 px-2 py-1 rounded text-[11px] font-medium"
+                        className="bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded-lg text-[11px] font-medium transition-colors border border-slate-700"
                       >
-                        संपादित करें
+                        Edit
                       </button>
                     </td>
                   </tr>
@@ -380,26 +385,26 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </div>
 
         {/* Activity Logs & Quick System Status (4 cols) */}
-        <div className="lg:col-span-4 bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-xs flex flex-col justify-between">
+        <div className="lg:col-span-4 bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-800">
-              <h2 className="font-serif font-bold text-base text-white flex items-center gap-2">
+              <h2 className="font-bold text-base text-white flex items-center gap-2">
                 <Activity className="w-4 h-4 text-emerald-400" />
-                सिस्टम गतिविधि (Activity Logs)
+                System Activity Logs
               </h2>
             </div>
 
             <div className="space-y-3">
               {activityLogs.slice(0, 6).map((log) => (
-                <div key={log.id} className="p-2.5 bg-slate-950/60 rounded-lg border border-slate-800 text-xs">
+                <div key={log.id} className="p-3 bg-slate-950/60 rounded-xl border border-slate-800 text-xs">
                   <div className="flex items-center justify-between text-[11px] mb-1">
                     <span className="font-bold text-slate-200">{log.action}</span>
                     <span className="text-[10px] text-slate-500 font-mono">
-                      {new Date(log.timestamp).toLocaleTimeString('hi-IN', { hour: '2-digit', minute: '2-digit' })}
+                      {new Date(log.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
                   <p className="text-[11px] text-slate-400">{log.details}</p>
-                  <div className="text-[10px] text-slate-500 mt-1">द्वारा: {log.userName}</div>
+                  <div className="text-[10px] text-slate-500 mt-1">By: {log.userName}</div>
                 </div>
               ))}
             </div>
@@ -408,9 +413,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           <div className="pt-4 mt-4 border-t border-slate-800">
             <button
               onClick={() => onNavigateTab('activity')}
-              className="w-full text-center text-xs text-slate-400 hover:text-white"
+              className="w-full text-center text-xs text-slate-400 hover:text-white transition-colors"
             >
-              सभी गतिविधि लॉग्स देखें →
+              View Full Audit Logs →
             </button>
           </div>
         </div>

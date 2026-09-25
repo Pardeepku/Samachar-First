@@ -19,7 +19,7 @@ export const VideoSection: React.FC<VideoSectionProps> = ({ videos, onNavigateTo
           <span className="w-3 h-6 bg-red-600 rounded-xs"></span>
           <Video className="w-6 h-6 text-red-500" />
           <h2 className="font-serif font-black text-xl sm:text-2xl text-white">
-            समाचार फर्स्ट वीडियो बुलेटिन
+            गैजेट ग्लो वीडियो बुलेटिन
           </h2>
         </div>
 

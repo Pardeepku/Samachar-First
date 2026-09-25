@@ -22,10 +22,16 @@ export const TrendingSection: React.FC<TrendingSectionProps> = ({ articles, onAr
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {sorted.map((art, index) => (
-          <div
+          <a
             key={art.id}
-            onClick={() => onArticleClick(art.slug)}
-            className="group cursor-pointer flex items-start gap-3 p-3 rounded-lg hover:bg-red-50/50 transition-colors border border-transparent hover:border-red-100"
+            href={`/news/${encodeURIComponent(art.slug)}`}
+            onClick={(e) => {
+              if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                e.preventDefault();
+                onArticleClick(art.slug);
+              }
+            }}
+            className="group cursor-pointer flex items-start gap-3 p-3 rounded-lg hover:bg-red-50/50 transition-colors border border-transparent hover:border-red-100 block"
           >
             <span className="font-serif font-black text-3xl text-neutral-300 group-hover:text-red-600 transition-colors w-8 text-right shrink-0">
               0{index + 1}
@@ -45,7 +51,7 @@ export const TrendingSection: React.FC<TrendingSectionProps> = ({ articles, onAr
                 </span>
               </div>
             </div>
-          </div>
+          </a>
         ))}
       </div>
     </section>

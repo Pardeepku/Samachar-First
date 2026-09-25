@@ -55,6 +55,56 @@ export { INITIAL_SEO_SETTINGS };
 let cachedSiteSettings: SiteSettings = INITIAL_SITE_SETTINGS;
 let cachedSeoSettings: SeoSettings = INITIAL_SEO_SETTINGS;
 
+const LOCAL_CUSTOM_ARTICLES_KEY = 'sf_portal_custom_articles_v1';
+
+export function stripUndefined<T>(obj: T): T {
+  if (obj === null || obj === undefined) return obj;
+  if (Array.isArray(obj)) {
+    return obj.map(stripUndefined) as any;
+  }
+  if (typeof obj === 'object' && !(obj instanceof Date)) {
+    const cleaned: any = {};
+    for (const [key, val] of Object.entries(obj)) {
+      if (val !== undefined) {
+        cleaned[key] = stripUndefined(val);
+      }
+    }
+    return cleaned;
+  }
+  return obj;
+}
+
+export function getLocalCustomArticles(): Article[] {
+  try {
+    const stored = localStorage.getItem(LOCAL_CUSTOM_ARTICLES_KEY);
+    return stored ? JSON.parse(stored) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function saveLocalCustomArticles(articles: Article[]): void {
+  try {
+    localStorage.setItem(LOCAL_CUSTOM_ARTICLES_KEY, JSON.stringify(articles));
+  } catch (err) {
+    console.warn('Could not persist full articles to localStorage, compressing payloads:', err);
+    try {
+      const lightweight = articles.map((a) => {
+        if (a.featuredImage && a.featuredImage.startsWith('data:image')) {
+          return {
+            ...a,
+            featuredImage: 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800&auto=format&fit=crop&q=80',
+          };
+        }
+        return a;
+      });
+      localStorage.setItem(LOCAL_CUSTOM_ARTICLES_KEY, JSON.stringify(lightweight));
+    } catch {
+      // Non-critical local storage fallback
+    }
+  }
+}
+
 function filterLocalArticles(source: Article[], filter?: {
   categoryId?: string;
   subcategoryId?: string;
@@ -130,82 +180,37 @@ export const dbService = {
     limit?: number;
     offset?: number;
   }): Promise<Article[]> {
-    if (!db) return filterLocalArticles(INITIAL_ARTICLES, filter);
+    const articleMap = new Map<string, Article>();
 
-    try {
-      let q = query(collection(db, 'articles'));
+    // 1. Initial articles
+    INITIAL_ARTICLES.forEach((art) => articleMap.set(art.id, art));
 
-      if (filter?.status) {
-        q = query(q, where('status', '==', filter.status));
-      }
-      if (filter?.categoryId) {
-        q = query(q, where('categoryId', '==', filter.categoryId));
-      }
-      if (filter?.subcategoryId) {
-        q = query(q, where('subcategoryId', '==', filter.subcategoryId));
-      }
-      if (filter?.authorId) {
-        q = query(q, where('authorId', '==', filter.authorId));
-      }
-      if (filter?.isBreaking !== undefined) {
-        q = query(q, where('isBreaking', '==', filter.isBreaking));
-      }
-      if (filter?.isFeatured !== undefined) {
-        q = query(q, where('isFeatured', '==', filter.isFeatured));
-      }
-      if (filter?.isTrending !== undefined) {
-        q = query(q, where('isTrending', '==', filter.isTrending));
-      }
+    // 2. Locally cached custom/uploaded articles
+    getLocalCustomArticles().forEach((art) => articleMap.set(art.id, art));
 
-      if (filter?.limit && !filter.searchQuery) {
-        q = query(q, limit(filter.limit));
-      }
-
-      const snap = await getDocs(q);
-      let items: Article[] = [];
-      snap.forEach((d) => {
-        items.push({ id: d.id, ...(d.data() as Omit<Article, 'id'>) });
-      });
-
-      if (items.length === 0) {
-        // Auto-seed in background if empty so Firestore is permanently populated
-        this.seedInitialDataToFirestore().catch(console.warn);
-        return filterLocalArticles(INITIAL_ARTICLES, filter);
-      }
-
-      if (filter?.searchQuery?.trim()) {
-        const queryTerm = filter.searchQuery.trim().toLowerCase();
-        items = items.filter((art) => {
-          return (
-            art.title?.toLowerCase().includes(queryTerm) ||
-            art.shortDescription?.toLowerCase().includes(queryTerm) ||
-            art.content?.toLowerCase().includes(queryTerm) ||
-            art.tags?.some((t) => t.toLowerCase().includes(queryTerm)) ||
-            art.categoryName?.toLowerCase().includes(queryTerm)
-          );
+    // 3. Firestore live articles
+    if (db) {
+      try {
+        const snap = await getDocs(collection(db, 'articles'));
+        snap.forEach((d) => {
+          articleMap.set(d.id, { id: d.id, ...(d.data() as Omit<Article, 'id'>) });
         });
+      } catch (error) {
+        console.warn('Firestore fetch articles error, falling back gracefully:', error);
       }
-
-      // Sort client-side if no index on compound order
-      items.sort((a, b) => {
-        const timeA = new Date(a.publishedAt || a.createdAt || 0).getTime();
-        const timeB = new Date(b.publishedAt || b.createdAt || 0).getTime();
-        return timeB - timeA;
-      });
-
-      if (filter?.limit && filter.searchQuery) {
-        items = items.slice(0, filter.limit);
-      }
-
-      return items;
-    } catch (error) {
-      handleFirestoreError(error, OperationType.GET, 'articles');
-      return filterLocalArticles(INITIAL_ARTICLES, filter);
     }
+
+    const allArticles = Array.from(articleMap.values());
+    return filterLocalArticles(allArticles, filter);
   },
 
   async getArticleById(id: string): Promise<Article | null> {
     if (!id) return null;
+
+    // Check local custom articles first
+    const local = getLocalCustomArticles().find((a) => a.id === id);
+    if (local) return local;
+
     if (db) {
       try {
         const snap = await getDoc(doc(db, 'articles', id));
@@ -221,106 +226,173 @@ export const dbService = {
 
   async getArticleBySlug(slug: string): Promise<Article | null> {
     if (!slug) return null;
+    const cleanSlug = typeof slug === 'string'
+      ? decodeURIComponent(slug).replace(/^\/?(news\/)?/, '').replace(/\/$/, '').trim()
+      : String(slug);
+
+    // Check local custom articles first
+    const local = getLocalCustomArticles().find((a) => a.slug === cleanSlug || a.id === cleanSlug);
+    if (local) return local;
+
     if (db) {
       try {
-        const q = query(collection(db, 'articles'), where('slug', '==', slug), limit(1));
+        const q = query(collection(db, 'articles'), where('slug', '==', cleanSlug), limit(1));
         const snap = await getDocs(q);
         if (!snap.empty) {
           const docSnap = snap.docs[0];
           return { id: docSnap.id, ...(docSnap.data() as Omit<Article, 'id'>) };
         }
         // Also try fetching directly by ID in case slug is an ID
-        const directSnap = await getDoc(doc(db, 'articles', slug));
+        const directSnap = await getDoc(doc(db, 'articles', cleanSlug));
         if (directSnap.exists()) {
           return { id: directSnap.id, ...(directSnap.data() as Omit<Article, 'id'>) };
         }
       } catch (error) {
-        handleFirestoreError(error, OperationType.GET, `articles/slug/${slug}`);
+        handleFirestoreError(error, OperationType.GET, `articles/slug/${cleanSlug}`);
       }
     }
-    return INITIAL_ARTICLES.find((a) => a.slug === slug || a.id === slug) || null;
+    return INITIAL_ARTICLES.find((a) => a.slug === cleanSlug || a.id === cleanSlug) || null;
   },
 
   async createArticle(
     article: Omit<Article, 'id' | 'views' | 'likes' | 'createdAt' | 'updatedAt'>,
     authorName?: string
   ): Promise<Article> {
-    if (!db) throw new Error('Firestore database is not connected');
-
-    const id = `art-${Date.now()}`;
+    const id = (article as any).id || `art-${Date.now()}`;
     const newArticle: Article = {
       ...article,
       id,
-      views: 0,
-      likes: 0,
-      createdAt: new Date().toISOString(),
+      views: (article as any).views || 0,
+      likes: (article as any).likes || 0,
+      createdAt: (article as any).createdAt || new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      publishedAt: article.status === 'published' ? new Date().toISOString() : undefined,
+      publishedAt: article.status === 'published' ? ((article as any).publishedAt || new Date().toISOString()) : undefined,
     };
 
-    try {
-      await setDoc(doc(db, 'articles', id), newArticle);
-      this.logActivity({
-        userId: 'admin-action',
-        userName: authorName || article.authorName || 'संपादक',
-        action: 'Article Created',
-        entityType: 'Article',
-        entityId: id,
-        details: `नया समाचार बनाया गया: "${newArticle.title}"`,
-        timestamp: new Date().toISOString(),
-      });
-      return newArticle;
-    } catch (error) {
-      handleFirestoreError(error, OperationType.CREATE, `articles/${id}`);
-      throw error;
+    const cleanData = stripUndefined(newArticle);
+
+    // 1. Save to local storage cache immediately so UI reflects it immediately
+    const customList = getLocalCustomArticles();
+    const existingIndex = customList.findIndex((a) => a.id === id);
+    if (existingIndex >= 0) {
+      customList[existingIndex] = cleanData;
+    } else {
+      customList.unshift(cleanData);
     }
+    saveLocalCustomArticles(customList);
+
+    // 2. Persist to Firestore with background/fast timeout so network latency never hangs the publish flow
+    if (db) {
+      const firestoreWritePromise = setDoc(doc(db, 'articles', id), cleanData)
+        .then(() => {
+          this.logActivity({
+            userId: 'admin-action',
+            userName: authorName || article.authorName || 'संपादक',
+            action: 'Article Created',
+            entityType: 'Article',
+            entityId: id,
+            details: `नया समाचार बनाया गया: "${cleanData.title}"`,
+            timestamp: new Date().toISOString(),
+          }).catch(console.warn);
+        })
+        .catch((error) => {
+          console.warn('Firestore write failed, but saved to local cache:', error);
+        });
+
+      // Wait up to 1000ms for network ack, otherwise continue in background
+      try {
+        await Promise.race([
+          firestoreWritePromise,
+          new Promise((resolve) => setTimeout(resolve, 1000)),
+        ]);
+      } catch {
+        // Continue
+      }
+    }
+
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('samachar_store_updated', { detail: cleanData }));
+    }
+
+    return cleanData;
   },
 
   async updateArticle(id: string, articleUpdate: Partial<Article>, adminName?: string): Promise<void> {
-    if (!db || !id) throw new Error('Firestore is not connected');
+    if (!id) throw new Error('Article ID is required for update');
 
-    try {
-      const updateData = {
-        ...articleUpdate,
-        updatedAt: new Date().toISOString(),
-        ...(articleUpdate.status === 'published' && !articleUpdate.publishedAt
-          ? { publishedAt: new Date().toISOString() }
-          : {}),
-      };
+    const updateData = stripUndefined({
+      ...articleUpdate,
+      updatedAt: new Date().toISOString(),
+      ...(articleUpdate.status === 'published' && !articleUpdate.publishedAt
+        ? { publishedAt: new Date().toISOString() }
+        : {}),
+    });
 
-      await updateDoc(doc(db, 'articles', id), updateData);
-      this.logActivity({
-        userId: 'admin-action',
-        userName: adminName || 'संपादक',
-        action: 'Article Updated',
-        entityType: 'Article',
-        entityId: id,
-        details: `समाचार अपडेट किया गया: ${id}`,
-        timestamp: new Date().toISOString(),
-      });
-    } catch (error) {
-      handleFirestoreError(error, OperationType.UPDATE, `articles/${id}`);
-      throw error;
+    // 1. Update local custom articles cache
+    const customList = getLocalCustomArticles();
+    const idx = customList.findIndex((a) => a.id === id);
+    if (idx >= 0) {
+      customList[idx] = { ...customList[idx], ...updateData };
+      saveLocalCustomArticles(customList);
+    } else {
+      // If updating an initial article, make a custom copy
+      const base = INITIAL_ARTICLES.find((a) => a.id === id);
+      if (base) {
+        customList.unshift({ ...base, ...updateData });
+        saveLocalCustomArticles(customList);
+      }
+    }
+
+    // 2. Update Firestore (use setDoc with merge: true for resilient upsert)
+    if (db) {
+      try {
+        await setDoc(doc(db, 'articles', id), updateData, { merge: true });
+        this.logActivity({
+          userId: 'admin-action',
+          userName: adminName || 'संपादक',
+          action: 'Article Updated',
+          entityType: 'Article',
+          entityId: id,
+          details: `समाचार अपडेट किया गया: ${id}`,
+          timestamp: new Date().toISOString(),
+        }).catch(console.warn);
+      } catch (error) {
+        console.warn('Firestore article upsert error, saved locally:', error);
+      }
+    }
+
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('samachar_store_updated'));
     }
   },
 
   async deleteArticle(id: string, adminName?: string): Promise<void> {
-    if (!db || !id) throw new Error('Firestore is not connected');
+    if (!id) throw new Error('Article ID is required for deletion');
 
-    try {
-      await deleteDoc(doc(db, 'articles', id));
-      this.logActivity({
-        userId: 'admin-action',
-        userName: adminName || 'संपादक',
-        action: 'Article Deleted',
-        entityType: 'Article',
-        entityId: id,
-        details: `समाचार हटाया गया: ${id}`,
-        timestamp: new Date().toISOString(),
-      });
-    } catch (error) {
-      handleFirestoreError(error, OperationType.DELETE, `articles/${id}`);
-      throw error;
+    // 1. Remove from local custom articles
+    const customList = getLocalCustomArticles().filter((a) => a.id !== id);
+    saveLocalCustomArticles(customList);
+
+    // 2. Delete from Firestore
+    if (db) {
+      try {
+        await deleteDoc(doc(db, 'articles', id));
+        this.logActivity({
+          userId: 'admin-action',
+          userName: adminName || 'संपादक',
+          action: 'Article Deleted',
+          entityType: 'Article',
+          entityId: id,
+          details: `समाचार हटाया गया: ${id}`,
+          timestamp: new Date().toISOString(),
+        }).catch(console.warn);
+      } catch (error) {
+        console.warn('Firestore deleteDoc failed, deleted locally:', error);
+      }
+    }
+
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('samachar_store_updated'));
     }
   },
 
@@ -396,7 +468,7 @@ export const dbService = {
   async updateCategory(id: string, category: Partial<Category>, adminName?: string): Promise<void> {
     if (!db || !id) throw new Error('Firestore is not connected');
     try {
-      await updateDoc(doc(db, 'categories', id), category);
+      await setDoc(doc(db, 'categories', id), category, { merge: true });
       this.logActivity({
         userId: 'admin-action',
         userName: adminName || 'संपादक',
@@ -491,7 +563,7 @@ export const dbService = {
   async updateSubcategory(id: string, sub: Partial<Subcategory>, adminName?: string): Promise<void> {
     if (!db || !id) throw new Error('Firestore is not connected');
     try {
-      await updateDoc(doc(db, 'subcategories', id), sub);
+      await setDoc(doc(db, 'subcategories', id), sub, { merge: true });
       this.logActivity({
         userId: 'admin-action',
         userName: adminName || 'संपादक',
@@ -584,7 +656,7 @@ export const dbService = {
   async updateBreakingNews(id: string, item: Partial<BreakingNews>, adminName?: string): Promise<void> {
     if (!db || !id) throw new Error('Firestore is not connected');
     try {
-      await updateDoc(doc(db, 'breakingNews', id), item);
+      await setDoc(doc(db, 'breakingNews', id), item, { merge: true });
       this.logActivity({
         userId: 'admin-action',
         userName: adminName || 'संपादक',
@@ -677,7 +749,7 @@ export const dbService = {
   async updateAuthor(id: string, author: Partial<Author>, adminName?: string): Promise<void> {
     if (!db || !id) throw new Error('Firestore is not connected');
     try {
-      await updateDoc(doc(db, 'authors', id), author);
+      await setDoc(doc(db, 'authors', id), author, { merge: true });
       this.logActivity({
         userId: 'admin-action',
         userName: adminName || 'संपादक',
@@ -763,7 +835,7 @@ export const dbService = {
   async updateVideo(id: string, vid: Partial<VideoNews>, adminName?: string): Promise<void> {
     if (!db || !id) throw new Error('Firestore is not connected');
     try {
-      await updateDoc(doc(db, 'videos', id), vid);
+      await setDoc(doc(db, 'videos', id), vid, { merge: true });
       this.logActivity({
         userId: 'admin-action',
         userName: adminName || 'संपादक',
@@ -854,7 +926,7 @@ export const dbService = {
   async updateAd(id: string, ad: Partial<Advertisement>, adminName?: string): Promise<void> {
     if (!db || !id) throw new Error('Firestore is not connected');
     try {
-      await updateDoc(doc(db, 'advertisements', id), ad);
+      await setDoc(doc(db, 'advertisements', id), ad, { merge: true });
       this.logActivity({
         userId: 'admin-action',
         userName: adminName || 'संपादक',
@@ -1248,7 +1320,7 @@ export const dbService = {
       return { success: false, message: 'कृपया एक वैध ईमेल पता दर्ज करें।' };
     }
     if (!db) {
-      return { success: true, message: 'समाचार फर्स्ट बुलेटिन की सदस्यता के लिए धन्यवाद!' };
+      return { success: true, message: 'गैजेट ग्लो बुलेटिन की सदस्यता के लिए धन्यवाद!' };
     }
 
     try {
@@ -1261,7 +1333,7 @@ export const dbService = {
       };
 
       await setDoc(doc(db, 'newsletterSubscribers', safeId), subscriber, { merge: true });
-      return { success: true, message: 'समाचार फर्स्ट बुलेटिन की सदस्यता के लिए धन्यवाद!' };
+      return { success: true, message: 'गैजेट ग्लो बुलेटिन की सदस्यता के लिए धन्यवाद!' };
     } catch (error) {
       handleFirestoreError(error, OperationType.CREATE, 'newsletterSubscribers');
       return { success: false, message: 'सदस्यता जोड़ने में समस्या आई। कृपया पुनः प्रयास करें।' };
